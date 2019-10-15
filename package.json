@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "eslint": "6.1.0",
+    "eslint-config-airbnb-base": "14.0.0",
+    "eslint-plugin-import": "2.18.2",
+    "jest-environment-webdriver": "^0.2.0"
+  },
+  "dependencies": {
+    "babel": "^6.23.0",
+    "chromedriver": "^77.0.0",
+    "fetch": "^1.1.0",
+    "geckodriver": "^1.18.0",
+    "isomorphic-fetch": "^2.2.1",
+    "jest": "^24.9.0",
+    "jest-fetch": "^1.1.1",
+    "jquery": "^3.4.1",
+    "selenium-webdriver": "^4.0.0-alpha.5"
+  },
+  "testEnvironment": "jest-environment-webdriver",
+  "testEnvironmentOptions": {
+    "browser": "chrome"
+  }
+}
