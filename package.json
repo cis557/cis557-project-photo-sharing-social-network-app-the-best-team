@@ -1,26 +1,19 @@
 {
+  "name": "cis557-project-photo-sharing-social-network-app-the-best-team",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "jest"
-  },
-  "devDependencies": {
-    "eslint": "6.1.0",
-    "eslint-config-airbnb-base": "14.0.0",
-    "eslint-plugin-import": "2.18.2",
-    "jest-environment-webdriver": "^0.2.0"
+    "start": "node ./bin/www"
   },
   "dependencies": {
-    "babel": "^6.23.0",
-    "chromedriver": "^77.0.0",
-    "fetch": "^1.1.0",
-    "geckodriver": "^1.18.0",
-    "isomorphic-fetch": "^2.2.1",
-    "jest": "^24.9.0",
-    "jest-fetch": "^1.1.1",
-    "jquery": "^3.4.1",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "~2.6.1",
+    "ejs-locals": "^1.0.2",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1",
     "selenium-webdriver": "^4.0.0-alpha.5"
-  },
-  "testEnvironment": "jest-environment-webdriver",
-  "testEnvironmentOptions": {
-    "browser": "chrome"
   }
 }
