@@ -98,6 +98,8 @@ app.delete('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-app.listen(8000);
-
-module.exports = app;
+module.exports = {
+  app,
+  checkAuthenticated,
+  checkNotAuthenticated,
+};
