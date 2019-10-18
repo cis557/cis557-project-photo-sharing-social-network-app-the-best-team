@@ -3,23 +3,32 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "devStart": "nodemon server.js"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
     "ejs": "~2.6.1",
     "ejs-locals": "^1.0.2",
     "express": "~4.16.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.0",
     "http-errors": "~1.6.3",
     "jest": "^24.9.0",
+    "method-override": "^3.0.0",
     "morgan": "~1.9.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "selenium-webdriver": "^4.0.0-alpha.5"
   },
   "devDependencies": {
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint-plugin-import": "^2.18.2",
+    "nodemon": "^1.19.4"
   }
 }

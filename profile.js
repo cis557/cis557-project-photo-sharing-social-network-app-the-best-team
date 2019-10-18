@@ -1,5 +1,5 @@
 /* global document fetch */
 
-module.exports = {
+import 'passport';
 
-};
+
