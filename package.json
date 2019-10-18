@@ -13,7 +13,13 @@
     "ejs-locals": "^1.0.2",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+    "jest": "^24.9.0",
     "morgan": "~1.9.1",
     "selenium-webdriver": "^4.0.0-alpha.5"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2"
   }
 }
