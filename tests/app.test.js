@@ -1,39 +1,60 @@
-/* global expect test */
+/* global afterAll beforeAll expect test */
 
-const testApp = require('../app');
+const request = require('supertest');
+const http = require('http');
+const script = require('../app');
 
-test('Correctly permits authenticated user to visit restricted page', () => {
+let server;
+
+beforeAll((done) => {
+  server = http.createServer((req, res) => {
+    res.write('ok');
+    res.end();
+  });
+  server.listen(done);
+});
+
+afterAll((done) => {
+  server.close(done);
+});
+
+test('Permits authenticated user to visit restricted page', () => {
   const req = { isAuthenticated: () => true };
   const res = { redirect: (string) => string };
   const next = () => 'next';
-  const authentication = testApp.checkAuthenticated(req, res, next);
+  const authentication = script.checkAuthenticated(req, res, next);
 
   expect(authentication).toEqual('next');
 });
 
-test('Correctly prevents unauthenticated user from visiting restricted page', () => {
+test('Prevents unauthenticated user from visiting restricted page', () => {
   const req = { isAuthenticated: () => false };
   const res = { redirect: (string) => string };
   const next = () => 'next';
-  const authentication = testApp.checkAuthenticated(req, res, next);
+  const authentication = script.checkAuthenticated(req, res, next);
 
   expect(authentication).toEqual('/login');
 });
 
-test('Correctly prevents authenticated user from visiting unrestricted page', () => {
+test('Prevents authenticated user from visiting unrestricted page', () => {
   const req = { isAuthenticated: () => true };
   const res = { redirect: (string) => string };
   const next = () => 'next';
-  const authentication = testApp.checkNotAuthenticated(req, res, next);
+  const authentication = script.checkNotAuthenticated(req, res, next);
 
   expect(authentication).toEqual('/');
 });
 
-test('Correctly permits unauthenticated user to visit unrestricted page', () => {
+test('Permits unauthenticated user to visit unrestricted page', () => {
   const req = { isAuthenticated: () => false };
   const res = { redirect: (string) => string };
   const next = () => 'next';
-  const authentication = testApp.checkNotAuthenticated(req, res, next);
+  const authentication = script.checkNotAuthenticated(req, res, next);
 
   expect(authentication).toEqual('next');
+});
+
+test('Loads login page for unauthenticated user', async () => {
+  const res = await request(server).get('/login');
+  expect(res.statusCode).toEqual(200);
 });
