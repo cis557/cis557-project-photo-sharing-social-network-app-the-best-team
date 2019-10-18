@@ -1,0 +1,71 @@
+#outerContainer {
+	display: flex;
+	flex: 1 1 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: stretch;
+}
+
+#innerContainer {
+	display: flex;
+	flex: 1 1 800px;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+#authContainer {
+	display: flex;
+	flex: 0 0 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+}
+
+#loginContainer {
+	display: flex;
+	flex: 0 0 100px;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 20px;
+}
+
+#registerContainer {
+	display: flex;
+	flex: 0 0 100px;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 20px;
+}
+
+#profileContainer {
+	display: flex;
+	flex: 1 1 400px;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 20px;
+}
+
+.textBoxContainer {
+	display: flex;
+	flex: 0 0 100%;
+	height: 50px;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.authLabel {
+	width: 100px;
+	margin-right: 10px;
+}
+
+#profileImage {
+	width: 300;
+	height: 300;
+}

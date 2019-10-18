@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" href="profile.css">
+		<script src="profile.js"></script>
+		<title>CIS 557 - Final Project</title>
+	</head>
+	<body onload="constructDocument();">
+		<div id="outerContainer">
+			<div id="innerContainer">
+				<div id="authContainer">
+					<div id="loginContainer">
+						<label>Existing User: Log In</label>
+
+						<div class="textboxContainer">
+							<label class="authLabel">Username</label>
+							<input id="loginUsername" type="input">
+						</div>
+
+						<div class="textboxContainer">
+							<label class="authLabel">Password</label>
+							<input id="loginPassword" type="password">
+						</div>
+
+						<div class="textboxContainer">
+							<input id="loginButton" type="button" value="Login">
+						</div>
+					</div>
+
+					<div id="registerContainer">
+						<label>New User: Register Account</label>
+
+						<div class="textboxContainer">
+							<label class="authLabel">Username</label>
+							<input id="registerUsername" type="input">
+						</div>
+
+						<div class="textboxContainer">
+							<label class="authLabel">Password</label>
+							<input id="registerPassword" type="password">
+						</div>
+
+						<div class="textboxContainer">
+							<input id="registerButton" type="button" value="Register">
+						</div>
+					</div>
+				</div>
+
+				<div id="profileContainer">
+					<div id="profileUsername">example_username</div>
+					<img id="profileImage" src="" alt="">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
