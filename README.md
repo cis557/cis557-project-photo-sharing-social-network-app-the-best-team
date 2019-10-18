@@ -1,7 +1,6 @@
 # CIS557 Project: Photo-Sharing Social Network App
 
-# Setup Instructions
+## Setup Instructions
 
-1. [Install Yarn](https://yarnpkg.com/lang/en/)
-2. Run command: ``cd {your-coding-directory}``
-3. Run command: ``yarn install``
+1. Create a file named ".env" in the project root directory
+2. Add the following text to .env: SESSION_SECRET={a-random-string}
