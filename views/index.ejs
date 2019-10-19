@@ -4,16 +4,15 @@
 	<head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="public/stylesheets/uikit.min.css">
-        <script src="public/javascripts/uikit.min.js"></script>
-        <script src="public/javascripts/uikit-icons.min.js"></script>
-		<script src="index.js"></script>
+        <link rel="stylesheet" type="text/css" href="stylesheets/uikit.min.css">
+        <script src="javascripts/uikit.min.js"></script>
+        <script src="javascripts/uikit-icons.min.js"></script>
 		<title>Profile</title>
 	</head>
 	<body>
 		<h1 id="greeting">Hi, <%= name %>!</h1>
         <form action="/logout?_method=DELETE" method="POST">
-            <button type="submit">Log Out</button>
+            <button type="submit" class="uk-button uk-button-default">Log Out</button>
         </form>
 	</body>
 </html>

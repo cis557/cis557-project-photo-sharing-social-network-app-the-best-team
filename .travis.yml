@@ -1,10 +1,6 @@
 language: node_js
 install:
   - nvm i node
-  - npm i --save-dev jest jest-environment-webdriver
-  - npm i --save-dev selenium-webdriver
-  - npm i --save-dev chromedriver
-  - npm i --save-dev geckodriver
-  - npm i --save-dev supertest
+  - npm install
 script:
   - npm test --coverage
