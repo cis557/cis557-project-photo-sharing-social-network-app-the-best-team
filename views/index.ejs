@@ -10,17 +10,21 @@
 		<title>Profile</title>
 	</head>
 	<body>
-        <h1 id="greeting">Hi, <%= name %>!</h1>
-        <form action="/uploadimage" enctype="multipart/form-data" method="POST">
-            <label for="image">🖼️ Select image and save in MongoDB :</label>
-            <input id="image" type="file" name="image" accept="image/*" />
-            <input type="submit" value="Upload an Image" />
-        </form>
-        <a href="/images">All images</a>
-            <p>Find image by id example: </p>
-            <p><B>http://localhost:3000/image/:id</B></p>
-        <form action="/logout?_method=DELETE" method="POST">
-            <button type="submit" class="uk-button uk-button-default">Log Out</button>
-        </form>
+        <div class="uk-flex uk-flex-center">
+            <div>
+                <h1 id="greeting">Hi, <%= name %>!</h1>
+                <form action="/uploadimage" enctype="multipart/form-data" method="POST" class="uk-form-stacked">
+                    <label for="image" class="uk-form-label">Select image and save in MongoDB:</label>
+                    <input id="image" type="file" name="image" accept="image/*" />
+                    <input type="submit" value="Upload" />
+                </form>
+                <a href="/images">All images</a>
+                <p>TODO: To find image by ID: </p>
+                <p>http://localhost:3000/image/{image-id}</p>
+                <form action="/logout?_method=DELETE" method="POST">
+                    <button type="submit" class="uk-button uk-button-default">Log Out</button>
+                </form>
+            </div>
+        </div>
 	</body>
 </html>

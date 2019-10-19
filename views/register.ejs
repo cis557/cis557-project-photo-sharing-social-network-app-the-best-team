@@ -10,22 +10,26 @@
 		<title>Register</title>
 	</head>
 	<body>
-		<h1>Register</h1>
-        <form action="/register" method="POST" class="uk-form-stacked">
+        <div class="uk-flex uk-flex-center">
             <div>
-                <label for="name" class="uk-form-label">Name</label>
-                <input type="text" id="name" name="name" required>
+                <h1>Register</h1>
+                <form action="/register" method="POST" class="uk-form-stacked">
+                    <div>
+                        <label for="name" class="uk-form-label">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="email" class="uk-form-label">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div>
+                        <label for="password" class="uk-form-label">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="uk-button uk-button-default">Register</button>
+                </form>
+                <a href="/login">Login</a>
             </div>
-            <div>
-                <label for="email" class="uk-form-label">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div>
-                <label for="password" class="uk-form-label">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="uk-button uk-button-default">Register</button>
-        </form>
-        <a href="/login">Login</a>
+        </div>
 	</body>
 </html>
