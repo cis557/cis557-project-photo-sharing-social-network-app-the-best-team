@@ -25,7 +25,8 @@ const users = [];
 
 // Connect to MongoDB.
 let db;
-const dbURL = 'mongodb://localhost:27017';
+// TODO: This should not be public.
+const dbURL = 'mongodb+srv://cis557:cd99ROWai391GPkb@thedatabox-7aslk.mongodb.net/test?retryWrites=true&w=majority';
 MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
   if (error) {
     console.log(error);
