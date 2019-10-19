@@ -16,31 +16,39 @@ const multer = require('multer');
 const { MongoClient, ObjectId } = require('mongodb');
 const fs = require('fs');
 const initializePassport = require('./passport-config');
-
-// TODO: Should this be a devDependency instead?
 require('dotenv').config();
 
-// TODO: Save this information to a database instead.
+// TODO: Save this information to the MongoDB instead.
 const users = [];
 
-// Connect to MongoDB.
+/**
+ * MongoDB initialization.
+ */
+
 let db;
 // TODO: This should not be public.
 const dbURL = 'mongodb+srv://cis557:cd99ROWai391GPkb@thedatabox-7aslk.mongodb.net/test?retryWrites=true&w=majority';
 MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
   if (error) {
-    console.log(error);
+    // TODO: Report error to user.
   } else {
-    console.log('\x1b[32m%s\x1b[0m', 'Successful connection to mongodb 👌');
-    db = client.db('DatabaseUploads');
+    db = client.db('uploads');
   }
 });
+
+/**
+ * Passport initialization.
+ */
 
 initializePassport(
   passport,
   (email) => users.find((user) => user.email === email),
   (id) => users.find((user) => user.id === id),
 );
+
+/**
+ * Express initialization.
+ */
 
 const app = express();
 
@@ -62,6 +70,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride('_method'));
 
+/**
+ * Multer initialization.
+ */
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads');
@@ -74,53 +86,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.post('/uploadimage', upload.single('image'), (req, res) => {
-  const img = fs.readFileSync(req.file.path);
-  const encodeImage = img.toString('base64');
-
-  const finalImg = {
-    contentType: req.file.mimetype,
-    // eslint-disable-next-line new-cap
-    image: new Buffer.from(encodeImage, 'base64'),
-  };
-
-  db.collection('images').insertOne(finalImg, (error, result) => {
-    console.log(result);
-
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('saved to database');
-      res.redirect('/');
-    }
-  });
-});
-
-app.get('/images', (req, res) => {
-  db.collection('images').find().toArray((error, result) => {
-    const imgArray = result.map((element) => element._id);
-    console.log(imgArray);
-
-    if (error) {
-      console.log(error);
-    } else {
-      res.send(imgArray);
-    }
-  });
-});
-
-app.get('/image/:id', (req, res) => {
-  const { id } = req.params;
-  db.collection('images').findOne({ _id: ObjectId(id) }, (error, result) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(result);
-      res.contentType('image/jpeg');
-      res.send(result.image.buffer);
-    }
-  });
-});
+/**
+ * Functions used to protect routes based on authentication status.
+ */
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -137,6 +105,10 @@ function checkNotAuthenticated(req, res, next) {
 
   return next();
 }
+
+/**
+ * Login/registration routes.
+ */
 
 app.get('/', checkAuthenticated, (req, res) => {
   res.render('index.ejs', { name: req.user.name });
@@ -174,6 +146,54 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 app.delete('/logout', (req, res) => {
   req.logOut();
   res.redirect('/login');
+});
+
+/**
+ * Image-handling routes.
+ */
+
+app.post('/uploadimage', upload.single('image'), (req, res) => {
+  const img = fs.readFileSync(req.file.path);
+  const encodeImage = img.toString('base64');
+
+  const finalImg = {
+    contentType: req.file.mimetype,
+    // eslint-disable-next-line new-cap
+    image: new Buffer.from(encodeImage, 'base64'),
+  };
+
+  db.collection('images').insertOne(finalImg, (error) => {
+    if (error) {
+      // TODO: Report error to user.
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+
+app.get('/images', (req, res) => {
+  db.collection('images').find().toArray((error, result) => {
+    // eslint-disable-next-line no-underscore-dangle
+    const imgArray = result.map((element) => element._id);
+
+    if (error) {
+      // TODO: Report error to user.
+    } else {
+      res.send(imgArray);
+    }
+  });
+});
+
+app.get('/image/:id', (req, res) => {
+  const { id } = req.params;
+  db.collection('images').findOne({ _id: ObjectId(id) }, (error, result) => {
+    if (error) {
+      // TODO: Report error to user.
+    } else {
+      res.contentType('image/jpeg');
+      res.send(result.image.buffer);
+    }
+  });
 });
 
 module.exports = {
