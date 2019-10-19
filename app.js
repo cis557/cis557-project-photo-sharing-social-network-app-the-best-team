@@ -100,6 +100,7 @@ app.delete('/logout', (req, res) => {
 
 module.exports = {
   app,
+  users,
   checkAuthenticated,
   checkNotAuthenticated,
 };
