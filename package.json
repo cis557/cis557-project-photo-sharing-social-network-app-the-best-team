@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-	  "devStart": "nodemon ./bin/www",
+    "devStart": "nodemon ./bin/www",
     "test": "jest --coverage --detectOpenHandles --forceExit"
   },
   "dependencies": {
@@ -21,7 +21,9 @@
     "http-errors": "~1.6.3",
     "http-shutdown": "^1.2.1",
     "method-override": "^3.0.0",
+    "mongodb": "^3.3.3",
     "morgan": "~1.9.1",
+    "multer": "^1.4.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "selenium-webdriver": "^4.0.0-alpha.5"
