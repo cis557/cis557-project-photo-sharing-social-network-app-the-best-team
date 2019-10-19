@@ -1,12 +1,10 @@
 language: node_js
 install:
-  - nvm install node
-  - node -v
-  - npm i -g yarn
-  - yarn
-  - npm install --save-dev jest jest-environment-webdriver
-  - npm install selenium-webdriver
-  - npm install chromedriver
-  - npm install geckodriver
+  - nvm i node
+  - npm i --save-dev jest jest-environment-webdriver
+  - npm i --save-dev selenium-webdriver
+  - npm i --save-dev chromedriver
+  - npm i --save-dev geckodriver
+  - npm i --save-dev supertest
 script:
-  - yarn test --coverage
+  - npm test --coverage
