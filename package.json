@@ -41,7 +41,7 @@
     "supertest": "^4.0.2"
   },
   "jest": {
-    "testEnvironment": "jest-environment-webdriver",
+    "testEnvironment": "node",
     "testEnvironmentOptions": {
       "browser": "chrome"
     },
