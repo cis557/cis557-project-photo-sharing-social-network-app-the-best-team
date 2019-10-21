@@ -35,12 +35,16 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
     "jest": "^24.9.0",
+    "jest-environment-webdriver": "^0.2.0",
     "nodemon": "^1.19.4",
     "superagent": "^5.1.0",
     "supertest": "^4.0.2"
   },
   "jest": {
-    "testEnvironment": "node",
+    "testEnvironment": "jest-environment-webdriver",
+    "testEnvironmentOptions": {
+      "browser": "chrome"
+    },
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ]

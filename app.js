@@ -143,7 +143,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
   }
 });
 
-app.delete('/logout', (req, res) => {
+app.delete('/logout', checkAuthenticated, (req, res) => {
   req.logOut();
   res.redirect('/login');
 });
@@ -152,7 +152,7 @@ app.delete('/logout', (req, res) => {
  * Image-handling routes.
  */
 
-app.post('/uploadimage', upload.single('image'), (req, res) => {
+app.post('/uploadimage', checkAuthenticated, upload.single('image'), (req, res) => {
   const img = fs.readFileSync(req.file.path);
   const encodeImage = img.toString('base64');
 
@@ -171,7 +171,7 @@ app.post('/uploadimage', upload.single('image'), (req, res) => {
   });
 });
 
-app.get('/images', (req, res) => {
+app.get('/images', checkAuthenticated, (req, res) => {
   db.collection('images').find().toArray((error, result) => {
     // eslint-disable-next-line no-underscore-dangle
     const imgArray = result.map((element) => element._id);
@@ -184,7 +184,7 @@ app.get('/images', (req, res) => {
   });
 });
 
-app.get('/image/:id', (req, res) => {
+app.get('/image/:id', checkAuthenticated, (req, res) => {
   const { id } = req.params;
   db.collection('images').findOne({ _id: ObjectId(id) }, (error, result) => {
     if (error) {
