@@ -2,11 +2,12 @@ language: node_js
 install:
   - nvm i node
   - node -v
-  - npm i --save-dev jest
-  - npm i --save-dev jest-environment-webdriver
-  - npm i --save-dev selenium-webdriver
-  - npm i --save-dev chromedriver
-  - npm i --save-dev geckodriver
-  - npm i --save-dev supertest
+  - npm i jest
+  - npm i jest-environment-webdriver
+  - npm i selenium-webdriver
+  - npm i chromedriver
+  - npm i geckodriver
+  - npm i supertest
+  - npm i bcrypt
 script:
   - npm test --coverage
