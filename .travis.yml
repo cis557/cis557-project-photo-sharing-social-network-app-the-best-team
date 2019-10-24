@@ -1,6 +1,7 @@
 language: node_js
 install:
   - nvm i node
+  - node -v
   - npm i --save-dev jest
   - npm i --save-dev jest-environment-webdriver
   - npm i --save-dev selenium-webdriver
