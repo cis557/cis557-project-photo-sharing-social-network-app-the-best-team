@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-/* global afterAll beforeAll beforeEach expect it */
+/* global afterAll beforeAll expect it */
 
 /**
  * @jest-environment jest-environment-webdriver
@@ -38,7 +38,7 @@ it('Loads the login page', async () => {
   expect(heading).not.toEqual(null);
 }, 60000);
 
-it('Goes to the registration page', async () => {
+it('Follows the link to the registration page', async () => {
   await driver.wait(until.elementLocated(By.id('register')), 20000);
   const register = await driver.findElement(By.id('register'));
   expect(register).not.toEqual(null);
@@ -54,9 +54,6 @@ it('Goes to the registration page', async () => {
 }, 60000);
 
 it('Registers a new account', async () => {
-  driver.wait(until.urlIs('http://localhost:3000/register'));
-  await driver.get('http://localhost:3000/register');
-
   await driver.wait(until.elementLocated(By.id('name')), 20000);
   const name = await driver.findElement(By.id('name'));
   expect(name).not.toEqual(null);
@@ -73,14 +70,14 @@ it('Registers a new account', async () => {
   const submit = await driver.findElement(By.id('submit'));
   expect(submit).not.toEqual(null);
 
-  await name.sendKeys('', Key.RETURN);
-  await name.sendKeys(testName, Key.RETURN);
+  await name.sendKeys('');
+  await name.sendKeys(testName);
 
-  await email.sendKeys('', Key.RETURN);
-  await email.sendKeys(testEmail, Key.RETURN);
+  await email.sendKeys('');
+  await email.sendKeys(testEmail);
 
-  await password.sendKeys('', Key.RETURN);
-  await password.sendKeys(testPasswordCorrect, Key.RETURN);
+  await password.sendKeys('');
+  await password.sendKeys(testPasswordCorrect);
 
   await submit.click();
 
@@ -90,4 +87,66 @@ it('Registers a new account', async () => {
   await driver.wait(until.elementLocated(By.id('heading')), 20000);
   const heading = await driver.findElement(By.id('heading'));
   expect(heading).not.toEqual(null);
+}, 60000);
+
+it('Rejects invalid login attempt', async () => {
+  await driver.wait(until.elementLocated(By.id('email')), 20000);
+  const email = await driver.findElement(By.id('email'));
+  expect(email).not.toEqual(null);
+
+  await driver.wait(until.elementLocated(By.id('password')), 20000);
+  const password = await driver.findElement(By.id('password'));
+  expect(password).not.toEqual(null);
+
+  await driver.wait(until.elementLocated(By.id('submit')), 20000);
+  const submit = await driver.findElement(By.id('submit'));
+  expect(submit).not.toEqual(null);
+
+  await email.sendKeys('');
+  await email.sendKeys(testEmail);
+
+  await password.sendKeys('');
+  await password.sendKeys(testPasswordIncorrect);
+
+  await submit.click();
+
+  driver.wait(until.urlIs('http://localhost:3000/login'));
+  await driver.get('http://localhost:3000/login');
+
+  await driver.wait(until.elementLocated(By.id('heading')), 20000);
+  const heading = await driver.findElement(By.id('heading'));
+  expect(heading).not.toEqual(null);
+}, 60000);
+
+it('Accepts valid login attempt', async () => {
+  await driver.wait(until.elementLocated(By.id('email')), 20000);
+  const email = await driver.findElement(By.id('email'));
+  expect(email).not.toEqual(null);
+
+  await driver.wait(until.elementLocated(By.id('password')), 20000);
+  const password = await driver.findElement(By.id('password'));
+  expect(password).not.toEqual(null);
+
+  await driver.wait(until.elementLocated(By.id('submit')), 20000);
+  const submit = await driver.findElement(By.id('submit'));
+  expect(submit).not.toEqual(null);
+
+  await email.sendKeys('');
+  await email.sendKeys(testEmail);
+
+  await password.sendKeys('');
+  await password.sendKeys(testPasswordCorrect);
+
+  await submit.click();
+
+  driver.wait(until.urlIs('http://localhost:3000/'));
+  await driver.get('http://localhost:3000/');
+
+  await driver.wait(until.elementLocated(By.id('heading')), 20000);
+  const heading = await driver.findElement(By.id('heading'));
+  expect(heading).not.toEqual(null);
+
+  await driver.wait(until.elementLocated(By.id('image')), 20000);
+  const image = await driver.findElement(By.id('image'));
+  expect(image).not.toEqual(null);
 }, 60000);
