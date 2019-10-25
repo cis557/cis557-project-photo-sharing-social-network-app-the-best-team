@@ -161,7 +161,7 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
 });
 
 /**
- * Routes for handling posts (e.g., images, comments, likes).
+ * Routes for creating and deleting posts.
  */
 
 app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
@@ -199,6 +199,54 @@ app.get('/post', checkAuthenticated, (req, res) => {
       res.send(posts[posts.length - 1].image.buffer);
     }
   });
+});
+
+app.delete('/post', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+/**
+ * Routes for liking posts.
+ */
+
+app.post('/like', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/like', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+/**
+ * Routes for commenting on posts.
+ */
+
+app.post('/comment', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/comment', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+/**
+ * Routes for followers and followees.
+ */
+
+app.post('/follow', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/follow', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.get('/followers', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.get('/followees', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
 });
 
 module.exports = {

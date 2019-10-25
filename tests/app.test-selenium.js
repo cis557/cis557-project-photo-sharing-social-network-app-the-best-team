@@ -139,14 +139,14 @@ it('Accepts valid login attempt', async () => {
 
   await submit.click();
 
-  driver.wait(until.urlIs('http://localhost:3000/'));
-  await driver.get('http://localhost:3000/');
+  driver.wait(until.urlIs('http://localhost:3000/feed'));
+  await driver.get('http://localhost:3000/feed');
 
   await driver.wait(until.elementLocated(By.id('heading')), 20000);
   const heading = await driver.findElement(By.id('heading'));
   expect(heading).not.toEqual(null);
 
-  await driver.wait(until.elementLocated(By.id('image')), 20000);
-  const image = await driver.findElement(By.id('image'));
-  expect(image).not.toEqual(null);
+  await driver.wait(until.elementLocated(By.id('cards')), 20000);
+  const cards = await driver.findElement(By.id('cards'));
+  expect(cards).not.toEqual(null);
 }, 60000);
