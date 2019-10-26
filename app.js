@@ -18,27 +18,31 @@ const fs = require('fs');
 const initializePassport = require('./passport-config');
 require('dotenv').config();
 
-// TODO: Save this information to MongoDB instead.
-const users = [];
-
 /**
  * MongoDB initialization.
  */
 
 let db;
+let users;
 // TODO: This should not be public.
 const dbURL = 'mongodb+srv://cis557:cd99ROWai391GPkb@thedatabox-7aslk.mongodb.net/test?retryWrites=true&w=majority';
-MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
-  if (error) {
+MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err1, client) => {
+  if (err1) {
     // TODO: Report error to user.
   } else {
     db = client.db('uploads');
+
+    // TODO: Instead of doing this, query the database when the user hits "submit."
+    // (The current implementation is a workaround to deal with async/await problems with Passport.)
+    db.collection('users').find().toArray((err2, result) => {
+      if (err2) {
+        // TODO: Report error to user.
+      }
+
+      users = result;
+    });
   }
 });
-
-/**
- * Passport initialization.
- */
 
 initializePassport(
   passport,
@@ -137,13 +141,21 @@ app.get('/profile', checkAuthenticated, (req, res) => {
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    users.push({
+    const user = {
       id: Date.now().toString(),
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
+      posts: [],
+    };
+
+    db.collection('users').insertOne(user, (error) => {
+      if (error) {
+        // TODO: Report error to user.
+      } else {
+        res.redirect('/login');
+      }
     });
-    res.redirect('/login');
   } catch (error) {
     req.redirect('/register');
   }
@@ -183,20 +195,22 @@ app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
       // TODO: Report error to user.
     } else {
       res.redirect('/feed');
+      // eslint-disable-next-line no-underscore-dangle
+      const id = post._id;
+
+      // TODO: Use req.user.email to add the post id to the user's entry in the database.
     }
   });
 });
 
-app.get('/post', checkAuthenticated, (req, res) => {
-  db.collection('posts').find().toArray((error, result) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const posts = result.filter((post) => post.email === req.user.email);
-
+app.get('/post/:id', checkAuthenticated, (req, res) => {
+  const { id } = req.params;
+  db.collection('posts').findOne({ _id: ObjectId(id) }, (error, result) => {
     if (error) {
       // TODO: Report error to user.
     } else {
       res.contentType('image/jpeg');
-      res.send(posts[posts.length - 1].image.buffer);
+      res.send(result.image.buffer);
     }
   });
 });
@@ -251,7 +265,6 @@ app.get('/followees', checkAuthenticated, (req, res) => {
 
 module.exports = {
   app,
-  users,
   checkAuthenticated,
   checkNotAuthenticated,
 };

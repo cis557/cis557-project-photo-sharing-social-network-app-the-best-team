@@ -1,4 +1,4 @@
-/* global document fetch */
+/* global document */
 
 // TODO: Add corresponding links.
 
@@ -25,7 +25,8 @@ async function generatePost() {
   post.appendChild(media);
 
   const img = document.createElement('img');
-  img.src = 'http://localhost:3000/post';
+  // TODO: Don't hardcode this.
+  img.src = 'http://localhost:3000/post/5db45dc82421b95154b61c79';
   media.appendChild(img);
 
   const body = document.createElement('div');
