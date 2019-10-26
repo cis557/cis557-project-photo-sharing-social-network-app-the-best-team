@@ -15,10 +15,11 @@ const bodyParser = require('body-parser');
 const engine = require('ejs-locals');
 const path = require('path');
 const multer = require('multer');
-const { MongoClient, ObjectId } = require('mongodb');
+const safeStringify = require('json-stringify-safe');
 const mongoose = require('mongoose');
+const { ObjectId } = require('mongoose').Types;
 const fs = require('fs');
-const initializePassport = require('./passport-config');
+require('./passport-config')(passport);
 const User = require('./models/User');
 const Post = require('./models/Post');
 require('dotenv').config();
@@ -35,35 +36,6 @@ mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology
     console.log('MONGO CONNECTED');
   }
 });
-
-initializePassport(
-  passport,
-  (email) => users.find((user) => user.email === email),
-  (id) => users.find((user) => user.id === id),
-  // TODO: Make these work correctly.
-  /*
-  async (email) => {
-    await db.collection('users').findOne({ email }, (error, result) => {
-      if (error) {
-        // TODO: Report error to user.
-        return null;
-      }
-
-      return result;
-    });
-  },
-  async (id) => {
-    await db.collection('users').findOne({ id }, (error, result) => {
-      if (error) {
-        // TODO: Report error to user.
-        return null;
-      }
-
-      return result;
-    });
-  },
-  */
-);
 
 /**
  * Express initialization.
@@ -193,8 +165,8 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }));
 
 app.get('/user', checkAuthenticated, (req, res) => {
-  const user = users.find((u) => u.email === req.user.email);
-  res.json(user);
+  const user = User.findOne({ email: req.user.email });
+  res.send(safeStringify(user));
 });
 
 app.delete('/logout', checkAuthenticated, (req, res) => {
