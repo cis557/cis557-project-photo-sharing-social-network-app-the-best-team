@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 // Acknowledgments:
 // Passport tutorial: https://youtu.be/-RCnNyD0L-s
@@ -15,32 +16,23 @@ const engine = require('ejs-locals');
 const path = require('path');
 const multer = require('multer');
 const { MongoClient, ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
 const fs = require('fs');
 const initializePassport = require('./passport-config');
+const User = require('./models/User');
+const Post = require('./models/Post');
 require('dotenv').config();
 
 /**
  * MongoDB initialization.
  */
 
-let db;
 let users;
-MongoClient.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err1, client) => {
-  if (err1) {
-    // TODO: Report error to user.
+mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+  if (err) {
+    console.log(err);
   } else {
-    db = client.db('uploads');
-
-    // TODO: Instead of doing this, query the database when the user hits "submit."
-    // (The current implementation is a workaround to deal with async/await problems with Passport.)
-    db.collection('users').find().toArray((err2, result) => {
-      if (err2) {
-        // TODO: Report error to user.
-      }
-
-      users = result;
-      console.log('Successfully loaded users');
-    });
+    console.log('MONGO CONNECTED');
   }
 });
 
@@ -161,7 +153,7 @@ app.get('/profile', checkAuthenticated, (req, res) => {
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = {
+    const incomingUser = {
       id: Date.now().toString(),
       name: req.body.name,
       email: req.body.email,
@@ -169,16 +161,26 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       posts: [],
     };
 
-    // TODO: Remove this workaround.
-    users.push(user);
+    User.findOne({ email: incomingUser.email })
+      .then((user) => {
+        if (user) {
+          req.redirect('/register');
+        } else {
+          const newUser = new User({
+            id: incomingUser.id,
+            name: incomingUser.name,
+            email: incomingUser.email,
+            password: incomingUser.password,
+            posts: incomingUser.posts,
+          });
 
-    db.collection('users').insertOne(user, (error) => {
-      if (error) {
-        // TODO: Report error to user.
-      } else {
-        res.redirect('/login');
-      }
-    });
+          newUser.save()
+            .then(() => {
+              res.redirect('/login');
+            })
+            .catch((err) => console.log(err));
+        }
+      });
   } catch (error) {
     req.redirect('/register');
   }
@@ -208,7 +210,7 @@ app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
   const img = fs.readFileSync(req.file.path);
   const bytes = img.toString('base64');
 
-  const post = {
+  const incomingPost = {
     email: req.user.email,
     contentType: req.file.mimetype,
     // eslint-disable-next-line new-cap
@@ -218,25 +220,27 @@ app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
     comments: [],
   };
 
-  db.collection('posts').insertOne(post, (error) => {
-    if (error) {
-      // TODO: Report error to user.
-    } else {
-      db.collection('users').updateOne(
-        { email: req.user.email },
-        // eslint-disable-next-line no-underscore-dangle
-        { $push: { posts: post._id } },
-      );
-
-      res.redirect('/feed');
-    }
+  const newPost = new Post({
+    email: incomingPost.email,
+    contentType: incomingPost.contentType,
+    image: incomingPost.image,
+    datetime: incomingPost.datetime,
+    likes: incomingPost.likes,
+    comments: incomingPost.comments,
   });
+
+  newPost.save()
+    .then((post) => {
+      User.findOneAndUpdate({ email: incomingPost.email }, { $push: { posts: post._id } });
+      res.redirect('/feed');
+    })
+    .catch((err) => console.log(err));
 });
 
 app.get('/post/:id', checkAuthenticated, (req, res) => {
   const { id } = req.params;
-  db.collection('posts').findOne({ _id: ObjectId(id) }, (error, result) => {
-    if (error) {
+  Post.findOne({ _id: ObjectId(id) }, (err, result) => {
+    if (err) {
       // TODO: Report error to user.
     } else if (result == null || result.image == null) {
       // TODO: Report error to user.
