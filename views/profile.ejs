@@ -13,7 +13,7 @@
         <div class="uk-flex uk-flex-center">
             <div>
                 <h1 id="heading">Hi, <%= name %>!</h1>
-                <form action="/uploadimage" enctype="multipart/form-data" method="POST" class="uk-form-stacked">
+                <form action="/post" enctype="multipart/form-data" method="POST" class="uk-form-stacked">
                     <label for="image" class="uk-form-label">Select image and save in MongoDB:</label>
                     <input id="image" type="file" name="image" accept="image/*" />
                     <input type="submit" value="Upload" />

@@ -18,31 +18,60 @@ const fs = require('fs');
 const initializePassport = require('./passport-config');
 require('dotenv').config();
 
-// TODO: Save this information to the MongoDB instead.
-const users = [];
-
 /**
  * MongoDB initialization.
  */
 
 let db;
+let users;
 // TODO: This should not be public.
 const dbURL = 'mongodb+srv://cis557:cd99ROWai391GPkb@thedatabox-7aslk.mongodb.net/test?retryWrites=true&w=majority';
-MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
-  if (error) {
+MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err1, client) => {
+  if (err1) {
     // TODO: Report error to user.
   } else {
     db = client.db('uploads');
+
+    // TODO: Instead of doing this, query the database when the user hits "submit."
+    // (The current implementation is a workaround to deal with async/await problems with Passport.)
+    db.collection('users').find().toArray((err2, result) => {
+      if (err2) {
+        // TODO: Report error to user.
+      }
+
+      users = result;
+      console.log('Successfully loaded users');
+    });
   }
 });
 
-/**
- * Passport initialization.
- */
 initializePassport(
   passport,
   (email) => users.find((user) => user.email === email),
   (id) => users.find((user) => user.id === id),
+  // TODO: Make these work correctly.
+  /*
+  async (email) => {
+    await db.collection('users').findOne({ email }, (error, result) => {
+      if (error) {
+        // TODO: Report error to user.
+        return null;
+      }
+
+      return result;
+    });
+  },
+  async (id) => {
+    await db.collection('users').findOne({ id }, (error, result) => {
+      if (error) {
+        // TODO: Report error to user.
+        return null;
+      }
+
+      return result;
+    });
+  },
+  */
 );
 
 /**
@@ -103,15 +132,57 @@ function checkNotAuthenticated(req, res, next) {
 }
 
 /**
- * Login/registration routes.
+ * GET routes for displaying pages.
  */
 
 app.get('/', checkAuthenticated, (req, res) => {
-  res.render('index.ejs', { name: req.user.name });
+  res.redirect('/feed');
+});
+
+app.get('/register', checkNotAuthenticated, (req, res) => {
+  res.render('register.ejs');
 });
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
   res.render('login.ejs');
+});
+
+app.get('/feed', checkAuthenticated, (req, res) => {
+  res.render('feed.ejs', { user: req.user.name });
+});
+
+app.get('/profile', checkAuthenticated, (req, res) => {
+  res.render('profile.ejs', { name: req.user.name });
+});
+
+/**
+ * POST routes for registration/login.
+ */
+
+app.post('/register', checkNotAuthenticated, async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const user = {
+      id: Date.now().toString(),
+      name: req.body.name,
+      email: req.body.email,
+      password: hashedPassword,
+      posts: [],
+    };
+
+    // TODO: Remove this workaround.
+    users.push(user);
+
+    db.collection('users').insertOne(user, (error) => {
+      if (error) {
+        // TODO: Report error to user.
+      } else {
+        res.redirect('/login');
+      }
+    });
+  } catch (error) {
+    req.redirect('/register');
+  }
 });
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
@@ -120,23 +191,9 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureFlash: true,
 }));
 
-app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register.ejs');
-});
-
-app.post('/register', checkNotAuthenticated, async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    users.push({
-      id: Date.now().toString(),
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword,
-    });
-    res.redirect('/login');
-  } catch (error) {
-    req.redirect('/register');
-  }
+app.get('/user', checkAuthenticated, (req, res) => {
+  const user = users.find((u) => u.email === req.user.email);
+  res.json(user);
 });
 
 app.delete('/logout', checkAuthenticated, (req, res) => {
@@ -145,45 +202,44 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
 });
 
 /**
- * Image-handling routes.
+ * Routes for creating and deleting posts.
  */
 
-app.post('/uploadimage', checkAuthenticated, upload.single('image'), (req, res) => {
+app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
   const img = fs.readFileSync(req.file.path);
-  const encodeImage = img.toString('base64');
+  const bytes = img.toString('base64');
 
-  const finalImg = {
+  const post = {
+    email: req.user.email,
     contentType: req.file.mimetype,
     // eslint-disable-next-line new-cap
-    image: new Buffer.from(encodeImage, 'base64'),
+    image: new Buffer.from(bytes, 'base64'),
+    datetime: Date.now(),
+    likes: [],
+    comments: [],
   };
 
-  db.collection('images').insertOne(finalImg, (error) => {
+  db.collection('posts').insertOne(post, (error) => {
     if (error) {
       // TODO: Report error to user.
     } else {
-      res.redirect('/');
+      db.collection('users').updateOne(
+        { email: req.user.email },
+        // eslint-disable-next-line no-underscore-dangle
+        { $push: { posts: post._id } },
+      );
+
+      res.redirect('/feed');
     }
   });
 });
 
-app.get('/images', checkAuthenticated, (req, res) => {
-  db.collection('images').find().toArray((error, result) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const imgArray = result.map((element) => element._id);
-
-    if (error) {
-      // TODO: Report error to user.
-    } else {
-      res.send(imgArray);
-    }
-  });
-});
-
-app.get('/image/:id', checkAuthenticated, (req, res) => {
+app.get('/post/:id', checkAuthenticated, (req, res) => {
   const { id } = req.params;
-  db.collection('images').findOne({ _id: ObjectId(id) }, (error, result) => {
+  db.collection('posts').findOne({ _id: ObjectId(id) }, (error, result) => {
     if (error) {
+      // TODO: Report error to user.
+    } else if (result == null || result.image == null) {
       // TODO: Report error to user.
     } else {
       res.contentType('image/jpeg');
@@ -192,9 +248,56 @@ app.get('/image/:id', checkAuthenticated, (req, res) => {
   });
 });
 
+app.delete('/post', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+/**
+ * Routes for liking posts.
+ */
+
+app.post('/like', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/like', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+/**
+ * Routes for commenting on posts.
+ */
+
+app.post('/comment', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/comment', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+/**
+ * Routes for followers and followees.
+ */
+
+app.post('/follow', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/follow', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.get('/followers', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.get('/followees', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
 module.exports = {
   app,
-  users,
   checkAuthenticated,
   checkNotAuthenticated,
 };

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="stylesheets/uikit.min.css">
+        <script src="javascripts/uikit.min.js"></script>
+        <script src="javascripts/uikit-icons.min.js"></script>
+        <script src="javascripts/feed.js"></script>
+        <title>Feed</title>
+</script>
+    </head>
+    <body onload="generatePosts();">
+        <h1 class="uk-heading-line uk-text-center uk-text-italic" id="heading"><span>Post Template</span></h1>
+        <div class="uk-container uk-container-center uk-background-default">
+            <div class="uk-container uk-background-default" style="z-index: 980" uk-sticky="bottom: #offset">
+                <ul class="uk-iconnav">
+                    <li><a href="" uk-icon="icon: home" class="uk-icon-align-center uk-icon-large"></a></li>
+                    <li><a href="" uk-icon="icon: file-edit" class="uk-icon-align-center uk-icon-large"></a></li>
+                    <li><a href="" uk-icon="icon: heart" class="uk-icon-align-center uk-icon-large"></a></li>
+                    <li><a href="" uk-icon="icon: more" class="uk-icon-align-center uk-icon-large"></a></li>
+                </ul>
+            </div>
+            
+            <div id="posts" class="uk-child-width-1-2@m uk-align-center uk-background-default">
+                <!-- Posts will be added here. -->
+            </div>
+        </div>
+        <hr class="uk-divider-icon">
+    </body>
+</html>

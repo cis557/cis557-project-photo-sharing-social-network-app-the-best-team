@@ -9,6 +9,11 @@ afterAll((done) => {
   www.server.shutdown(done);
 });
 
+const testName = 'testName';
+const testEmail = 'testEmail@test.com';
+const testPasswordCorrect = 'correctPassword';
+const testPasswordIncorrect = 'incorrectPassword';
+
 test('Permits authenticated user to visit restricted page', () => {
   const req = { isAuthenticated: () => true };
   const res = { redirect: (string) => string };
@@ -48,40 +53,62 @@ test('Permits unauthenticated user to visit unrestricted page', () => {
 test('Loads login page for unauthenticated user', async () => {
   const res = await request(www.server).get('/login');
 
-  expect(res.statusCode).toEqual(200);
+  expect(res.status).toEqual(200);
 });
 
 test('Loads registration page for unauthenticated user', async () => {
   const res = await request(www.server).get('/register');
 
-  expect(res.statusCode).toEqual(200);
+  expect(res.status).toEqual(200);
 });
 
 test('Redirects unauthenticated user to login page', async () => {
   const res = await request(www.server).get('/');
 
-  expect(res.statusCode).toEqual(302);
+  expect(res.status).toEqual(302);
 });
 
 test('Returns 404 for invalid page', async () => {
   const res = await request(www.server).get('/pizza');
 
-  expect(res.statusCode).toEqual(404);
+  expect(res.status).toEqual(404);
 });
 
-/*
-test('Registers a new user', async () => {
-  // Register a mock user.
+test('Registers using mock credentials', async () => {
   const res = await request(www.server)
     .post('/register')
     .send({
-      body: {
-        name: 'Matt',
-        email: 'getinthedamnbox@gmail.com',
-        password: 'password',
-      },
+      name: testName,
+      email: testEmail,
+      password: testPasswordCorrect,
     });
 
-  expect(res.statusCode).toEqual(200);
+  expect(res.status).toEqual(302);
+});
+
+test('Rejects login using invalid mock credentials', async () => {
+  const res = await request(www.server)
+    .post('/login')
+    .send({
+      name: testName,
+      email: testEmail,
+      password: testPasswordIncorrect,
+    });
+
+  expect(res.status).toEqual(302);
+});
+
+// TODO: Figure out how to test this.
+/*
+test('Accepts login using valid mock credentials', async () => {
+  const res = request(www.server)
+    .post('/login')
+    .send({
+      name: testName,
+      email: testEmail,
+      password: testPasswordCorrect,
+    });
+
+  expect(res.status).toEqual(302);
 });
 */
