@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 // Acknowledgments:
@@ -15,7 +16,6 @@ const bodyParser = require('body-parser');
 const engine = require('ejs-locals');
 const path = require('path');
 const multer = require('multer');
-const safeStringify = require('json-stringify-safe');
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongoose').Types;
 const fs = require('fs');
@@ -28,7 +28,6 @@ require('dotenv').config();
  * MongoDB initialization.
  */
 
-let users;
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
   if (err) {
     console.log(err);
@@ -111,7 +110,7 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 });
 
 app.get('/feed', checkAuthenticated, (req, res) => {
-  res.render('feed.ejs', { user: req.user.name });
+  res.render('feed.ejs', { user: req.user.name, posts: Post });
 });
 
 app.get('/profile', checkAuthenticated, (req, res) => {
@@ -165,8 +164,9 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }));
 
 app.get('/user', checkAuthenticated, (req, res) => {
-  const user = User.findOne({ email: req.user.email });
-  res.send(safeStringify(user));
+  User.findOne({ email: req.user.email })
+    .then((user) => res.send(user))
+    .catch((err) => console.log(err));
 });
 
 app.delete('/logout', checkAuthenticated, (req, res) => {
@@ -203,8 +203,14 @@ app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
 
   newPost.save()
     .then((post) => {
-      User.findOneAndUpdate({ email: incomingPost.email }, { $push: { posts: post._id } });
-      res.redirect('/feed');
+      console.log(post);
+      User.findOneAndUpdate({ email: incomingPost.email }, { $push: { posts: post._id } })
+        .then(() => {
+          res.redirect('/feed');
+        })
+        .catch((err) => {
+          throw err;
+        });
     })
     .catch((err) => console.log(err));
 });
