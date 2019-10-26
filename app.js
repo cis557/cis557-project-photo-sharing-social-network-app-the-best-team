@@ -39,7 +39,6 @@ MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, 
 /**
  * Passport initialization.
  */
-
 initializePassport(
   passport,
   (email) => users.find((user) => user.email === email),
@@ -49,7 +48,6 @@ initializePassport(
 /**
  * Express initialization.
  */
-
 const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
@@ -73,7 +71,6 @@ app.use(methodOverride('_method'));
 /**
  * Multer initialization.
  */
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads');
@@ -89,7 +86,6 @@ const upload = multer({ storage });
 /**
  * Functions used to protect routes based on authentication status.
  */
-
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();

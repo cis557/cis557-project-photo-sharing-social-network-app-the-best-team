@@ -43,6 +43,7 @@ const server = http.createServer(app).withShutdown();
 /**
  * Listen on provided port, on all network interfaces.
  */
+console.log(`Server has started on localhost:${port}`);
 server.listen(port);
 
 /**
