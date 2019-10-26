@@ -40,6 +40,7 @@ MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, 
       }
 
       users = result;
+      console.log('Successfully loaded users');
     });
   }
 });
@@ -127,7 +128,7 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 });
 
 app.get('/feed', checkAuthenticated, (req, res) => {
-  res.render('feed.ejs', { name: req.user.name });
+  res.render('feed.ejs', { user: req.user.name });
 });
 
 app.get('/profile', checkAuthenticated, (req, res) => {
@@ -194,11 +195,13 @@ app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
     if (error) {
       // TODO: Report error to user.
     } else {
-      res.redirect('/feed');
-      // eslint-disable-next-line no-underscore-dangle
-      const id = post._id;
+      db.collection('users').update(
+        { email: req.user.email },
+        // eslint-disable-next-line no-underscore-dangle
+        { $push: { posts: post._id } },
+      );
 
-      // TODO: Use req.user.email to add the post id to the user's entry in the database.
+      res.redirect('/feed');
     }
   });
 });
@@ -207,6 +210,8 @@ app.get('/post/:id', checkAuthenticated, (req, res) => {
   const { id } = req.params;
   db.collection('posts').findOne({ _id: ObjectId(id) }, (error, result) => {
     if (error) {
+      // TODO: Report error to user.
+    } else if (res == null || res.image == null) {
       // TODO: Report error to user.
     } else {
       res.contentType('image/jpeg');
