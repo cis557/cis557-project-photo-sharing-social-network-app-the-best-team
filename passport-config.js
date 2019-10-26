@@ -3,7 +3,6 @@
 /* eslint-disable func-names */
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
-const { ObjectId } = require('mongoose').Types;
 const User = require('./models/User');
 
 module.exports = function (passport) {
