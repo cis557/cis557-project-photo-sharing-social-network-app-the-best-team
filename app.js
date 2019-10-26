@@ -49,6 +49,29 @@ initializePassport(
   passport,
   (email) => users.find((user) => user.email === email),
   (id) => users.find((user) => user.id === id),
+  // TODO: Make these work correctly.
+  /*
+  async (email) => {
+    await db.collection('users').findOne({ email }, (error, result) => {
+      if (error) {
+        // TODO: Report error to user.
+        return null;
+      }
+
+      return result;
+    });
+  },
+  async (id) => {
+    await db.collection('users').findOne({ id }, (error, result) => {
+      if (error) {
+        // TODO: Report error to user.
+        return null;
+      }
+
+      return result;
+    });
+  },
+  */
 );
 
 /**
@@ -150,6 +173,9 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       posts: [],
     };
 
+    // TODO: Remove this workaround.
+    users.push(user);
+
     db.collection('users').insertOne(user, (error) => {
       if (error) {
         // TODO: Report error to user.
@@ -167,6 +193,11 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureRedirect: '/login',
   failureFlash: true,
 }));
+
+app.get('/user', checkAuthenticated, (req, res) => {
+  const user = users.find((u) => u.email === req.user.email);
+  res.json(user);
+});
 
 app.delete('/logout', checkAuthenticated, (req, res) => {
   req.logOut();
@@ -195,7 +226,7 @@ app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
     if (error) {
       // TODO: Report error to user.
     } else {
-      db.collection('users').update(
+      db.collection('users').updateOne(
         { email: req.user.email },
         // eslint-disable-next-line no-underscore-dangle
         { $push: { posts: post._id } },
@@ -211,7 +242,7 @@ app.get('/post/:id', checkAuthenticated, (req, res) => {
   db.collection('posts').findOne({ _id: ObjectId(id) }, (error, result) => {
     if (error) {
       // TODO: Report error to user.
-    } else if (res == null || res.image == null) {
+    } else if (result == null || result.image == null) {
       // TODO: Report error to user.
     } else {
       res.contentType('image/jpeg');

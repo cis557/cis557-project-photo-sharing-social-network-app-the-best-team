@@ -1,13 +1,13 @@
-/* global document */
+/* global document fetch */
 
 // TODO: Add corresponding links.
 
 const testAuthor = 'Test Name';
 const testText = 'I Love Mountains Again';
-const testImg = '../assets/Valley-Taurus-Mountains-Turkey.jpg';
+// const testImg = '../assets/Valley-Taurus-Mountains-Turkey.jpg';
 const testTitle = 'Test Title';
 
-async function generatePost() {
+async function generatePost(imageId) {
   const posts = document.getElementById('posts');
 
   const post = document.createElement('div');
@@ -25,8 +25,8 @@ async function generatePost() {
   post.appendChild(media);
 
   const img = document.createElement('img');
-  // TODO: Don't hardcode this.
-  img.src = 'http://localhost:3000/post/5db45dc82421b95154b61c79';
+  // TODO: Don't hardcode this request.
+  img.src = `http://localhost:3000/post/${imageId}`;
   media.appendChild(img);
 
   const body = document.createElement('div');
@@ -57,6 +57,12 @@ async function generatePost() {
   body.appendChild(commentIcon);
 }
 
-function generatePosts() {
-  generatePost(testAuthor, testText, testImg, testTitle);
+async function generatePosts() {
+  // TODO: Don't hardcode this request.
+  const res = await fetch('http://localhost:3000/user');
+  const user = await res.json();
+
+  for (let i = user.posts.length - 1; i >= 0; i -= 1) {
+    generatePost(user.posts[i]);
+  }
 }
