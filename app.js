@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // Acknowledgments:
 // Passport tutorial: https://youtu.be/-RCnNyD0L-s
 // Image upload tutorial: https://code.tutsplus.com/tutorials/file-upload-with-multer-in-node--cms-32088
@@ -24,9 +25,7 @@ require('dotenv').config();
 
 let db;
 let users;
-// TODO: This should not be public.
-const dbURL = 'mongodb+srv://cis557:cd99ROWai391GPkb@thedatabox-7aslk.mongodb.net/test?retryWrites=true&w=majority';
-MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err1, client) => {
+MongoClient.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err1, client) => {
   if (err1) {
     // TODO: Report error to user.
   } else {
