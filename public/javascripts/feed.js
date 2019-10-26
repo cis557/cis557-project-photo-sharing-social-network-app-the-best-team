@@ -1,4 +1,4 @@
-/* global document */
+/* global document fetch */
 
 // TODO: Add corresponding links.
 
@@ -7,66 +7,55 @@ const testText = 'I Love Mountains Again';
 const testImg = '../assets/Valley-Taurus-Mountains-Turkey.jpg';
 const testTitle = 'Test Title';
 
-function generateNewCard(author, text, img, title) {
-  const cards = document.getElementById('cards');
+async function generatePost() {
+  const posts = document.getElementById('posts');
 
-  const card = document.createElement('div');
-  card.setAttribute('class', 'uk-card uk-card-default uk-card-hover uk-align-center');
-  card.setAttribute('uk-scrollspy', 'cls: uk-animation-slide-left; repeat: true');
+  const post = document.createElement('div');
+  post.className = 'uk-card uk-card-default uk-card-hover uk-align-center';
+  post.setAttribute('uk-scrollspy', 'cls: uk-animation-slide-left; repeat: true');
+  posts.appendChild(post);
 
-  const postTitle = document.createElement('h3');
-  postTitle.setAttribute('class', 'uk-card-title uk-text-left-medium');
-  postTitle.innerHTML = title;
+  const title = document.createElement('h3');
+  title.className = 'uk-card-title uk-text-left-medium';
+  title.innerHTML = testTitle;
+  post.appendChild(title);
 
-  card.appendChild(postTitle);
+  const media = document.createElement('div');
+  media.className = 'uk-card-media-top';
+  post.appendChild(media);
 
-  const cardMedia = document.createElement('div');
-  cardMedia.setAttribute('class', 'uk-card-media-top');
+  const img = document.createElement('img');
+  img.src = 'http://localhost:3000/post';
+  media.appendChild(img);
 
-  const cardImg = document.createElement('img');
-  cardImg.setAttribute('src', img);
+  const body = document.createElement('div');
+  body.className = 'uk-card-body';
+  post.appendChild(body);
 
-  cardMedia.appendChild(cardImg);
-  card.appendChild(cardMedia);
-
-  // ####Card Body####
-
-  const cardBody = document.createElement('div');
-  cardBody.setAttribute('class', 'uk-card-body');
-
-  // Posted By Info
   const postBy = document.createElement('h3');
-  postBy.setAttribute('class', 'uk-card-title uk-text-small');
-  const Author = document.createElement('a');
+  postBy.className = 'uk-card-title uk-text-small';
   postBy.innerHTML = 'Posted by ';
-  // Dynamic
-  Author.innerHTML = author;
+  body.appendChild(postBy);
 
-  postBy.appendChild(Author);
-  cardBody.appendChild(postBy);
+  const author = document.createElement('a');
+  author.innerHTML = testAuthor;
+  postBy.appendChild(author);
 
-  const textContent = document.createElement('p');
-
-  // Dynamic
-  textContent.innerHTML = text;
-  cardBody.appendChild(textContent);
+  const text = document.createElement('p');
+  text.innerHTML = testText;
+  body.appendChild(text);
 
   const likeIcon = document.createElement('a');
-  likeIcon.setAttribute('href', '');
+  likeIcon.href = '';
   likeIcon.setAttribute('uk-icon', 'heart');
-  const commentsIcon = document.createElement('a');
-  commentsIcon.setAttribute('href', '');
-  commentsIcon.setAttribute('uk-icon', 'comments');
+  body.appendChild(likeIcon);
 
-  cardBody.appendChild(likeIcon);
-  cardBody.appendChild(commentsIcon);
-
-  card.appendChild(cardBody);
-  cards.appendChild(card);
+  const commentIcon = document.createElement('a');
+  commentIcon.href = '';
+  commentIcon.setAttribute('uk-icon', 'comments');
+  body.appendChild(commentIcon);
 }
 
-function testGenerateNewCards() {
-  generateNewCard(testAuthor, testText, testImg, testTitle);
-  generateNewCard(testAuthor, testText, testImg, testTitle);
-  generateNewCard(testAuthor, testText, testImg, testTitle);
+function generatePosts() {
+  generatePost(testAuthor, testText, testImg, testTitle);
 }

@@ -146,7 +146,7 @@ it('Accepts valid login attempt', async () => {
   const heading = await driver.findElement(By.id('heading'));
   expect(heading).not.toEqual(null);
 
-  await driver.wait(until.elementLocated(By.id('cards')), 20000);
-  const cards = await driver.findElement(By.id('cards'));
+  await driver.wait(until.elementLocated(By.id('posts')), 20000);
+  const cards = await driver.findElement(By.id('posts'));
   expect(cards).not.toEqual(null);
 }, 60000);
