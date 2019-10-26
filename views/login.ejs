@@ -11,26 +11,23 @@
 	</head>
 	<body>
         <div>
-            <div class="uk-flex uk-flex-center">
-                <div>
-                    <h1 id="heading">Login</h1>
-                    <% if (messages.error) { %>
-                        <%= messages.error %>
-                    <% } %>
-
-                    <form action="/login" method="POST" class="uk-form-stacked">
-                        <div>
-                            <label for="email" class="uk-form-label">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div>
-                            <label for="password" class="uk-form-label">Password</label>
-                            <input type="password" id="password" name="password" required>
-                        </div>
-                        <button type="submit" class="uk-button uk-button-default" id="submit">Login</button>
-                    </form>
-                    <a href="/register" id="register">Register</a>
-                </div>
+            <h1 id="heading" class="uk-position-top-center">Login Page</h1>
+            <% if (messages.error) { %>
+                <%= messages.error %>
+            <% } %>
+        <div class="uk-container-large uk-container-center">
+                <form action="/login" method="POST" class="uk-form-stacked uk-position-center">
+                    <div class="uk-margin">
+                        <label for="email" class="uk-form-label uk-text-large">Email</label>
+                        <input type="email" class="uk-input uk-form-width-medium" placeholder="email@email.com" id="email" name="email" required>
+                    </div>
+                    <div class="uk-margin">
+                        <label for="password" class="uk-form-label uk-text-large">Password</label>
+                        <input type="password" class= "uk-input uk-form-width-medium" id="password" placeholder="Password" name="password" required>
+                    </div>
+                    <button type="submit" class="uk-button uk-button-primary" id="submit">Login</button>
+                    <a href="/register" id="register" class="uk-position-relative">Register</a>  
+                </form>
             </div>
         </div>
 	</body>
