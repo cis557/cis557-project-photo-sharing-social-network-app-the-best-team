@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable max-len */
 // Acknowledgments:
 // Passport tutorial: https://youtu.be/-RCnNyD0L-s
 // Image upload tutorial: https://code.tutsplus.com/tutorials/file-upload-with-multer-in-node--cms-32088
@@ -13,66 +16,25 @@ const bodyParser = require('body-parser');
 const engine = require('ejs-locals');
 const path = require('path');
 const multer = require('multer');
-const { MongoClient, ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
+const { ObjectId } = require('mongoose').Types;
 const fs = require('fs');
-const initializePassport = require('./passport-config');
+require('./passport-config')(passport);
+const User = require('./models/User');
+const Post = require('./models/Post');
 require('dotenv').config();
 
 /**
  * MongoDB initialization.
  */
 
-let db;
-let users;
-// TODO: This should not be public.
-const dbURL = 'mongodb+srv://cis557:cd99ROWai391GPkb@thedatabox-7aslk.mongodb.net/test?retryWrites=true&w=majority';
-MongoClient.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err1, client) => {
-  if (err1) {
-    // TODO: Report error to user.
+mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+  if (err) {
+    console.log(err);
   } else {
-    db = client.db('uploads');
-
-    // TODO: Instead of doing this, query the database when the user hits "submit."
-    // (The current implementation is a workaround to deal with async/await problems with Passport.)
-    db.collection('users').find().toArray((err2, result) => {
-      if (err2) {
-        // TODO: Report error to user.
-      }
-
-      users = result;
-      console.log('Successfully loaded users');
-    });
+    console.log('MONGO CONNECTED');
   }
 });
-
-initializePassport(
-  passport,
-  (email) => users.find((user) => user.email === email),
-  (id) => users.find((user) => user.id === id),
-  // TODO: Make these work correctly.
-  /*
-  async (email) => {
-    await db.collection('users').findOne({ email }, (error, result) => {
-      if (error) {
-        // TODO: Report error to user.
-        return null;
-      }
-
-      return result;
-    });
-  },
-  async (id) => {
-    await db.collection('users').findOne({ id }, (error, result) => {
-      if (error) {
-        // TODO: Report error to user.
-        return null;
-      }
-
-      return result;
-    });
-  },
-  */
-);
 
 /**
  * Express initialization.
@@ -110,7 +72,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const parser = multer({ storage });
 
 /**
  * Functions used to protect routes based on authentication status.
@@ -148,7 +110,7 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 });
 
 app.get('/feed', checkAuthenticated, (req, res) => {
-  res.render('feed.ejs', { user: req.user.name });
+  res.render('feed.ejs', { name: req.user.name, posts: Post });
 });
 
 app.get('/profile', checkAuthenticated, (req, res) => {
@@ -162,7 +124,7 @@ app.get('/profile', checkAuthenticated, (req, res) => {
 app.post('/register', checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = {
+    const incomingUser = {
       id: Date.now().toString(),
       name: req.body.name,
       email: req.body.email,
@@ -170,16 +132,28 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       posts: [],
     };
 
-    // TODO: Remove this workaround.
-    users.push(user);
+    User.findOne({ email: incomingUser.email })
+      .then((user) => {
+        if (user) {
+          res.redirect('/register');
+        } else {
+          const newUser = new User({
+            id: incomingUser.id,
+            name: incomingUser.name,
+            email: incomingUser.email,
+            password: incomingUser.password,
+            posts: incomingUser.posts,
+          });
 
-    db.collection('users').insertOne(user, (error) => {
-      if (error) {
-        // TODO: Report error to user.
-      } else {
-        res.redirect('/login');
-      }
-    });
+          newUser.save()
+            .then(() => {
+              res.redirect('/login');
+            })
+            .catch((err) => console.log(err));
+
+          res.redirect('/login');
+        }
+      });
   } catch (error) {
     req.redirect('/register');
   }
@@ -192,8 +166,9 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }));
 
 app.get('/user', checkAuthenticated, (req, res) => {
-  const user = users.find((u) => u.email === req.user.email);
-  res.json(user);
+  User.findOne({ email: req.user.email })
+    .then((user) => res.send(user))
+    .catch((err) => console.log(err));
 });
 
 app.delete('/logout', checkAuthenticated, (req, res) => {
@@ -205,57 +180,79 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
  * Routes for creating and deleting posts.
  */
 
-app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
+app.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
+  // The steps are:
+  //    1. Upload image to the server-side file system.
+  //    2. Cache the image's bytes.
+  //    3. Delete the image from the server-side file system.
+  // Ideally, the app would skip #1 and #3, instead getting the bytes directly from the request.
+  // However, #1 and #3 appear to be necessary, at least based on readily available documentation.
   const img = fs.readFileSync(req.file.path);
   const bytes = img.toString('base64');
+  fs.unlinkSync(req.file.path);
 
-  const post = {
+  const incomingPost = {
     email: req.user.email,
     contentType: req.file.mimetype,
-    // eslint-disable-next-line new-cap
-    image: new Buffer.from(bytes, 'base64'),
+    image: Buffer.from(bytes, 'base64'),
     datetime: Date.now(),
     likes: [],
     comments: [],
   };
 
-  db.collection('posts').insertOne(post, (error) => {
-    if (error) {
-      // TODO: Report error to user.
-    } else {
-      db.collection('users').updateOne(
-        { email: req.user.email },
-        // eslint-disable-next-line no-underscore-dangle
-        { $push: { posts: post._id } },
-      );
-
-      res.redirect('/feed');
-    }
+  const newPost = new Post({
+    email: incomingPost.email,
+    contentType: incomingPost.contentType,
+    image: incomingPost.image,
+    datetime: incomingPost.datetime,
+    likes: incomingPost.likes,
+    comments: incomingPost.comments,
   });
+
+  newPost.save()
+    .then((post) => {
+      console.log(post);
+      User.findOneAndUpdate({ email: incomingPost.email }, { $push: { posts: post._id } })
+        .then(() => {
+          res.redirect('/feed');
+        })
+        .catch((err) => {
+          throw err;
+        });
+    })
+    .catch((err) => console.log(err));
 });
 
 app.get('/post/:id', checkAuthenticated, (req, res) => {
   const { id } = req.params;
-  db.collection('posts').findOne({ _id: ObjectId(id) }, (error, result) => {
-    if (error) {
+  Post.findOne({ _id: ObjectId(id) }, (err, result) => {
+    if (err) {
       // TODO: Report error to user.
     } else if (result == null || result.image == null) {
       // TODO: Report error to user.
     } else {
-      res.contentType('image/jpeg');
-      res.send(result.image.buffer);
+      res.send(Buffer.from(result.image, 'binary'));
     }
   });
 });
 
-app.delete('/post', checkAuthenticated, (req, res) => {
+// TODO: The routes below are for future milestones.
+
+/*
+app.post('/post/:id', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+
+app.delete('/post/:id', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+*/
 
 /**
  * Routes for liking posts.
  */
 
+/*
 app.post('/like', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
@@ -263,23 +260,31 @@ app.post('/like', checkAuthenticated, (req, res) => {
 app.delete('/like', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+*/
 
 /**
  * Routes for commenting on posts.
  */
 
+/*
 app.post('/comment', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
 
-app.delete('/comment', checkAuthenticated, (req, res) => {
+app.post('/comment/:id', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+
+app.delete('/comment:id', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+*/
 
 /**
  * Routes for followers and followees.
  */
 
+/*
 app.post('/follow', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
@@ -295,6 +300,7 @@ app.get('/followers', checkAuthenticated, (req, res) => {
 app.get('/followees', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+*/
 
 module.exports = {
   app,

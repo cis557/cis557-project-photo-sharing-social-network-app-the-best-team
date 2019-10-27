@@ -98,10 +98,8 @@ test('Rejects login using invalid mock credentials', async () => {
   expect(res.status).toEqual(302);
 });
 
-// TODO: Figure out how to test this.
-/*
 test('Accepts login using valid mock credentials', async () => {
-  const res = request(www.server)
+  request(www.server)
     .post('/login')
     .send({
       name: testName,
@@ -109,6 +107,7 @@ test('Accepts login using valid mock credentials', async () => {
       password: testPasswordCorrect,
     });
 
-  expect(res.status).toEqual(302);
+  request(www.server)
+    .get('/user')
+    .then((user) => expect(user).toEqual(testEmail));
 });
-*/
