@@ -102,7 +102,11 @@ app.get('/', checkAuthenticated, (req, res) => {
 });
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-  res.render('register.ejs');
+  if (req.query.error) {
+    res.render('register.ejs', { messages: { error: req.query.error } });
+  } else {
+    res.render('register.ejs');
+  }
 });
 
 app.get('/login', checkNotAuthenticated, (req, res) => {
@@ -135,7 +139,9 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     User.findOne({ email: incomingUser.email })
       .then((user) => {
         if (user) {
-          res.redirect('/register');
+          const message = encodeURIComponent('This user already exists');
+          // eslint-disable-next-line prefer-template
+          res.redirect('/register?error=' + message);
         } else {
           const newUser = new User({
             id: incomingUser.id,
@@ -146,9 +152,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
           });
 
           newUser.save()
-            .then(() => {
-              res.redirect('/login');
-            })
+            .then(() => {})
             .catch((err) => console.log(err));
 
           res.redirect('/login');

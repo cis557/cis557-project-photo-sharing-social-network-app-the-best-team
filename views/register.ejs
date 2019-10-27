@@ -5,30 +5,57 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="stylesheets/uikit.min.css">
-        <script src="javascripts/uikit.min.js"></script>
-        <script src="javascripts/uikit-icons.min.js"></script>
-		<title>Register</title>
-	</head>
-	<body>
-        <div class="uk-flex uk-flex-center">
-                <h1 id="heading" class="uk-position-top-center">Registration</h1>
-                <form action="/register" method="POST" class="uk-form-stacked uk-position-center">
-                    <div class="uk-margin">
-                        <label for="name" class="uk-form-label uk-text-large">Name</label>
-                        <input type="text" id="name" name="name" placeholder="Matt" class="uk-input uk-form-width-medium" required>
-                    </div>
-                    <div class="uk-margin">
-                        <label for="email" class="uk-form-label uk-text-large">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Email@email.com" class="uk-input uk-form-width-medium" required>
-                    </div>
-                    <div class="uk-margin">
-                        <label for="password" class="uk-form-label uk-text-large">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Password" class="uk-input uk-form-width-medium" required>
-                    </div>
-                    <button type="submit" class="uk-button uk-button-primary" id="submit">Register</button>
-                    <a href="/login" id="login">Login</a>
+        <link rel="stylesheet" type="text/css" href="stylesheets/login-page.css">
+        <link rel="icon" href="images/logo.ico" type="image/x-icon">
+        <title>Register | Photogram</title>
+        </head>
+        <body id="slide-show" class="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
+            <div class="uk-position-cover uk-overlay-primary"></div>
+            <div class="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index"
+                uk-scrollspy="cls: uk-animation-fade" style="background-color: rgba(253, 253, 253, 0.253)">
+                <div class="uk-text-center uk-margin">
+                        <img src="images/photogram.png" alt="Logo">
+                </div>
+                <h4 class="uk-heading-line uk-text-center" style="color: rgba(255, 255, 255, .8)"><span>Registration</span></h4>
+                <% if (messages.error) { %>
+                <div class="uk-alert-danger" uk-alert style="background-color: rgba(245, 92, 92, 0.356); color: rgba(255, 255, 255, .5);">
+                    <a class="uk-alert-close" uk-close></a>
+                    <p><%= messages.error %></p>
+                </div>
+                <% } %>
+                <form action="/register" method="POST" class="toggle-class">
+                    <fieldset class="uk-fieldset">
+                        <div class="uk-margin-small">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: user"></span>
+                                <input id="name" name="name" class="uk-input uk-border-pill" placeholder="Full Name"
+                                    type="text" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin-small">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: mail"></span>
+                                <input id="email" name="email" class="uk-input uk-border-pill" placeholder="Email"
+                                    type="email" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin-small">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: lock"></span>
+                                <input id="password" name="password" class="uk-input uk-border-pill"
+                                    placeholder="Password" type="password" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin-bottom" style="text-align: center">
+                            <button type="submit" class="uk-button uk-button-primary uk-border-pill uk-width-1-1"
+                                id="submit">Register</button>
+                            <p>Already have an account? <a href="/login" id="login" class="uk-position-relative">Login.</a></p>
+                        </div>
+                    </fieldset>
                 </form>
             </div>
-        </div>
-	</body>
+
+            <script src="javascripts/uikit.min.js"></script>
+            <script src="javascripts/uikit-icons.min.js"></script>
+    </body>
 </html>

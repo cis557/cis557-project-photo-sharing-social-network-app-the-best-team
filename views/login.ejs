@@ -6,7 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="stylesheets/uikit.min.css">
         <link rel="stylesheet" type="text/css" href="stylesheets/login-page.css">
-		<title>Login - Photogram</title>
+        <link rel="icon" href="images/logo.ico" type="image/x-icon">
+		<title>Login | Photogram</title>
 	</head>
 	<body id="slide-show" class="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
         <div class="uk-position-cover uk-overlay-primary"></div>
@@ -14,8 +15,9 @@
                 <div class="uk-text-center uk-margin">
                     <img src="images/photogram.png" alt="Logo">
                 </div>
+                <h4 class="uk-heading-line uk-text-center" style="color: rgba(255, 255, 255, .8)"><span>Log In</span></h4>
                 <% if (messages.error) { %>
-                    <div class="uk-alert-danger" uk-alert>
+                    <div class="uk-alert-danger" uk-alert style="background-color: rgba(245, 92, 92, 0.356)">
                         <a class="uk-alert-close" uk-close></a>
                         <p><%= messages.error %></p>
                     </div>
