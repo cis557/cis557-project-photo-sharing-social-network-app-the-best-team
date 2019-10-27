@@ -110,7 +110,7 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 });
 
 app.get('/feed', checkAuthenticated, (req, res) => {
-  res.render('feed.ejs', { user: req.user.name, posts: Post });
+  res.render('feed.ejs', { name: req.user.name, posts: Post });
 });
 
 app.get('/profile', checkAuthenticated, (req, res) => {
@@ -229,7 +229,11 @@ app.get('/post/:id', checkAuthenticated, (req, res) => {
   });
 });
 
-app.delete('/post', checkAuthenticated, (req, res) => {
+app.post('/post/:id', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/post/:id', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
 
@@ -253,7 +257,11 @@ app.post('/comment', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
 
-app.delete('/comment', checkAuthenticated, (req, res) => {
+app.post('/comment/:id', checkAuthenticated, (req, res) => {
+  // TODO: Implement this route.
+});
+
+app.delete('/comment:id', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
 

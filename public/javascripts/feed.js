@@ -1,13 +1,10 @@
 /* global document fetch */
 
-// TODO: Add corresponding links.
+const testTitle = 'Placeholder post title';
+const testAuthor = 'Placeholder post author';
+const testText = 'Placeholder post text';
 
-const testAuthor = 'Test Name';
-const testText = 'I Love Mountains Again';
-// const testImg = '../assets/Valley-Taurus-Mountains-Turkey.jpg';
-const testTitle = 'Test Title';
-
-async function generatePost(imageId) {
+async function generatePost(imgId) {
   const posts = document.getElementById('posts');
 
   const post = document.createElement('div');
@@ -25,8 +22,7 @@ async function generatePost(imageId) {
   post.appendChild(media);
 
   const img = document.createElement('img');
-  // TODO: Don't hardcode this request.
-  img.src = `http://localhost:3000/post/${imageId}`;
+  img.src = `/post/${imgId}`;
   media.appendChild(img);
 
   const body = document.createElement('div');
@@ -57,9 +53,10 @@ async function generatePost(imageId) {
   body.appendChild(commentIcon);
 }
 
+// This function is called in feed.ejs.
+// eslint-disable-next-line no-unused-vars
 async function generatePosts() {
-  // TODO: Don't hardcode this request.
-  const res = await fetch('http://localhost:3000/user');
+  const res = await fetch('/user');
   const user = await res.json();
 
   for (let i = user.posts.length - 1; i >= 0; i -= 1) {
