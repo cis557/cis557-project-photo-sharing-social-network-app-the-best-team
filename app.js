@@ -72,7 +72,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const parser = multer({ storage });
 
 /**
  * Functions used to protect routes based on authentication status.
@@ -180,9 +180,16 @@ app.delete('/logout', checkAuthenticated, (req, res) => {
  * Routes for creating and deleting posts.
  */
 
-app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
+app.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
+  // The steps are:
+  //    1. Upload image to the server-side file system.
+  //    2. Cache the image's bytes.
+  //    3. Delete the image from the server-side file system.
+  // Ideally, the app would skip #1 and #3, instead getting the bytes directly from the request.
+  // However, #1 and #3 appear to be necessary, at least based on readily available documentation.
   const img = fs.readFileSync(req.file.path);
   const bytes = img.toString('base64');
+  fs.unlinkSync(req.file.path);
 
   const incomingPost = {
     email: req.user.email,
@@ -229,6 +236,9 @@ app.get('/post/:id', checkAuthenticated, (req, res) => {
   });
 });
 
+// TODO: The routes below are for future milestones.
+
+/*
 app.post('/post/:id', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
@@ -236,11 +246,13 @@ app.post('/post/:id', checkAuthenticated, (req, res) => {
 app.delete('/post/:id', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+*/
 
 /**
  * Routes for liking posts.
  */
 
+/*
 app.post('/like', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
@@ -248,11 +260,13 @@ app.post('/like', checkAuthenticated, (req, res) => {
 app.delete('/like', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+*/
 
 /**
  * Routes for commenting on posts.
  */
 
+/*
 app.post('/comment', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
@@ -264,11 +278,13 @@ app.post('/comment/:id', checkAuthenticated, (req, res) => {
 app.delete('/comment:id', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+*/
 
 /**
  * Routes for followers and followees.
  */
 
+/*
 app.post('/follow', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
@@ -284,6 +300,7 @@ app.get('/followers', checkAuthenticated, (req, res) => {
 app.get('/followees', checkAuthenticated, (req, res) => {
   // TODO: Implement this route.
 });
+*/
 
 module.exports = {
   app,
