@@ -10,20 +10,30 @@
 		<title><%= name %></title>
 	</head>
 	<body>
-        <div class="uk-flex uk-flex-center">
-            <div>
-                <h1 id="heading">Hi, <%= name %>!</h1>
+        <div class="uk-flex uk-flex-center uk-background-default">
+            <div class= "uk-container">
+                <h1 class="uk-heading-line uk-text-center uk-text-italic" id="heading"><span>Hi, <%=name%>!</span></h1>
+                <div class="uk-container uk-background-default" style="z-index: 980" uk-sticky="bottom: #offset">
+                    <ul class="uk-iconnav">
+                            <li><a href="http://localhost:3000/profile" uk-icon="icon: home" class="uk-icon-align-center uk-icon-large"></a></li>
+                            <li><a href="" uk-icon="icon: file-edit" class="uk-icon-align-center uk-icon-large"></a></li>
+                            <li><a href="" uk-icon="icon: heart" class="uk-icon-align-center uk-icon-large"></a></li>
+                            <li><a href="" uk-icon="icon: more" class="uk-icon-align-center uk-icon-large"></a></li>
+                    </ul>
+                </div>
                 <form action="/post" enctype="multipart/form-data" method="POST" class="uk-form-stacked">
-                    <label for="image" class="uk-form-label">Select image and save in MongoDB:</label>
-                    <input id="image" type="file" name="image" accept="image/*" />
-                    <input type="submit" value="Upload" />
-                </form>
-                <a href="/images">All images</a>
-                <p>TODO: To find image by ID: </p>
-                <p>http://localhost:3000/image/{image-id}</p>
-                <form action="/logout?_method=DELETE" method="POST">
-                    <button type="submit" class="uk-button uk-button-default">Log Out</button>
-                </form>
+                    <div class="uk-margin"> 
+                        <label for="image" class="uk-form-label">Select image and save in MongoDB:</label>
+                        <input id="image" class = "uk-input uk-form-width-large" type="file" name="image" accept="image/*"/>
+                    </div>
+                        <input type="submit" class="uk-button-primary uk-button-small" value="Upload" />
+                    </form>
+                    <a href="/images">All images</a>
+                    <p>This link is currently invalid.</p>
+                    <p>TODO: To find image by ID: </p>
+                    <p>http://localhost:3000/image/{image-id}</p>
+                    <form action="/logout?_method=DELETE" method="POST">
+                    <button type="submit" class="uk-button uk-button-primary">Log Out</button>
             </div>
         </div>
 	</body>

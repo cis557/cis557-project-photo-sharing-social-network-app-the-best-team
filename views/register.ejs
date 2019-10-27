@@ -11,24 +11,23 @@
 	</head>
 	<body>
         <div class="uk-flex uk-flex-center">
-            <div>
-                <h1 id="heading">Register</h1>
-                <form action="/register" method="POST" class="uk-form-stacked">
-                    <div>
-                        <label for="name" class="uk-form-label">Name</label>
-                        <input type="text" id="name" name="name" required>
+                <h1 id="heading" class="uk-position-top-center">Register</h1>
+                <form action="/register" method="POST" class="uk-form-stacked uk-position-center">
+                    <div class="uk-margin">
+                        <label for="name" class="uk-form-label uk-text-large">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Matt" class="uk-input uk-form-width-medium" required>
                     </div>
-                    <div>
-                        <label for="email" class="uk-form-label">Email</label>
-                        <input type="email" id="email" name="email" required>
+                    <div class="uk-margin">
+                        <label for="email" class="uk-form-label uk-text-large">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Email@email.com" class="uk-input uk-form-width-medium" required>
                     </div>
-                    <div>
-                        <label for="password" class="uk-form-label">Password</label>
-                        <input type="password" id="password" name="password" required>
+                    <div class="uk-margin">
+                        <label for="password" class="uk-form-label uk-text-large">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Password" class="uk-input uk-form-width-medium" required>
                     </div>
-                    <button type="submit" class="uk-button uk-button-default" id="submit">Register</button>
+                    <button type="submit" class="uk-button uk-button-primary" id="submit">Register</button>
+                    <a href="/login" id="login">Login</a>
                 </form>
-                <a href="/login" id="login">Login</a>
             </div>
         </div>
 	</body>
