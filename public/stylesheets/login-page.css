@@ -1,0 +1,31 @@
+#slide-show {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  animation: slideshow 30s linear infinite 0s;
+  backface-visibility: hidden;
+  animation-timing-function: ease-in-out;
+  background-image: url('../images/slide-1.jpg')
+}
+
+@keyframes slideshow {
+  0% {
+    background-image: url('../images/slide-1.jpg')
+  }
+
+  20% {
+    background-image: url('../images/slide-2.jpg')
+  }
+
+  40% {
+    background-image: url('../images/slide-3.jpg')
+  }
+
+  60% {
+    background-image: url('../images/slide-4.jpg')
+  }
+
+  80% {
+    background-image: url('../images/slide-5.jpg')
+  }
+}

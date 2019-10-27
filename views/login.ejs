@@ -5,30 +5,44 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="stylesheets/uikit.min.css">
-        <script src="javascripts/uikit.min.js"></script>
-        <script src="javascripts/uikit-icons.min.js"></script>
-		<title>Login</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/login-page.css">
+		<title>Login - Photogram</title>
 	</head>
-	<body>
-        <div>
-            <h1 id="heading" class="uk-position-top-center">Login</h1>
-            <% if (messages.error) { %>
-                <%= messages.error %>
-            <% } %>
-            <div class="uk-container-large uk-container-center">
-                <form action="/login" method="POST" class="uk-form-stacked uk-position-center">
-                    <div class="uk-margin">
-                        <label for="email" class="uk-form-label uk-text-large">Email</label>
-                        <input type="email" class="uk-input uk-form-width-medium" placeholder="email@email.com" id="email" name="email" required>
+	<body id="slide-show" class="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
+        <div class="uk-position-cover uk-overlay-primary"></div>
+            <div class="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style="background-color: rgba(253, 253, 253, 0.253);">
+                <div class="uk-text-center uk-margin">
+                    <img src="images/photogram.png" alt="Logo">
+                </div>
+                <% if (messages.error) { %>
+                    <div class="uk-alert-danger" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p><%= messages.error %></p>
                     </div>
-                    <div class="uk-margin">
-                        <label for="password" class="uk-form-label uk-text-large">Password</label>
-                        <input type="password" class= "uk-input uk-form-width-medium" id="password" placeholder="Password" name="password" required>
-                    </div>
-                    <button type="submit" class="uk-button uk-button-primary" id="submit">Login</button>
-                    <a href="/register" id="register" class="uk-position-relative">Register</a>  
+                <% } %>
+                <form action="/login" method="POST" class="toggle-class">
+                    <fieldset class="uk-fieldset">
+                        <div class="uk-margin-small">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: user"></span>
+                                <input id="email" name="email" class="uk-input uk-border-pill" placeholder="Username" type="email" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin-small">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: lock"></span>
+                                <input id="password" name="password" class="uk-input uk-border-pill" placeholder="Password" type="password" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin-bottom" style="text-align: center">
+                            <button type="submit" class="uk-button uk-button-primary uk-border-pill uk-width-1-1" id="submit">Login</button>
+                            <p>Don't have an account? <a href="/register" id="register" class="uk-position-relative">Register.</a></p> 
+                        </div> 
+                    </fieldset> 
                 </form>
             </div>
-        </div>
+
+        <script src="javascripts/uikit.min.js"></script>
+        <script src="javascripts/uikit-icons.min.js"></script>
 	</body>
 </html>
