@@ -135,7 +135,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     User.findOne({ email: incomingUser.email })
       .then((user) => {
         if (user) {
-          req.redirect('/register');
+          res.redirect('/register');
         } else {
           const newUser = new User({
             id: incomingUser.id,
@@ -150,6 +150,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
               res.redirect('/login');
             })
             .catch((err) => console.log(err));
+
+          res.redirect('/login');
         }
       });
   } catch (error) {
@@ -185,8 +187,7 @@ app.post('/post', checkAuthenticated, upload.single('image'), (req, res) => {
   const incomingPost = {
     email: req.user.email,
     contentType: req.file.mimetype,
-    // eslint-disable-next-line new-cap
-    image: new Buffer.from(bytes, 'base64'),
+    image: Buffer.from(bytes, 'base64'),
     datetime: Date.now(),
     likes: [],
     comments: [],
@@ -223,8 +224,7 @@ app.get('/post/:id', checkAuthenticated, (req, res) => {
     } else if (result == null || result.image == null) {
       // TODO: Report error to user.
     } else {
-      res.contentType('image/jpeg');
-      res.send(result.image.buffer);
+      res.send(Buffer.from(result.image, 'binary'));
     }
   });
 });
