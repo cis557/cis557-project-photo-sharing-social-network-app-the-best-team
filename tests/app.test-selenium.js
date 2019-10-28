@@ -6,7 +6,7 @@
  */
 
 const {
-  Builder, By, Key, until,
+  Builder, By, until,
 } = require('selenium-webdriver');
 require('selenium-webdriver/chrome');
 
@@ -33,9 +33,9 @@ it('Loads the login page', async () => {
   driver.wait(until.urlIs('http://localhost:3000/login'));
   await driver.get('http://localhost:3000/login');
 
-  await driver.wait(until.elementLocated(By.id('heading')), 20000);
-  const heading = await driver.findElement(By.id('heading'));
-  expect(heading).not.toEqual(null);
+  await driver.wait(until.elementLocated(By.id('register')), 20000);
+  const register = await driver.findElement(By.id('register'));
+  expect(register).not.toEqual(null);
 }, 60000);
 
 it('Follows the link to the registration page', async () => {
@@ -48,9 +48,9 @@ it('Follows the link to the registration page', async () => {
   driver.wait(until.urlIs('http://localhost:3000/register'));
   await driver.get('http://localhost:3000/register');
 
-  await driver.wait(until.elementLocated(By.id('heading')), 20000);
-  const heading = await driver.findElement(By.id('heading'));
-  expect(heading).not.toEqual(null);
+  await driver.wait(until.elementLocated(By.id('login')), 20000);
+  const login = await driver.findElement(By.id('login'));
+  expect(login).not.toEqual(null);
 }, 60000);
 
 it('Registers a new account', async () => {
@@ -84,9 +84,9 @@ it('Registers a new account', async () => {
   driver.wait(until.urlIs('http://localhost:3000/login'));
   await driver.get('http://localhost:3000/login');
 
-  await driver.wait(until.elementLocated(By.id('heading')), 20000);
-  const heading = await driver.findElement(By.id('heading'));
-  expect(heading).not.toEqual(null);
+  await driver.wait(until.elementLocated(By.id('register')), 20000);
+  const register = await driver.findElement(By.id('register'));
+  expect(register).not.toEqual(null);
 }, 60000);
 
 it('Rejects invalid login attempt', async () => {
@@ -113,9 +113,9 @@ it('Rejects invalid login attempt', async () => {
   driver.wait(until.urlIs('http://localhost:3000/login'));
   await driver.get('http://localhost:3000/login');
 
-  await driver.wait(until.elementLocated(By.id('heading')), 20000);
-  const heading = await driver.findElement(By.id('heading'));
-  expect(heading).not.toEqual(null);
+  await driver.wait(until.elementLocated(By.id('register')), 20000);
+  const register = await driver.findElement(By.id('register'));
+  expect(register).not.toEqual(null);
 }, 60000);
 
 it('Accepts valid login attempt', async () => {
@@ -142,11 +142,22 @@ it('Accepts valid login attempt', async () => {
   driver.wait(until.urlIs('http://localhost:3000/feed'));
   await driver.get('http://localhost:3000/feed');
 
-  await driver.wait(until.elementLocated(By.id('heading')), 20000);
-  const heading = await driver.findElement(By.id('heading'));
-  expect(heading).not.toEqual(null);
+  await driver.wait(until.elementLocated(By.id('navbar')), 20000);
+  const navbar = await driver.findElement(By.id('navbar'));
+  expect(navbar).not.toEqual(null);
+}, 60000);
 
-  await driver.wait(until.elementLocated(By.id('posts')), 20000);
-  const cards = await driver.findElement(By.id('posts'));
-  expect(cards).not.toEqual(null);
+it('Goes to the profile page', async () => {
+  await driver.wait(until.elementLocated(By.id('profile')), 20000);
+  const profile = await driver.findElement(By.id('profile'));
+  expect(profile).not.toEqual(null);
+
+  await profile.click();
+
+  driver.wait(until.urlIs('http://localhost:3000/profile'));
+  await driver.get('http://localhost:3000/profile');
+
+  await driver.wait(until.elementLocated(By.id('recentPost')), 20000);
+  const recentPost = await driver.findElement(By.id('recentPost'));
+  expect(recentPost).not.toEqual(null);
 }, 60000);
