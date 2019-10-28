@@ -7,7 +7,7 @@ body::after{
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-  animation: slideshow 30s linear infinite 0s;
+  animation: slideshow 60s linear infinite 0s;
   backface-visibility: hidden;
   animation-timing-function: ease-in-out;
   background-image: url('../images/slide-1.jpg')
