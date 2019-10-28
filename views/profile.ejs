@@ -7,11 +7,12 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/uikit.min.css">
     <script src="javascripts/uikit.min.js"></script>
     <script src="javascripts/uikit-icons.min.js"></script>
+    <script src="javascripts/profile.js"></script>
     <link rel="icon" href="images/logo.ico" type="image/x-icon">
     <title><%= name %></title>
 </head>
 
-<body>
+<body onload="generateRecentPosts();">
     <header class="uk-margin-medium-bottom" style="background-color: #fff; border-bottom: 1px solid #dbdbdb"
         data-uk-sticky="show-on-up: true; animation: uk-animation-fade">
         <div class="uk-container uk-container-small">
@@ -49,13 +50,18 @@
             <form class="uk-margin-small-bottom" action="/post" enctype="multipart/form-data" method="POST"
                 class="uk-form-stacked">
                 <div class="uk-margin">
-                    <label for="image" class="uk-form-label">Select an image to upload:</label>
+                    <label for="image" class="uk-form-label uk-text-large">Select an image to upload:</label>
                     <input id="image" class="uk-input uk-form-width-large" type="file" name="image" accept="image/*" />
+                    <input type="submit" class="uk-button-muted uk-button-small" value="Upload" />
                 </div>
-                <input type="submit" class="uk-button-primary uk-button-small" value="Upload" />
             </form>
-            <form action="/logout?_method=DELETE" method="POST">
-                <button type="submit" class="uk-button uk-button-primary">Log Out</button>
+            <div class="uk-container uk-container-small uk-margin-top">
+                <div id="recentPost" class="uk-child-width-1-2@m uk-align-center uk-background-default">
+                    <!-- The most recent Post will be added here. -->
+                </div>
+            </div>
+            <form action="/logout?_method=DELETE" method="POST" class="uk-margin-large-top">
+                <button type="submit" class="uk-button uk-button-danger">Log Out</button>
             </form>
         </div>
     </div>
