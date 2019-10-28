@@ -1,11 +1,15 @@
 /* global afterAll expect test */
 
 const request = require('supertest');
+const mockFs = require('mock-fs');
 const app = require('../app');
 const www = require('../bin/www');
 
+const testImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAANSURBVBhXY2BwS/0PAAKgAaunBFbvAAAAAElFTkSuQmCC';
+
 // TODO: Figure out why this doesn't work.
 afterAll((done) => {
+  // mockFs.restore();
   www.server.shutdown(done);
 });
 
@@ -98,8 +102,13 @@ test('Rejects login using invalid mock credentials', async () => {
   expect(res.status).toEqual(302);
 });
 
+// TODO: Figure out why this doesn't work.
 test('Accepts login using valid mock credentials', async () => {
-  request(www.server)
+  expect.assertions(1);
+
+  console.log('#1');
+
+  await request(www.server)
     .post('/login')
     .send({
       name: testName,
@@ -107,7 +116,31 @@ test('Accepts login using valid mock credentials', async () => {
       password: testPasswordCorrect,
     });
 
-  request(www.server)
-    .get('/user')
-    .then((user) => expect(user).toEqual(testEmail));
+  // TODO: Notice that this console statement doesn't print.
+  console.log('#2');
+
+  const res2 = await request(www.server)
+    .get('/user');
+
+  console.log('#3');
+
+  expect(res2.body.email).toEqual(testEmail);
 });
+
+// TODO: Figure out why this doesn't work.
+/*
+test('Uploads an image', async () => {
+  mockFs({
+    'test.png': testImg,
+  });
+
+  const img = fs.readFileSync('test.png');
+
+  request(www.server)
+    .post('/post')
+    .attach('image', img)
+    .then((res) => {
+      expect(res.status).toEqual(302);
+    });
+});
+*/
