@@ -58,5 +58,7 @@ async function generatePost(imgId) {
 async function generateRecentPosts() {
   const res = await fetch('/user');
   const user = await res.json();
-  generatePost(user.posts[user.posts.length - 1]);
+  if (user.posts.length != 0) { 
+    generatePost(user.posts[user.posts.length - 1]);
+  }
 }
