@@ -11,19 +11,40 @@
 		<title><%= name %></title>
 	</head>
 	<body>
+            <header class="uk-margin-medium-bottom" style="background-color: #fff; border-bottom: 1px solid #dbdbdb" data-uk-sticky="show-on-up: true; animation: uk-animation-fade">
+                    <div class="uk-container uk-container-small">
+                        <nav id="navbar" data-uk-navbar="mode: click;">
+                            <div class="uk-navbar-left">
+                                        <a class="uk-navbar-item uk-logo" href="/feed"><img src="images/photogram.png" alt="Logo"
+                                                style="width: 180px; height: 40px"></a>
+                            </div>
+                            <div class="uk-navbar-center">
+                                <ul class="uk-navbar-nav">
+                                    <li>
+                                        <form class="uk-search uk-search-default">
+                                            <span class="uk-search-icon-flip" uk-search-icon></span>
+                                            <input class="uk-border-rounded uk-search-input" type="search" placeholder="Search...">
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="uk-navbar-right">
+                                <ul class="uk-navbar-nav">
+                                    <li>
+                                       <a href="#" data-uk-icon="icon:heart"></a>
+                                    </li>
+                                    <li>
+                                        <a href="/profile" data-uk-icon="icon:user"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </header>
         <div class="uk-flex uk-flex-center uk-background-default">
-            <div class= "uk-container">
+            <div class= "uk-container uk-container-small">
                 <h1 class="uk-heading-line uk-text-center uk-text-italic" id="heading"><span>Hi, <%=name%>!</span></h1>
-                <div class="uk-container uk-background-default" style="z-index: 980" uk-sticky="bottom: #offset">
-                    <ul class="uk-iconnav">
-                        <li><a href="/feed" uk-icon="icon: home" class="uk-icon-align-center uk-icon-large"></a></li>
-                        <li><a href="/profile" uk-icon="icon: user" class="uk-icon-align-center uk-icon-large"></a></li>
-                        <li><a href="" uk-icon="icon: file-edit" class="uk-icon-align-center uk-icon-large"></a></li>
-                        <li><a href="" uk-icon="icon: heart" class="uk-icon-align-center uk-icon-large"></a></li>
-                        <li><a href="" uk-icon="icon: more" class="uk-icon-align-center uk-icon-large"></a></li>
-                    </ul>
-                </div>
-                <form action="/post" enctype="multipart/form-data" method="POST" class="uk-form-stacked">
+                <form class="uk-margin-small-bottom" action="/post" enctype="multipart/form-data" method="POST" class="uk-form-stacked">
                     <div class="uk-margin"> 
                         <label for="image" class="uk-form-label">Select an image to upload:</label>
                         <input id="image" class = "uk-input uk-form-width-large" type="file" name="image" accept="image/*"/>
