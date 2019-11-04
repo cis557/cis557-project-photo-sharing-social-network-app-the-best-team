@@ -1,8 +1,6 @@
-/* global afterAll beforeAll beforeEach describe expect test */
+/* global afterAll beforeEach describe expect test */
 
 const request = require('supertest');
-const fs = require('fs');
-const mockFs = require('mock-fs');
 const assert = require('assert');
 const app = require('../app');
 const www = require('../bin/www');
@@ -11,7 +9,6 @@ const agent = request.agent(www.server);
 
 // TODO: Figure out why this doesn't work.
 afterAll((done) => {
-  mockFs.restore();
   www.server.shutdown(done);
 });
 
@@ -139,17 +136,9 @@ describe('When a user is logged in', () => {
   });
 
   test('Allows them to upload an image', (done) => {
-    const testImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAANSURBVBhXY2BwS/0PAAKgAaunBFbvAAAAAElFTkSuQmCC';
-
-    mockFs({
-      'test.png': testImg,
-    });
-
-    const img = fs.readFileSync('test.png');
-
     agent
       .post('/post')
-      .attach('image', img)
+      .attach('image', './tests/test.png')
       .expect(302)
       .end(done);
   });

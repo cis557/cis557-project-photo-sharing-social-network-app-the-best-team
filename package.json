@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon app.js",
-    "test": "jest --coverage --runInBand --detectOpenHandles --forceExit"
+    "test": "jest --coverage --runInBand --detectOpenHandles --testTimeout=10000 --forceExit"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",

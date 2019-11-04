@@ -33,7 +33,7 @@ mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology
   if (err) {
     console.log(err);
   } else {
-    console.log('MONGO CONNECTED');
+    console.log('Connected to MongoDB Atlas');
   }
 });
 
@@ -160,7 +160,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         }
       });
   } catch (error) {
-    req.redirect('/register');
+    res.redirect('/register');
   }
 });
 
@@ -192,9 +192,17 @@ app.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
   //    3. Delete the image from the server-side file system.
   // Ideally, the app would skip #1 and #3, instead getting the bytes directly from the request.
   // However, #1 and #3 appear to be necessary, at least based on readily available documentation.
-  const img = fs.readFileSync(req.file.path);
-  const bytes = img.toString('base64');
-  fs.unlinkSync(req.file.path);
+
+  let bytes;
+
+  try {
+    const img = fs.readFileSync(req.file.path);
+    bytes = img.toString('base64');
+    fs.unlinkSync(req.file.path);
+  } catch (error) {
+    console.log(error);
+    res.redirect('/feed');
+  }
 
   const incomingPost = {
     email: req.user.email,
