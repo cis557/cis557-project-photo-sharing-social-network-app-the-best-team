@@ -20,6 +20,7 @@
     "express-session": "^1.17.0",
     "http-errors": "~1.6.3",
     "http-shutdown": "^1.2.1",
+    "jsdom": "^15.2.1",
     "json-stringify-safe": "^5.0.1",
     "method-override": "^3.0.0",
     "mock-fs": "^4.10.2",
