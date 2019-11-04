@@ -135,8 +135,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       email: req.body.email,
       password: hashedPassword,
       posts: [],
-      followers:[],
-      followees:[],
+      followers: [],
+      followees: [],
     };
 
     User.findOne({ email: incomingUser.email })
@@ -208,6 +208,7 @@ app.get('/users', checkAuthenticated, (req, res) => {
 app.delete('/logout', checkAuthenticated, (req, res) => {
   req.logOut();
   res.redirect('/login');
+});
 
 /**
  * Routes for creating and deleting posts.
