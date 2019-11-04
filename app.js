@@ -135,6 +135,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
       email: req.body.email,
       password: hashedPassword,
       posts: [],
+      followers:[],
+      followees:[],
     };
 
     User.findOne({ email: incomingUser.email })
@@ -150,6 +152,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             email: incomingUser.email,
             password: incomingUser.password,
             posts: incomingUser.posts,
+            followers: incomingUser.followers,
+            followees: incomingUser.followees,
           });
 
           newUser.save()
@@ -190,6 +194,20 @@ app.delete('/user', checkAuthenticated, (req, res) => {
   // TODO: The response should vary based on whether the deletion was successful.
   res.sendStatus(200);
 });
+
+app.get('/users', checkAuthenticated, (req, res) => {
+  User.find({}, (err, users) => {
+    const userMap = {};
+    users.forEach((user) => {
+      userMap[user.email] = user;
+    });
+    res.send(userMap);
+  });
+});
+
+app.delete('/logout', checkAuthenticated, (req, res) => {
+  req.logOut();
+  res.redirect('/login');
 
 /**
  * Routes for creating and deleting posts.
@@ -306,23 +324,22 @@ app.delete('/comment:id', checkAuthenticated, (req, res) => {
  * Routes for followers and followees.
  */
 
-/*
-app.post('/follow', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
 
-app.delete('/follow', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
+// app.post('/follow', checkAuthenticated, (req, res) => {
+//   // TODO: Implement this route.
+// });
 
-app.get('/followers', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
+// app.delete('/follow', checkAuthenticated, (req, res) => {
+//   // TODO: Implement this route.
+// });
 
-app.get('/followees', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
-*/
+// app.get('/followers', checkAuthenticated, (req, res) => {
+//   // TODO: Implement this route.
+// });
+
+// app.get('/followees', checkAuthenticated, (req, res) => {
+//   // TODO: Implement this route.
+// });
 
 module.exports = {
   app,
