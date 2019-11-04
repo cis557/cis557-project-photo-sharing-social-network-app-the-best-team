@@ -174,15 +174,30 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureFlash: true,
 }));
 
+app.delete('/logout', checkAuthenticated, (req, res) => {
+  req.logOut();
+  res.redirect('/login');
+});
+
 app.get('/user', checkAuthenticated, (req, res) => {
   User.findOne({ email: req.user.email })
     .then((user) => res.send(user))
     .catch((err) => console.log(err));
 });
 
+app.delete('/user', checkAuthenticated, (req, res) => {
+  Post.deleteMany({ email: req.user.email })
+    .catch((err) => console.log(err));
+  User.deleteOne({ email: req.user.email })
+    .catch((err) => console.log(err));
+
+  // TODO: The response should vary based on whether the deletion was successful.
+  res.sendStatus(200);
+});
+
 app.get('/users', checkAuthenticated, (req, res) => {
   User.find({}, (err, users) => {
-    var userMap = {};
+    const userMap = {};
     users.forEach((user) => {
       userMap[user.email] = user;
     });
@@ -193,7 +208,6 @@ app.get('/users', checkAuthenticated, (req, res) => {
 app.delete('/logout', checkAuthenticated, (req, res) => {
   req.logOut();
   res.redirect('/login');
-});
 
 /**
  * Routes for creating and deleting posts.
@@ -238,7 +252,6 @@ app.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
 
   newPost.save()
     .then((post) => {
-      console.log(post);
       User.findOneAndUpdate({ email: incomingPost.email }, { $push: { posts: post._id } })
         .then(() => {
           res.redirect('/feed');

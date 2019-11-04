@@ -2,8 +2,11 @@
 
 const request = require('supertest');
 const assert = require('assert');
+const jsdom = require('jsdom');
 const app = require('../app');
 const www = require('../bin/www');
+
+const { JSDOM } = jsdom;
 
 const agent = request.agent(www.server);
 
@@ -60,14 +63,25 @@ describe('When a user is not logged in', () => {
     agent
       .get('/login')
       .expect(200)
-      .end(done);
+      .type('text/ejs')
+      .end((err, res) => {
+        const dom = new JSDOM(res.text);
+        const title = dom.window.document.getElementsByTagName('title')[0].innerHTML;
+        assert(title === 'Login | Photogram');
+        done();
+      });
   });
 
   test('Loads registration page for them', (done) => {
     agent
       .get('/register')
       .expect(200)
-      .end(done);
+      .end((err, res) => {
+        const dom = new JSDOM(res.text);
+        const title = dom.window.document.getElementsByTagName('title')[0].innerHTML;
+        assert(title === 'Register | Photogram');
+        done();
+      });
   });
 
   test('Redirects them to login page', (done) => {
@@ -98,6 +112,7 @@ describe('When a user is not logged in', () => {
 });
 
 describe('When a user is logged in', () => {
+  // Log in before every test.
   beforeEach(async () => agent
     .post('/login')
     .send({
@@ -105,6 +120,14 @@ describe('When a user is logged in', () => {
       password: testPasswordCorrect,
     })
     .expect(302));
+
+  // After tests finish, delete the test user and their posts from the database.
+  afterAll(async () => agent
+    .delete('/user')
+    .send({
+      email: testEmail,
+    })
+    .expect(200));
 
   test('Fetches their data from the server', (done) => {
     agent.get('/user')
@@ -132,7 +155,12 @@ describe('When a user is logged in', () => {
     agent
       .get('/feed')
       .expect(200)
-      .end(done);
+      .end((err, res) => {
+        const dom = new JSDOM(res.text);
+        const title = dom.window.document.getElementsByTagName('title')[0].innerHTML;
+        assert(title === 'Feed | Photogram');
+        done();
+      });
   });
 
   test('Allows them to upload an image', (done) => {
