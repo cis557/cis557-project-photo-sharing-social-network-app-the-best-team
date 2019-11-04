@@ -112,6 +112,7 @@ describe('When a user is not logged in', () => {
 });
 
 describe('When a user is logged in', () => {
+  // Log in before every test.
   beforeEach(async () => agent
     .post('/login')
     .send({
@@ -119,6 +120,14 @@ describe('When a user is logged in', () => {
       password: testPasswordCorrect,
     })
     .expect(302));
+
+  // After tests finish, delete the test user and their posts from the database.
+  afterAll(async () => agent
+    .delete('/user')
+    .send({
+      email: testEmail,
+    })
+    .expect(200));
 
   test('Fetches their data from the server', (done) => {
     agent.get('/user')
