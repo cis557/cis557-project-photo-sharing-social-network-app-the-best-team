@@ -101,28 +101,16 @@ describe('When a user is not logged in', () => {
 });
 
 describe('When a user is logged in', () => {
-  let cookie;
-
   beforeEach(async () => agent
     .post('/login')
     .send({
       email: testEmail,
       password: testPasswordCorrect,
     })
-    .expect(302)
-    .then((res) => {
-      cookie = res
-        .headers['set-cookie'][0]
-        .split(',')
-        .map((item) => item.split(';')[0])
-        .join(';');
-
-      expect(res.status).toEqual(302);
-    }));
+    .expect(302));
 
   test('Fetches their data from the server', (done) => {
     agent.get('/user')
-      .set('Cookie', cookie)
       .expect((res) => {
         assert.equal(res.body.email, testEmail);
       })
@@ -131,7 +119,6 @@ describe('When a user is logged in', () => {
 
   test('Redirects them away from login page', (done) => {
     agent
-      .set('Cookie', cookie)
       .get('/login')
       .expect(302)
       .end(done);
@@ -139,7 +126,6 @@ describe('When a user is logged in', () => {
 
   test('Redirects them away from registration page', (done) => {
     agent
-      .set('Cookie', cookie)
       .get('/register')
       .expect(302)
       .end(done);
@@ -147,7 +133,6 @@ describe('When a user is logged in', () => {
 
   test('Loads feed page for them', (done) => {
     agent
-      .set('Cookie', cookie)
       .get('/feed')
       .expect(200)
       .end(done);
@@ -163,7 +148,6 @@ describe('When a user is logged in', () => {
     const img = fs.readFileSync('test.png');
 
     agent
-      .set('Cookie', cookie)
       .post('/post')
       .attach('image', img)
       .expect(302)
