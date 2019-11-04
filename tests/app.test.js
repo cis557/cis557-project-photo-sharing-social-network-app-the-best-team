@@ -1,15 +1,17 @@
-/* global afterAll expect test */
+/* global afterAll beforeAll beforeEach describe expect test */
 
 const request = require('supertest');
+const fs = require('fs');
 const mockFs = require('mock-fs');
+const assert = require('assert');
 const app = require('../app');
 const www = require('../bin/www');
 
-const testImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAANSURBVBhXY2BwS/0PAAKgAaunBFbvAAAAAElFTkSuQmCC';
+const agent = request.agent(www.server);
 
 // TODO: Figure out why this doesn't work.
 afterAll((done) => {
-  // mockFs.restore();
+  mockFs.restore();
   www.server.shutdown(done);
 });
 
@@ -18,129 +20,153 @@ const testEmail = 'testEmail@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
 
-test('Permits authenticated user to visit restricted page', () => {
-  const req = { isAuthenticated: () => true };
-  const res = { redirect: (string) => string };
-  const next = () => 'next';
-  const authentication = app.checkAuthenticated(req, res, next);
+describe('Mock authentication tests', () => {
+  test('Permits authenticated user to visit restricted page', () => {
+    const req = { isAuthenticated: () => true };
+    const res = { redirect: (string) => string };
+    const next = () => 'next';
+    const authentication = app.checkAuthenticated(req, res, next);
 
-  expect(authentication).toEqual('next');
-});
-
-test('Prevents unauthenticated user from visiting restricted page', () => {
-  const req = { isAuthenticated: () => false };
-  const res = { redirect: (string) => string };
-  const next = () => 'next';
-  const authentication = app.checkAuthenticated(req, res, next);
-
-  expect(authentication).toEqual('/login');
-});
-
-test('Prevents authenticated user from visiting unrestricted page', () => {
-  const req = { isAuthenticated: () => true };
-  const res = { redirect: (string) => string };
-  const next = () => 'next';
-  const authentication = app.checkNotAuthenticated(req, res, next);
-
-  expect(authentication).toEqual('/');
-});
-
-test('Permits unauthenticated user to visit unrestricted page', () => {
-  const req = { isAuthenticated: () => false };
-  const res = { redirect: (string) => string };
-  const next = () => 'next';
-  const authentication = app.checkNotAuthenticated(req, res, next);
-
-  expect(authentication).toEqual('next');
-});
-
-test('Loads login page for unauthenticated user', async () => {
-  const res = await request(www.server).get('/login');
-
-  expect(res.status).toEqual(200);
-});
-
-test('Loads registration page for unauthenticated user', async () => {
-  const res = await request(www.server).get('/register');
-
-  expect(res.status).toEqual(200);
-});
-
-test('Redirects unauthenticated user to login page', async () => {
-  const res = await request(www.server).get('/');
-
-  expect(res.status).toEqual(302);
-});
-
-test('Returns 404 for invalid page', async () => {
-  const res = await request(www.server).get('/pizza');
-
-  expect(res.status).toEqual(404);
-});
-
-test('Registers using mock credentials', async () => {
-  const res = await request(www.server)
-    .post('/register')
-    .send({
-      name: testName,
-      email: testEmail,
-      password: testPasswordCorrect,
-    });
-
-  expect(res.status).toEqual(302);
-});
-
-test('Rejects login using invalid mock credentials', async () => {
-  const res = await request(www.server)
-    .post('/login')
-    .send({
-      name: testName,
-      email: testEmail,
-      password: testPasswordIncorrect,
-    });
-
-  expect(res.status).toEqual(302);
-});
-
-// TODO: Figure out why this doesn't work.
- test('Accepts login using valid mock credentials', async () => {
-    expect.assertions(1);   
-    console.log('#1');
-    const res = await request(www.server)
-    .post('/login')
-    .send("username=testEmail&password=testPasswordCorrect");
-    //setAttribute etc. doesnt work
-    expect(res.status).toEqual(302);
-
-  // TODO: Notice that this console statement doesn't print.
-  // console.log('#2');
-
-  // const res2 = await request(www.server)
-  //   .get('/user');
-
-  // console.log('#3');
-
-  // expect(res2.body.email).toEqual(testEmail);
-});
-
-//FixME
-
-
-
-// TODO: Figure out why this doesn't work.
-/*
-test('Uploads an image', async () => {
-  mockFs({
-    'test.png': testImg,
+    expect(authentication).toEqual('next');
   });
 
-  const img = fs.readFileSync('test.png');
+  test('Prevents unauthenticated user from visiting restricted page', () => {
+    const req = { isAuthenticated: () => false };
+    const res = { redirect: (string) => string };
+    const next = () => 'next';
+    const authentication = app.checkAuthenticated(req, res, next);
 
-  request(www.server)
-    .post('/post')
-    .attach('image', img)
-    .then((res) => {
-      expect(res.status).toEqual(302);
-    });
+    expect(authentication).toEqual('/login');
+  });
+
+  test('Prevents authenticated user from visiting unrestricted page', () => {
+    const req = { isAuthenticated: () => true };
+    const res = { redirect: (string) => string };
+    const next = () => 'next';
+    const authentication = app.checkNotAuthenticated(req, res, next);
+
+    expect(authentication).toEqual('/');
+  });
+
+  test('Permits unauthenticated user to visit unrestricted page', () => {
+    const req = { isAuthenticated: () => false };
+    const res = { redirect: (string) => string };
+    const next = () => 'next';
+    const authentication = app.checkNotAuthenticated(req, res, next);
+
+    expect(authentication).toEqual('next');
+  });
 });
-*/
+
+describe('When a user is not logged in', () => {
+  test('Loads login page for them', (done) => {
+    agent
+      .get('/login')
+      .expect(200)
+      .end(done);
+  });
+
+  test('Loads registration page for them', (done) => {
+    agent
+      .get('/register')
+      .expect(200)
+      .end(done);
+  });
+
+  test('Redirects them to login page', (done) => {
+    agent
+      .get('/')
+      .expect(302)
+      .end(done);
+  });
+
+  test('Returns 404 for invalid page', (done) => {
+    agent
+      .get('/pizza')
+      .expect(404)
+      .end(done);
+  });
+
+  test('Registers using mock credentials', (done) => {
+    agent
+      .post('/register')
+      .send({
+        name: testName,
+        email: testEmail,
+        password: testPasswordCorrect,
+      })
+      .expect(302)
+      .end(done);
+  });
+});
+
+describe('When a user is logged in', () => {
+  let cookie;
+
+  beforeEach(async () => agent
+    .post('/login')
+    .send({
+      email: testEmail,
+      password: testPasswordCorrect,
+    })
+    .expect(302)
+    .then((res) => {
+      cookie = res
+        .headers['set-cookie'][0]
+        .split(',')
+        .map((item) => item.split(';')[0])
+        .join(';');
+
+      expect(res.status).toEqual(302);
+    }));
+
+  test('Fetches their data from the server', (done) => {
+    agent.get('/user')
+      .set('Cookie', cookie)
+      .expect((res) => {
+        assert.equal(res.body.email, testEmail);
+      })
+      .end(done);
+  });
+
+  test('Redirects them away from login page', (done) => {
+    agent
+      .set('Cookie', cookie)
+      .get('/login')
+      .expect(302)
+      .end(done);
+  });
+
+  test('Redirects them away from registration page', (done) => {
+    agent
+      .set('Cookie', cookie)
+      .get('/register')
+      .expect(302)
+      .end(done);
+  });
+
+  test('Loads feed page for them', (done) => {
+    agent
+      .set('Cookie', cookie)
+      .get('/feed')
+      .expect(200)
+      .end(done);
+  });
+
+  test('Allows them to upload an image', (done) => {
+    const testImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAANSURBVBhXY2BwS/0PAAKgAaunBFbvAAAAAElFTkSuQmCC';
+
+    mockFs({
+      'test.png': testImg,
+    });
+
+    const img = fs.readFileSync('test.png');
+
+    agent
+      .set('Cookie', cookie)
+      .post('/post')
+      .attach('image', img)
+      .expect(302)
+      .end(done);
+  });
+});

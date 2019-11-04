@@ -5,6 +5,7 @@
 // Passport tutorial: https://youtu.be/-RCnNyD0L-s
 // Image upload tutorial: https://code.tutsplus.com/tutorials/file-upload-with-multer-in-node--cms-32088
 // Image upload sample: https://github.com/Bigeard/upload-express
+// Passport testing tutorial: https://medium.com/@internetross/a-pattern-for-creating-authenticated-sessions-for-routing-specs-with-supertest-and-jest-until-the-baf14d498e9d
 
 const express = require('express');
 const bcrypt = require('bcrypt');
