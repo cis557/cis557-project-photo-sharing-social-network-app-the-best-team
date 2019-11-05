@@ -122,6 +122,16 @@ app.get('/profile', checkAuthenticated, (req, res) => {
   res.render('profile.ejs', { name: req.user.name });
 });
 
+app.get('/follow', checkAuthenticated, (req, res) => {
+  User.find({}, (err, data) => {
+    // note that data is an array of objects, not a single object!
+    res.render('follow.ejs', {
+      user: req.user.name,
+      names: data,
+    });
+  });
+});
+
 /**
  * POST routes for registration/login.
  */
@@ -197,11 +207,11 @@ app.delete('/user', checkAuthenticated, (req, res) => {
 
 app.get('/users', checkAuthenticated, (req, res) => {
   User.find({}, (err, users) => {
-    const userMap = {};
+    const userArray = [];
     users.forEach((user) => {
-      userMap[user.email] = user;
+      userArray.push(user);
     });
-    res.send(userMap);
+    res.send(userArray);
   });
 });
 
