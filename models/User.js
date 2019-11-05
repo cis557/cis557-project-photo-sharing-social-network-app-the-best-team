@@ -5,11 +5,24 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  name: {
+  image: {
+    type: Buffer,
+    required: false,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
     type: String,
     required: true,
   },
   email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -22,11 +35,11 @@ const UserSchema = new mongoose.Schema({
     type: Array,
     required: false,
   },
-  followers:{
+  followers: {
     type: Array,
     required: false,
   },
-  followees:{
+  followees: {
     type: Array,
     required: false,
   },

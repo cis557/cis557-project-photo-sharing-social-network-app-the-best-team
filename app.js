@@ -29,7 +29,7 @@ require('dotenv').config();
  * MongoDB initialization.
  */
 
-mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+mongoose.connect(process.env.DB_URL, { useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
   if (err) {
     console.log(err);
   } else {
@@ -119,7 +119,7 @@ app.get('/feed', checkAuthenticated, (req, res) => {
 });
 
 app.get('/profile', checkAuthenticated, (req, res) => {
-  res.render('profile.ejs', { name: req.user.name });
+  res.render('profile.ejs', { name: req.user.firstName });
 });
 
 app.get('/follow', checkAuthenticated, (req, res) => {
@@ -136,17 +136,21 @@ app.get('/follow', checkAuthenticated, (req, res) => {
  * POST routes for registration/login.
  */
 
-app.post('/register', checkNotAuthenticated, async (req, res) => {
+app.post('/register', checkNotAuthenticated, parser.single('image'), async (req, res) => {
   try {
+    const defaultImg = fs.readFileSync(path.join(__dirname, 'uploads/default-profile.png'));
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const incomingUser = {
       id: Date.now().toString(),
-      name: req.body.name,
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
       email: req.body.email,
       password: hashedPassword,
+      username: req.body.username,
       posts: [],
       followers: [],
       followees: [],
+      image: Buffer.from(defaultImg, 'base64'),
     };
 
     User.findOne({ email: incomingUser.email })
@@ -156,21 +160,45 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
           // eslint-disable-next-line prefer-template
           res.redirect('/register?error=' + message);
         } else {
-          const newUser = new User({
-            id: incomingUser.id,
-            name: incomingUser.name,
-            email: incomingUser.email,
-            password: incomingUser.password,
-            posts: incomingUser.posts,
-            followers: incomingUser.followers,
-            followees: incomingUser.followees,
-          });
+          User.findOne({ username: incomingUser.username })
+            .then((userTwo) => {
+              if (userTwo) {
+                const message = encodeURIComponent('Please pick another username');
+                // eslint-disable-next-line prefer-template
+                res.redirect('/register?error=' + message);
+              } else {
+                if (req.file) {
+                  let bytes;
+                  try {
+                    const img = fs.readFileSync(req.file.path);
+                    bytes = img.toString('base64');
+                    fs.unlinkSync(req.file.path);
+                  } catch (error) {
+                    res.redirect(`/register?error= ${error}`);
+                  }
+                  incomingUser.image = Buffer.from(bytes, 'base64');
+                }
 
-          newUser.save()
-            .then(() => {})
-            .catch((err) => console.log(err));
+                const newUser = new User({
+                  id: incomingUser.id,
+                  firstName: incomingUser.firstname,
+                  lastName: incomingUser.lastname,
+                  email: incomingUser.email,
+                  password: incomingUser.password,
+                  posts: incomingUser.posts,
+                  followers: incomingUser.followers,
+                  followees: incomingUser.followees,
+                  image: incomingUser.image,
+                  username: incomingUser.username,
+                });
 
-          res.redirect('/login');
+                newUser.save()
+                  .then(() => {})
+                  .catch((err) => console.log(err));
+
+                res.redirect('/login');
+              }
+            });
         }
       });
   } catch (error) {
@@ -280,6 +308,17 @@ app.get('/post/:id', checkAuthenticated, (req, res) => {
     if (err) {
       // TODO: Report error to user.
     } else if (result == null || result.image == null) {
+      // TODO: Report error to user.
+    } else {
+      res.send(Buffer.from(result.image, 'binary'));
+    }
+  });
+});
+
+app.get('/profile/:email', checkAuthenticated, (req, res) => {
+  const { email } = req.params;
+  User.findOne({ email }, (err, result) => {
+    if (err) {
       // TODO: Report error to user.
     } else {
       res.send(Buffer.from(result.image, 'binary'));

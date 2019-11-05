@@ -46,7 +46,16 @@
     </header>
     <div class="uk-flex uk-flex-center uk-background-default">
         <div class="uk-container uk-container-small">
-            <h1 class="uk-heading-line uk-text-center uk-text-italic" id="heading"><span>Hi, <%=name%>!</span></h1>
+            <div class="uk-grid" uk-grid>
+                <div class="uk-width-1-3 uk-flex uk-flex-middle uk-flex-center">
+                    <img class="uk-border-pill" style="height: 150px; width: 150px" id="profile-image" src="" alt="">
+                </div>
+                <div class="uk-width-expand uk-padding-small uk-flex uk-flex-column">
+                    <p id="username" class="uk-text-lead uk-text-light"></p>
+                    <span> <p id="followers" class="uk-text-bold"></p> <p id="following" class="uk-text-bold"></p> </span>
+                    <p id="name" class="uk-text-bold uk-text-small"></p>
+                </div>
+            </div>
             <form class="uk-margin-small-bottom" action="/post" enctype="multipart/form-data" method="POST"
                 class="uk-form-stacked">
                 <div class="uk-margin">

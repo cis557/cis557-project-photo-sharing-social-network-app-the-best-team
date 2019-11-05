@@ -23,13 +23,20 @@
                     <p><%= messages.error %></p>
                 </div>
                 <% } %>
-                <form action="/register" method="POST" class="toggle-class">
+                <form action="/register" enctype="multipart/form-data" method="POST" class="toggle-class">
                     <fieldset class="uk-fieldset">
                         <div class="uk-margin-small">
                             <div class="uk-inline uk-width-1-1">
-                                <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: user"></span>
-                                <input id="name" name="name" class="uk-input uk-border-pill" placeholder="Full Name"
+                                <span class="uk-form-icon uk-form-icon-flip"></span>
+                                <input id="firstname" name="firstname" class="uk-input uk-border-pill" placeholder="First Name"
                                     type="text" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin-small">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon uk-form-icon-flip"></span>
+                                <input id="lastname" name="lastname" class="uk-input uk-border-pill" placeholder="Last Name"
+                                   type="text" required>
                             </div>
                         </div>
                         <div class="uk-margin-small">
@@ -41,9 +48,22 @@
                         </div>
                         <div class="uk-margin-small">
                             <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: user"></span>
+                                <input id="username" name="username" class="uk-input uk-border-pill" placeholder="Username"
+                                   type="text" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin-small">
+                            <div class="uk-inline uk-width-1-1">
                                 <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: lock"></span>
                                 <input id="password" name="password" class="uk-input uk-border-pill"
                                     placeholder="Password" type="password" required>
+                            </div>
+                        </div>
+                        <div class="uk-margin">
+                            <div class="uk-inline uk-width-1-1" uk-form-custom="target: true">
+                                <input id="image" name="image" type="file" accept="image/*">
+                                <input class="uk-input uk-border-pill" type="text" placeholder="Select profile image">
                             </div>
                         </div>
                         <div class="uk-margin-bottom" style="text-align: center">

@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* global document fetch */
 
 const testTitle = 'Placeholder Most Recent Post Title';
@@ -53,12 +54,27 @@ async function generatePost(imgId) {
   body.appendChild(commentIcon);
 }
 
+async function generateProfile(email, usern, name, followers, followees) {
+  const img = document.getElementById('profile-image');
+  img.src = `/profile/${email}`;
+  const username = document.getElementById('username');
+  username.innerHTML = usern;
+  const fullname = document.getElementById('name');
+  fullname.innerHTML = name;
+  const following = document.getElementById('following');
+  following.innerHTML = `Following: ${followees.length}`;
+  const followed = document.getElementById('followers');
+  followed.innerHTML = `Followers: ${followers.length}`;
+}
+
 // This function is called in feed.ejs.
 // eslint-disable-next-line no-unused-vars
 async function generateRecentPosts() {
   const res = await fetch('/user');
   const user = await res.json();
-  if (user.posts.length != 0) { 
+  if (user.posts.length !== 0) {
     generatePost(user.posts[user.posts.length - 1]);
   }
+  const name = `${user.firstName} ${user.lastName}`;
+  generateProfile(user.email, user.username, name, user.followers, user.followees);
 }
