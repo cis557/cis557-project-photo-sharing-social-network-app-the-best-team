@@ -212,11 +212,6 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureFlash: true,
 }));
 
-app.delete('/logout', checkAuthenticated, (req, res) => {
-  req.logOut();
-  res.redirect('/login');
-});
-
 app.get('/user', checkAuthenticated, (req, res) => {
   User.findOne({ email: req.user.email })
     .then((user) => res.send(user))

@@ -1,4 +1,4 @@
-/* global afterAll beforeAll beforeEach describe expect test */
+/* global afterAll afterEach beforeAll beforeEach describe expect test */
 
 const request = require('supertest');
 const assert = require('assert');
@@ -69,7 +69,33 @@ describe('Mock authentication tests', () => {
 });
 
 describe('When a user is not logged in', () => {
-  test('Loads login page for them', (done) => {
+  test('They receive a 404 response for an invalid page', (done) => {
+    agent
+      .get('/pizza')
+      .expect(404)
+      .end(done);
+  });
+
+  test('They are redirected away from the homepage', (done) => {
+    agent
+      .get('/')
+      .expect(302)
+      .end(done);
+  });
+
+  test('They can view the registration page', (done) => {
+    agent
+      .get('/register')
+      .expect(200)
+      .end((err, res) => {
+        const dom = new JSDOM(res.text);
+        const title = dom.window.document.getElementsByTagName('title')[0].innerHTML;
+        assert(title === 'Register | Photogram');
+        done();
+      });
+  });
+
+  test('They can view the login page', (done) => {
     agent
       .get('/login')
       .expect(200)
@@ -82,33 +108,21 @@ describe('When a user is not logged in', () => {
       });
   });
 
-  test('Loads registration page for them', (done) => {
+  test('They cannot view the feed page', (done) => {
     agent
-      .get('/register')
-      .expect(200)
-      .end((err, res) => {
-        const dom = new JSDOM(res.text);
-        const title = dom.window.document.getElementsByTagName('title')[0].innerHTML;
-        assert(title === 'Register | Photogram');
-        done();
-      });
-  });
-
-  test('Redirects them to login page', (done) => {
-    agent
-      .get('/')
+      .get('/feed')
       .expect(302)
       .end(done);
   });
 
-  test('Returns 404 for invalid page', (done) => {
+  test('They cannot view the profile page', (done) => {
     agent
-      .get('/pizza')
-      .expect(404)
+      .get('/profile')
+      .expect(302)
       .end(done);
   });
 
-  test('Registers using mock credentials', (done) => {
+  test('They register using mock credentials', (done) => {
     agent
       .post('/register')
       .send({
@@ -118,6 +132,89 @@ describe('When a user is not logged in', () => {
         password: testPasswordCorrect,
         username: testUsername,
         image: testImage,
+      })
+      .expect(302)
+      .end(done);
+  });
+
+  test('They fail to register a duplicate account', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstname: testFirstName,
+        lastname: testLastName,
+        email: testEmail,
+        password: testPasswordCorrect,
+        username: testUsername,
+        image: testImage,
+      })
+      .expect(302)
+      .end(done);
+  });
+
+  test('They cannot get a user\'s info', (done) => {
+    agent
+      .get('/user')
+      .expect(302)
+      .end(done);
+  });
+
+  test('They cannot delete a user', (done) => {
+    agent
+      .delete('/user')
+      .expect(302)
+      .end(done);
+  });
+
+  test('They cannot get a list of users', (done) => {
+    agent
+      .get('/users')
+      .expect(302)
+      .end(done);
+  });
+
+  test('They cannot log out', (done) => {
+    agent
+      .delete('/logout')
+      .expect(302)
+      .end(done);
+  });
+
+  // TODO: This seems to overload the server.
+  /*
+  test('They cannot upload an image', (done) => {
+    agent
+      .post('/post')
+      .attach('image', testImage)
+      .expect(302)
+      .end(done);
+  });
+  */
+
+  test('They cannot see their profile picture', (done) => {
+    agent
+      .get(`/profile/${testEmail}`)
+      .expect(302)
+      .end(done);
+  });
+
+  test('They cannot log in using invalid credentials', (done) => {
+    agent
+      .post('/login')
+      .send({
+        email: testEmail,
+        password: testPasswordIncorrect,
+      })
+      .expect(302)
+      .end(done);
+  });
+
+  test('They can log in using valid credentials', (done) => {
+    agent
+      .post('/login')
+      .send({
+        email: testEmail,
+        password: testPasswordCorrect,
       })
       .expect(302)
       .end(done);
@@ -142,7 +239,7 @@ describe('When a user is logged in', () => {
     })
     .expect(200));
 
-  test('Fetches their data from the server', (done) => {
+  test('They can get their user data', (done) => {
     agent.get('/user')
       .expect((res) => {
         assert.equal(res.body.email, testEmail);
@@ -150,21 +247,21 @@ describe('When a user is logged in', () => {
       .end(done);
   });
 
-  test('Redirects them away from login page', (done) => {
+  test('They cannot view the login page', (done) => {
     agent
       .get('/login')
       .expect(302)
       .end(done);
   });
 
-  test('Redirects them away from registration page', (done) => {
+  test('They cannot view the registration page', (done) => {
     agent
       .get('/register')
       .expect(302)
       .end(done);
   });
 
-  test('Loads feed page for them', (done) => {
+  test('They can view the feed page', (done) => {
     agent
       .get('/feed')
       .expect(200)
@@ -176,7 +273,7 @@ describe('When a user is logged in', () => {
       });
   });
 
-  test('Allows them to upload an image', (done) => {
+  test('They can upload an image', (done) => {
     agent
       .post('/post')
       .attach('image', testImage)
@@ -184,7 +281,7 @@ describe('When a user is logged in', () => {
       .end(done);
   });
 
-  test('Lets them see their profile picture', (done) => {
+  test('They can see their profile picture', (done) => {
     agent
       .get(`/profile/${testEmail}`)
       .expect(200)
