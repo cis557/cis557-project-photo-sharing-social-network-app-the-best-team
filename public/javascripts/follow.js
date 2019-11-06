@@ -60,10 +60,9 @@ async function generateNames() {
   const userRes = await fetch('/user');
   const userJSON = await userRes.json();
   const users = await allRes.json();
-  // try using own name first
   users.forEach((others) => {
-    if (userJSON.name !== others.name) {
-      generatePossibleFollow(others.name);
+    if (userJSON.username !== others.username && (users).length !== 1) {
+      generatePossibleFollow(others.username);
     }
   });
 }
