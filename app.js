@@ -395,4 +395,5 @@ module.exports = {
   app,
   checkAuthenticated,
   checkNotAuthenticated,
+  mongoose,
 };

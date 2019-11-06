@@ -26,7 +26,8 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  server.close(done);
+  app.mongoose.connection.close()
+    .then(server.close(done));
 });
 
 describe('Mock authentication tests', () => {
