@@ -138,10 +138,10 @@ app.get('/follow', checkAuthenticated, (req, res) => {
 
 app.post('/register', checkNotAuthenticated, parser.single('image'), async (req, res) => {
   try {
-    const defaultImg = fs.readFileSync(path.join(__dirname, 'uploads/default-profile.png'));
+    const defaultImg = fs.readFileSync(path.join(__dirname, 'public/images/default-profile.png'));
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const incomingUser = {
-      id: Date.now().toString(),
+      _id: Date.now().toString(),
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       email: req.body.email,
@@ -180,7 +180,7 @@ app.post('/register', checkNotAuthenticated, parser.single('image'), async (req,
                 }
 
                 const newUser = new User({
-                  id: incomingUser.id,
+                  _id: incomingUser.id,
                   firstName: incomingUser.firstname,
                   lastName: incomingUser.lastname,
                   email: incomingUser.email,
@@ -302,9 +302,9 @@ app.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
     .catch((err) => console.log(err));
 });
 
-app.get('/post/:id', checkAuthenticated, (req, res) => {
-  const { id } = req.params;
-  Post.findOne({ _id: ObjectId(id) }, (err, result) => {
+app.get('/post/:_id', checkAuthenticated, (req, res) => {
+  const { _id } = req.params;
+  Post.findOne({ _id: ObjectId(_id) }, (err, result) => {
     if (err) {
       // TODO: Report error to user.
     } else if (result == null || result.image == null) {
