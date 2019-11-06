@@ -39,6 +39,29 @@
                         <li>
                             <a href="/profile" data-uk-icon="icon:user"></a>
                         </li>
+                        <li>
+                            <a id="signout" href="#modal-overflow" data-uk-icon="icon:sign-out" uk-toggle></a>
+                        <div id="modal-overflow" uk-modal>
+                            <div class="uk-modal-dialog">
+
+                                <button class="uk-modal-close-default" type="button" uk-close></button>
+
+                                <div class="uk-modal-header">
+                                    <h2 class="uk-modal-title">Sign-out</h2>
+                                </div>
+                                <div class="uk-modal-body" uk-overflow-auto>
+                                    <p class = "uk-text-large">Photogram is fun! You sure you wanna leave???</p>
+                                    <img src="images/slide-1.jpg">
+                                </div>
+                                <div class="uk-modal-footer uk-text-right">
+                                <form action="/logout?_method=DELETE" method="POST">
+                                    <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                                    <button type="submit" class="uk-button uk-button-danger">Log Out</button>
+                                </form>
+                                </div>
+                                </div>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -69,9 +92,6 @@
                     <!-- The most recent Post will be added here. -->
                 </div>
             </div>
-            <form action="/logout?_method=DELETE" method="POST" class="uk-margin-large-top">
-                <button type="submit" class="uk-button uk-button-danger">Log Out</button>
-            </form>
         </div>
     </div>
 </body>
