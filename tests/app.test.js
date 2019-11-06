@@ -1,24 +1,33 @@
-/* global afterAll beforeEach describe expect test */
+/* global afterAll beforeAll beforeEach describe expect test */
 
 const request = require('supertest');
 const assert = require('assert');
 const jsdom = require('jsdom');
+const http = require('http');
 const app = require('../app');
-const www = require('../bin/www');
 
 const { JSDOM } = jsdom;
 
-const agent = request.agent(www.server);
-
-// TODO: Figure out why this doesn't work.
-afterAll((done) => {
-  www.server.shutdown(done);
-});
-
-const testName = 'testName';
+const testFirstName = 'testFirstName';
+const testLastName = 'testLastName';
+const testUsername = 'testUsername';
 const testEmail = 'testEmail@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
+const testImage = './tests/test.png';
+
+let server;
+let agent;
+
+beforeAll((done) => {
+  server = http.createServer(app.app);
+  agent = request.agent(server);
+  server.listen(done);
+});
+
+afterAll((done) => {
+  server.close(done);
+});
 
 describe('Mock authentication tests', () => {
   test('Permits authenticated user to visit restricted page', () => {
@@ -102,9 +111,12 @@ describe('When a user is not logged in', () => {
     agent
       .post('/register')
       .send({
-        name: testName,
+        firstname: testFirstName,
+        lastname: testLastName,
         email: testEmail,
         password: testPasswordCorrect,
+        username: testUsername,
+        image: testImage,
       })
       .expect(302)
       .end(done);
@@ -166,8 +178,15 @@ describe('When a user is logged in', () => {
   test('Allows them to upload an image', (done) => {
     agent
       .post('/post')
-      .attach('image', './tests/test.png')
+      .attach('image', testImage)
       .expect(302)
+      .end(done);
+  });
+
+  test('Lets them see their profile picture', (done) => {
+    agent
+      .get(`/profile/${testEmail}`)
+      .expect(200)
       .end(done);
   });
 });
