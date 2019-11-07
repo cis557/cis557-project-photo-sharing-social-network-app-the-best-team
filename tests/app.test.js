@@ -10,8 +10,10 @@ const { JSDOM } = jsdom;
 
 const testFirstName = 'testFirstName';
 const testLastName = 'testLastName';
-const testUsername = 'testUsername';
-const testEmail = 'testEmail@test.com';
+const testUsername1 = 'testUsername1';
+const testUsername2 = 'testUsername2';
+const testEmail1 = 'testEmail1@test.com';
+const testEmail2 = 'testEmail2@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
 const testImage = './tests/test.png';
@@ -80,6 +82,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/')
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -112,6 +115,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/feed')
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -119,6 +123,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/profile')
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -128,27 +133,46 @@ describe('When a user is not logged in', () => {
       .send({
         firstname: testFirstName,
         lastname: testLastName,
-        email: testEmail,
+        email: testEmail1,
         password: testPasswordCorrect,
-        username: testUsername,
+        username: testUsername1,
         image: testImage,
       })
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
-  test('They fail to register a duplicate account', (done) => {
+  test('They fail to register with a duplicate email address', (done) => {
     agent
       .post('/register')
       .send({
         firstname: testFirstName,
         lastname: testLastName,
-        email: testEmail,
+        email: testEmail1,
         password: testPasswordCorrect,
-        username: testUsername,
+        username: testUsername2,
         image: testImage,
       })
       .expect(302)
+      // TODO: Add this kind of message elsewhere in app.js as well.
+      .expect('Location', '/register?error=This%20user%20already%20exists')
+      .end(done);
+  });
+
+  test('They fail to register with a duplicate username', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstname: testFirstName,
+        lastname: testLastName,
+        email: testEmail2,
+        password: testPasswordCorrect,
+        username: testUsername1,
+        image: testImage,
+      })
+      .expect(302)
+      .expect('Location', '/register?error=Please%20pick%20another%20username')
       .end(done);
   });
 
@@ -156,6 +180,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/user')
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -163,6 +188,7 @@ describe('When a user is not logged in', () => {
     agent
       .delete('/user')
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -170,6 +196,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/users')
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -177,6 +204,7 @@ describe('When a user is not logged in', () => {
     agent
       .delete('/logout')
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -193,8 +221,9 @@ describe('When a user is not logged in', () => {
 
   test('They cannot see their profile picture', (done) => {
     agent
-      .get(`/profile/${testEmail}`)
+      .get(`/profile/${testEmail1}`)
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -202,10 +231,11 @@ describe('When a user is not logged in', () => {
     agent
       .post('/login')
       .send({
-        email: testEmail,
+        email: testEmail1,
         password: testPasswordIncorrect,
       })
       .expect(302)
+      .expect('Location', '/login')
       .end(done);
   });
 
@@ -213,10 +243,11 @@ describe('When a user is not logged in', () => {
     agent
       .post('/login')
       .send({
-        email: testEmail,
+        email: testEmail1,
         password: testPasswordCorrect,
       })
       .expect(302)
+      .expect('Location', '/')
       .end(done);
   });
 });
@@ -226,7 +257,7 @@ describe('When a user is logged in', () => {
   beforeEach(async () => agent
     .post('/login')
     .send({
-      email: testEmail,
+      email: testEmail1,
       password: testPasswordCorrect,
     })
     .expect(302));
@@ -235,14 +266,14 @@ describe('When a user is logged in', () => {
   afterAll(async () => agent
     .delete('/user')
     .send({
-      email: testEmail,
+      email: testEmail1,
     })
     .expect(200));
 
   test('They can get their user data', (done) => {
     agent.get('/user')
       .expect((res) => {
-        assert.equal(res.body.email, testEmail);
+        assert.equal(res.body.email, testEmail1);
       })
       .end(done);
   });
@@ -251,6 +282,7 @@ describe('When a user is logged in', () => {
     agent
       .get('/login')
       .expect(302)
+      .expect('Location', '/')
       .end(done);
   });
 
@@ -258,6 +290,7 @@ describe('When a user is logged in', () => {
     agent
       .get('/register')
       .expect(302)
+      .expect('Location', '/')
       .end(done);
   });
 
@@ -278,12 +311,13 @@ describe('When a user is logged in', () => {
       .post('/post')
       .attach('image', testImage)
       .expect(302)
+      .expect('Location', '/feed')
       .end(done);
   });
 
   test('They can see their profile picture', (done) => {
     agent
-      .get(`/profile/${testEmail}`)
+      .get(`/profile/${testEmail1}`)
       .expect(200)
       .end(done);
   });
