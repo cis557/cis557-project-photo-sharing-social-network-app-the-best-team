@@ -32,6 +32,11 @@ afterAll((done) => {
     .then(server.close(done));
 });
 
+const mustBeLoggedInRes = '/login';
+const mustBeLoggedOutRes = '/';
+const emailAlreadyExistsRes = '/register?error=This%20email%20address%20is%20already%20in%20use';
+const usernameAlreadyExistsRes = '/register?error=This%20username%20is%20already%20in%20use';
+
 describe('Mock authentication tests', () => {
   test('Permits authenticated user to visit restricted page', () => {
     const req = { isAuthenticated: () => true };
@@ -48,7 +53,7 @@ describe('Mock authentication tests', () => {
     const next = () => 'next';
     const authentication = app.checkAuthenticated(req, res, next);
 
-    expect(authentication).toEqual('/login');
+    expect(authentication).toEqual(mustBeLoggedInRes);
   });
 
   test('Prevents authenticated user from visiting unrestricted page', () => {
@@ -57,7 +62,7 @@ describe('Mock authentication tests', () => {
     const next = () => 'next';
     const authentication = app.checkNotAuthenticated(req, res, next);
 
-    expect(authentication).toEqual('/');
+    expect(authentication).toEqual(mustBeLoggedOutRes);
   });
 
   test('Permits unauthenticated user to visit unrestricted page', () => {
@@ -78,11 +83,11 @@ describe('When a user is not logged in', () => {
       .end(done);
   });
 
-  test('They are redirected away from the homepage', (done) => {
+  test('They are directed to the login page from the homepage', (done) => {
     agent
       .get('/')
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
@@ -115,7 +120,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/feed')
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
@@ -123,7 +128,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/profile')
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
@@ -155,8 +160,7 @@ describe('When a user is not logged in', () => {
         image: testImage,
       })
       .expect(302)
-      // TODO: Add this kind of message elsewhere in app.js as well.
-      .expect('Location', '/register?error=This%20user%20already%20exists')
+      .expect('Location', emailAlreadyExistsRes)
       .end(done);
   });
 
@@ -172,7 +176,7 @@ describe('When a user is not logged in', () => {
         image: testImage,
       })
       .expect(302)
-      .expect('Location', '/register?error=Please%20pick%20another%20username')
+      .expect('Location', usernameAlreadyExistsRes)
       .end(done);
   });
 
@@ -180,15 +184,19 @@ describe('When a user is not logged in', () => {
     agent
       .get('/user')
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
   test('They cannot delete a user', (done) => {
     agent
       .delete('/user')
+      .send({
+        email: testEmail1,
+        password: testPasswordCorrect,
+      })
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
@@ -196,7 +204,7 @@ describe('When a user is not logged in', () => {
     agent
       .get('/users')
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
@@ -204,7 +212,7 @@ describe('When a user is not logged in', () => {
     agent
       .delete('/logout')
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
@@ -223,7 +231,7 @@ describe('When a user is not logged in', () => {
     agent
       .get(`/profile/${testEmail1}`)
       .expect(302)
-      .expect('Location', '/login')
+      .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
 
@@ -260,7 +268,8 @@ describe('When a user is logged in', () => {
       email: testEmail1,
       password: testPasswordCorrect,
     })
-    .expect(302));
+    .expect(302)
+    .expect('Location', '/'));
 
   // After tests finish, delete the test user and their posts from the database.
   afterAll(async () => agent
@@ -270,19 +279,18 @@ describe('When a user is logged in', () => {
     })
     .expect(200));
 
-  test('They can get their user data', (done) => {
-    agent.get('/user')
-      .expect((res) => {
-        assert.equal(res.body.email, testEmail1);
-      })
+  test('They receive a 404 response for an invalid page', (done) => {
+    agent
+      .get('/pizza')
+      .expect(404)
       .end(done);
   });
 
-  test('They cannot view the login page', (done) => {
+  test('They are directed to the feed page from the homepage', (done) => {
     agent
-      .get('/login')
+      .get('/')
       .expect(302)
-      .expect('Location', '/')
+      .expect('Location', '/feed')
       .end(done);
   });
 
@@ -290,7 +298,15 @@ describe('When a user is logged in', () => {
     agent
       .get('/register')
       .expect(302)
-      .expect('Location', '/')
+      .expect('Location', mustBeLoggedOutRes)
+      .end(done);
+  });
+
+  test('They cannot view the login page', (done) => {
+    agent
+      .get('/login')
+      .expect(302)
+      .expect('Location', mustBeLoggedOutRes)
       .end(done);
   });
 
@@ -306,6 +322,54 @@ describe('When a user is logged in', () => {
       });
   });
 
+  test('They can view the profile page', (done) => {
+    agent
+      .get('/profile')
+      .expect(200)
+      .end((err, res) => {
+        const dom = new JSDOM(res.text);
+        const title = dom.window.document.getElementsByTagName('title')[0].innerHTML;
+        assert(title === 'Photogram | Profile');
+        done();
+      });
+  });
+
+  test('They cannot register', (done) => {
+    agent
+      .get('/register')
+      .expect(302)
+      .expect('Location', mustBeLoggedOutRes)
+      .end(done);
+  });
+
+  test('They cannot log in', (done) => {
+    agent
+      .get('/login')
+      .expect(302)
+      .expect('Location', mustBeLoggedOutRes)
+      .end(done);
+  });
+
+  test('They can get their user data', (done) => {
+    agent.get('/user')
+      .send({
+        email: testEmail1,
+      })
+      .expect((res) => {
+        assert.equal(res.body.email, testEmail1);
+      })
+      .end(done);
+  });
+
+  test('They can get a list of users', (done) => {
+    agent
+      .get('/users')
+      .expect((res) => {
+        assert.notEqual(res.body.userArray, undefined);
+      })
+      .end(done);
+  });
+
   test('They can upload an image', (done) => {
     agent
       .post('/post')
@@ -318,7 +382,29 @@ describe('When a user is logged in', () => {
   test('They can see their profile picture', (done) => {
     agent
       .get(`/profile/${testEmail1}`)
+      .expect((res) => {
+        assert.notEqual(res.body, '{}');
+      })
+      .end(done);
+  });
+
+  /*
+  test('They can delete a user', (done) => {
+    agent
+      .delete('/user')
+      .send({
+        email: testEmail1,
+      })
       .expect(200)
       .end(done);
   });
+
+  test('They can log out', (done) => {
+    agent
+      .delete('/logout')
+      .expect(302)
+      .expect('Location', '/login')
+      .end(done);
+  });
+  */
 });
