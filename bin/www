@@ -8,7 +8,6 @@
 const debug = require('debug')('cis557-project-photo-sharing-social-network-app-the-best-team:server');
 const http = require('http');
 const { app } = require('../app');
-require('http-shutdown').extend();
 
 /**
  * Normalize a port into a number, string, or false.
@@ -38,7 +37,7 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-const server = http.createServer(app).withShutdown();
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.

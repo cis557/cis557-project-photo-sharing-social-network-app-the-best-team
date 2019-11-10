@@ -156,16 +156,14 @@ app.post('/register', checkNotAuthenticated, parser.single('image'), async (req,
     User.findOne({ email: incomingUser.email })
       .then((user) => {
         if (user) {
-          const message = encodeURIComponent('This user already exists');
-          // eslint-disable-next-line prefer-template
-          res.redirect('/register?error=' + message);
+          const message = encodeURIComponent('This email address is already in use');
+          res.redirect(`/register?error=${message}`);
         } else {
           User.findOne({ username: incomingUser.username })
             .then((userTwo) => {
               if (userTwo) {
-                const message = encodeURIComponent('Please pick another username');
-                // eslint-disable-next-line prefer-template
-                res.redirect('/register?error=' + message);
+                const message = encodeURIComponent('This username is already in use');
+                res.redirect(`/register?error=${message}`);
               } else {
                 if (req.file) {
                   let bytes;
@@ -174,7 +172,7 @@ app.post('/register', checkNotAuthenticated, parser.single('image'), async (req,
                     bytes = img.toString('base64');
                     fs.unlinkSync(req.file.path);
                   } catch (error) {
-                    res.redirect(`/register?error= ${error}`);
+                    res.redirect(`/register?error=${error}`);
                   }
                   incomingUser.image = Buffer.from(bytes, 'base64');
                 }
@@ -211,11 +209,6 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
   failureRedirect: '/login',
   failureFlash: true,
 }));
-
-app.delete('/logout', checkAuthenticated, (req, res) => {
-  req.logOut();
-  res.redirect('/login');
-});
 
 app.get('/user', checkAuthenticated, (req, res) => {
   User.findOne({ email: req.user.email })
@@ -395,4 +388,5 @@ module.exports = {
   app,
   checkAuthenticated,
   checkNotAuthenticated,
+  mongoose,
 };
