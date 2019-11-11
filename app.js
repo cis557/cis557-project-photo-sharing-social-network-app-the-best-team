@@ -124,8 +124,25 @@ app.get('/profile', checkAuthenticated, (req, res) => {
 
 app.get('/follow', checkAuthenticated, (req, res) => {
   User.find({}, (err, data) => {
-    // note that data is an array of objects, not a single object!
     res.render('follow.ejs', {
+      user: req.user.name,
+      names: data,
+    });
+  });
+});
+
+app.get('/follower', checkAuthenticated, (req, res) => {
+  User.find({}, (err, data) => {
+    res.render('follower.ejs', {
+      user: req.user.name,
+      names: data,
+    });
+  });
+});
+
+app.get('/followee', checkAuthenticated, (req, res) => {
+  User.find({}, (err, data) => {
+    res.render('followee.ejs', {
       user: req.user.name,
       names: data,
     });
