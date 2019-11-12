@@ -6,7 +6,7 @@
 async function addFriend(event) {
   const userInfo = await fetch('/user');
   const user = await userInfo.json();
-  console.log(user.email);
+  console.log(user.followers);
   console.log(1);
   await fetch('/follow',
     {
@@ -14,7 +14,7 @@ async function addFriend(event) {
       body: JSON.stringify({
         username: user.username,
         followname: event.target.value,
-        followArray: user.follower,
+        followArray: user.followers,
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
