@@ -5,7 +5,9 @@
 
 async function addFriend(event) {
   const userInfo = await fetch('/user');
-  const user = userInfo.json();
+  const user = await userInfo.json();
+  console.log(user.email);
+  console.log(1);
   await fetch('/follow',
     {
       method: 'POST',
@@ -18,9 +20,10 @@ async function addFriend(event) {
         'Content-type': 'application/json; charset=UTF-8',
       },
     });
+  console.log(2);
 }
 
-async function generatePossibleFollow(other, user) {
+async function generatePossibleFollow(other) {
   const container = document.getElementById('possible');
 
   // dt
@@ -83,7 +86,7 @@ async function generateNames() {
   const users = await allRes.json();
   users.forEach((others) => {
     if (userJSON.username !== others.username && (users).length !== 1) {
-      generatePossibleFollow(others, userJSON);
+      generatePossibleFollow(others);
     }
   });
 }
