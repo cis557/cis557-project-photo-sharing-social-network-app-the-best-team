@@ -123,18 +123,20 @@ app.get('/profile', checkAuthenticated, (req, res) => {
 });
 
 app.get('/follow', checkAuthenticated, (req, res) => {
+  console.log('1');
   User.find({}, (err, data) => {
     res.render('follow.ejs', {
-      user: req.user.name,
+      user: req.username,
       names: data,
     });
   });
 });
 
+
 app.get('/follower', checkAuthenticated, (req, res) => {
   User.find({}, (err, data) => {
     res.render('follower.ejs', {
-      user: req.user.name,
+      user: req.body.username,
       names: data,
     });
   });
@@ -143,7 +145,7 @@ app.get('/follower', checkAuthenticated, (req, res) => {
 app.get('/followee', checkAuthenticated, (req, res) => {
   User.find({}, (err, data) => {
     res.render('followee.ejs', {
-      user: req.user.name,
+      user: req.body.username,
       names: data,
     });
   });
@@ -152,6 +154,18 @@ app.get('/followee', checkAuthenticated, (req, res) => {
 /**
  * POST routes for registration/login.
  */
+
+app.post('/follow', checkAuthenticated, (req, res) => {
+  console.log(req);
+  try {
+    const user = req.username;
+    const userFollowers = req.followArray;
+    userFollowers.push(req.followname);
+    User.findOneAndUpdate({ username: user }, { followers: userFollowers }, { new: true });
+  } catch (error) {
+    res.redirect('/feed');
+  }
+});
 
 app.post('/register', checkNotAuthenticated, parser.single('image'), async (req, res) => {
   try {

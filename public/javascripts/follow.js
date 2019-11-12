@@ -1,4 +1,7 @@
 /* global document fetch */
+/* eslint-disable no-console */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable max-len */
 
 async function generatePossibleFollow(name) {
   const container = document.getElementById('possible');
@@ -7,7 +10,7 @@ async function generatePossibleFollow(name) {
   const nameHolder = document.createElement('dt');
   nameHolder.className = 'uk-text uk-margin';
   const names = document.createElement('h3');
-  names.innerText = name;
+  names.innerText = other.username;
   nameHolder.appendChild(names);
   container.appendChild(nameHolder);
 
@@ -20,15 +23,14 @@ async function generatePossibleFollow(name) {
   buttonHolder.setAttribute('uk-switcher', 'animation: uk-animation-fade');
 
   const unfollowList = document.createElement('li');
-  const unfollow = document.createElement('a');
-  unfollow.setAttribute('href', '#');
+  const unfollow = document.createElement('button');
   unfollow.innerText = 'Unfollow';
   unfollowList.appendChild(unfollow);
 
   const followList = document.createElement('li');
-  const follow = document.createElement('a');
-  follow.setAttribute('href', '#');
+  const follow = document.createElement('button');
   follow.innerHTML = 'Follow';
+  follow.onclick = addFriend(user, other);
   followList.appendChild(follow);
 
   buttonHolder.appendChild(unfollowList);
@@ -62,7 +64,7 @@ async function generateNames() {
   const users = await allRes.json();
   users.forEach((others) => {
     if (userJSON.username !== others.username && (users).length !== 1) {
-      generatePossibleFollow(others.username);
+      generatePossibleFollow(others, userJSON);
     }
   });
 }
