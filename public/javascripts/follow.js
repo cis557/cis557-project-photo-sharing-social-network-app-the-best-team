@@ -3,7 +3,22 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 
-async function generatePossibleFollow(name) {
+async function addFriend(user, other) {
+  await fetch('/follow',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        username: user.username,
+        followname: other.username,
+        followArray: user.follower,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    });
+}
+
+async function generatePossibleFollow(other, user) {
   const container = document.getElementById('possible');
 
   // dt
@@ -30,7 +45,9 @@ async function generatePossibleFollow(name) {
   const followList = document.createElement('li');
   const follow = document.createElement('button');
   follow.innerHTML = 'Follow';
-  follow.onclick = addFriend(user, other);
+  console.log(1);
+  follow.addEventListener('click', addFriend(user, other));
+  // follow.onclick = addFriend(user, other);
   followList.appendChild(follow);
 
   buttonHolder.appendChild(unfollowList);
