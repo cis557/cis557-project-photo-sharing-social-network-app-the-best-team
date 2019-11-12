@@ -6,8 +6,7 @@
 async function addFriend(event) {
   const userInfo = await fetch('/user');
   const user = await userInfo.json();
-  console.log(user.followers);
-  console.log(1);
+  console.log('hi');
   await fetch('/follow',
     {
       method: 'POST',
@@ -19,8 +18,10 @@ async function addFriend(event) {
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
-    });
-  console.log(2);
+    })
+    .then((response) => response.text())
+    .then((json) => console.log(json));
+  console.log('done');
 }
 
 async function generatePossibleFollow(other) {

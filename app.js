@@ -158,9 +158,9 @@ app.get('/followee', checkAuthenticated, (req, res) => {
 app.post('/follow', checkAuthenticated, (req, res) => {
   console.log(req);
   try {
-    const user = req.username;
-    const userFollowers = req.followArray;
-    userFollowers.push(req.followname);
+    const user = req.body.username;
+    const userFollowers = req.body.followArray;
+    userFollowers.push(req.body.followname);
     User.findOneAndUpdate({ username: user }, { followers: userFollowers }, { new: true });
   } catch (error) {
     res.redirect('/feed');
