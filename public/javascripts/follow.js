@@ -3,13 +3,15 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 
-async function addFriend(user, other) {
+async function addFriend(event) {
+  const userInfo = await fetch('/user');
+  const user = userInfo.json();
   await fetch('/follow',
     {
       method: 'POST',
       body: JSON.stringify({
         username: user.username,
-        followname: other.username,
+        followname: event.target.value,
         followArray: user.follower,
       }),
       headers: {
@@ -45,8 +47,8 @@ async function generatePossibleFollow(other, user) {
   const followList = document.createElement('li');
   const follow = document.createElement('button');
   follow.innerHTML = 'Follow';
-  console.log(1);
-  follow.addEventListener('click', addFriend(user, other));
+  follow.setAttribute('value', other.username);
+  follow.addEventListener('click', addFriend);
   // follow.onclick = addFriend(user, other);
   followList.appendChild(follow);
 
