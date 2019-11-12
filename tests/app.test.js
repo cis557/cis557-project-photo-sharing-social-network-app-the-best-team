@@ -1,10 +1,12 @@
-/* global afterAll afterEach beforeAll beforeEach describe expect test */
+/* global afterAll beforeAll beforeEach describe expect test */
 
 const request = require('supertest');
 const assert = require('assert');
 const jsdom = require('jsdom');
 const http = require('http');
 const app = require('../app');
+const User = require('../models/User');
+const Post = require('../models/Post');
 
 const { JSDOM } = jsdom;
 
@@ -28,8 +30,16 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  app.mongoose.connection.close()
-    .then(server.close(done));
+  agent
+    .delete('/user')
+    .send({
+      email: testEmail1,
+    })
+    .expect(200)
+    .end(() => {
+      app.mongoose.connection.close()
+        .then(server.close(done));
+    });
 });
 
 const mustBeLoggedInRes = '/login';
@@ -132,54 +142,6 @@ describe('When a user is not logged in', () => {
       .end(done);
   });
 
-  test('They register using mock credentials', (done) => {
-    agent
-      .post('/register')
-      .send({
-        firstname: testFirstName,
-        lastname: testLastName,
-        email: testEmail1,
-        password: testPasswordCorrect,
-        username: testUsername1,
-        image: testImage,
-      })
-      .expect(302)
-      .expect('Location', '/login')
-      .end(done);
-  });
-
-  test('They fail to register with a duplicate email address', (done) => {
-    agent
-      .post('/register')
-      .send({
-        firstname: testFirstName,
-        lastname: testLastName,
-        email: testEmail1,
-        password: testPasswordCorrect,
-        username: testUsername2,
-        image: testImage,
-      })
-      .expect(302)
-      .expect('Location', emailAlreadyExistsRes)
-      .end(done);
-  });
-
-  test('They fail to register with a duplicate username', (done) => {
-    agent
-      .post('/register')
-      .send({
-        firstname: testFirstName,
-        lastname: testLastName,
-        email: testEmail2,
-        password: testPasswordCorrect,
-        username: testUsername1,
-        image: testImage,
-      })
-      .expect(302)
-      .expect('Location', usernameAlreadyExistsRes)
-      .end(done);
-  });
-
   test('They cannot get a user\'s info', (done) => {
     agent
       .get('/user')
@@ -235,6 +197,99 @@ describe('When a user is not logged in', () => {
       .end(done);
   });
 
+  test('They cannot get a list of their followers', (done) => {
+    agent
+      .get('/follower')
+      .expect(302)
+      .expect('Location', mustBeLoggedInRes)
+      .end(done);
+  });
+
+  test('They cannot get a list of their followees', (done) => {
+    agent
+      .get('/followee')
+      .expect(302)
+      .expect('Location', mustBeLoggedInRes)
+      .end(done);
+  });
+
+  test('They cannot follow another user', (done) => {
+    agent
+      .get(`/follow/${testEmail2}`)
+      .expect(302)
+      .expect('Location', mustBeLoggedInRes)
+      .end(done);
+  });
+
+  test('They cannot like a post', (done) => {
+    agent
+      .get('/like')
+      .expect(302)
+      .expect('Location', mustBeLoggedInRes)
+      .end(done);
+  });
+});
+
+describe('When a user is registered', () => {
+  // Register before all tests.
+  beforeAll((done) => agent
+    .post('/register')
+    .send({
+      firstname: testFirstName,
+      lastname: testLastName,
+      email: testEmail1,
+      password: testPasswordCorrect,
+      username: testUsername1,
+      image: testImage,
+    })
+    .end(done));
+
+  test('Their data is in the database', (done) => {
+    User.findOne({ email: testEmail1 })
+      .then((user) => expect(user.email).toEqual(testEmail1))
+      .then(done);
+  });
+
+  test('They fail to register with a duplicate email address', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstname: testFirstName,
+        lastname: testLastName,
+        email: testEmail1,
+        password: testPasswordCorrect,
+        username: testUsername2,
+        image: testImage,
+      })
+      .expect(302)
+      .expect('Location', emailAlreadyExistsRes)
+      .end(() => {
+        User.findOne({ email: testEmail1 })
+          .then((user) => expect(user.email).toEqual(testEmail1))
+          .then(() => { done(); });
+      });
+  });
+
+  test('They fail to register with a duplicate username', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstname: testFirstName,
+        lastname: testLastName,
+        email: testEmail2,
+        password: testPasswordCorrect,
+        username: testUsername1,
+        image: testImage,
+      })
+      .expect(302)
+      .expect('Location', usernameAlreadyExistsRes)
+      .end(() => {
+        User.findOne({ username: testUsername1 })
+          .then((user) => expect(user.email).toEqual(testEmail1))
+          .then(() => { done(); });
+      });
+  });
+
   test('They cannot log in using invalid credentials', (done) => {
     agent
       .post('/login')
@@ -261,6 +316,18 @@ describe('When a user is not logged in', () => {
 });
 
 describe('When a user is logged in', () => {
+  // Register before all tests.
+  beforeAll(async () => agent
+    .post('/register')
+    .send({
+      firstname: testFirstName,
+      lastname: testLastName,
+      email: testEmail1,
+      password: testPasswordCorrect,
+      username: testUsername1,
+      image: testImage,
+    }));
+
   // Log in before every test.
   beforeEach(async () => agent
     .post('/login')
@@ -271,13 +338,11 @@ describe('When a user is logged in', () => {
     .expect(302)
     .expect('Location', '/'));
 
-  // After tests finish, delete the test user and their posts from the database.
-  afterAll(async () => agent
-    .delete('/user')
-    .send({
-      email: testEmail1,
-    })
-    .expect(200));
+  test('Their credentials appear in the database', (done) => {
+    User.findOne({ email: testEmail1 })
+      .then((user) => expect(user.email).toEqual(testEmail1))
+      .then(() => { done(); });
+  });
 
   test('They receive a 404 response for an invalid page', (done) => {
     agent
@@ -388,16 +453,65 @@ describe('When a user is logged in', () => {
       .end(done);
   });
 
-  /*
-  test('They can delete a user', (done) => {
+  test('They can get a list of their followers', (done) => {
     agent
-      .delete('/user')
-      .send({
-        email: testEmail1,
-      })
+      .get('/follower')
       .expect(200)
       .end(done);
   });
+
+  test('They can get a list of their followees', (done) => {
+    agent
+      .get('/followee')
+      .expect(200)
+      .end(done);
+  });
+
+  test('They can follow another user', (done) => {
+    agent
+      .get(`/follow/${testEmail2}`)
+      .expect(200)
+      .end(done);
+  });
+
+  test('They can like a post', (done) => {
+    agent
+      .get('/like')
+      .expect(200)
+      .end(done);
+  });
+});
+
+describe('When a user creates a post', () => {
+  beforeAll(async () => agent
+    // Register before all tests.
+    .post('/register')
+    .send({
+      firstname: testFirstName,
+      lastname: testLastName,
+      email: testEmail1,
+      password: testPasswordCorrect,
+      username: testUsername1,
+      image: testImage,
+    })
+    // Log in before all tests.
+    .then(() => {
+      agent
+        .post('/login')
+        .send({
+          email: testEmail1,
+          password: testPasswordCorrect,
+        })
+        .expect(302)
+        .expect('Location', '/')
+        .then(() => {
+          agent
+            .post('/post')
+            .attach('image', testImage)
+            .expect(302)
+            .expect('Location', '/feed');
+        });
+    }));
 
   test('They can log out', (done) => {
     agent
@@ -406,5 +520,36 @@ describe('When a user is logged in', () => {
       .expect('Location', '/login')
       .end(done);
   });
-  */
+});
+
+describe('When a user is logged in', () => {
+// Register before all tests.
+  beforeAll(async () => agent
+    .post('/register')
+    .send({
+      firstname: testFirstName,
+      lastname: testLastName,
+      email: testEmail1,
+      password: testPasswordCorrect,
+      username: testUsername1,
+      image: testImage,
+    }));
+
+  // Log in before every test.
+  beforeEach(async () => agent
+    .post('/login')
+    .send({
+      email: testEmail1,
+      password: testPasswordCorrect,
+    })
+    .expect(302)
+    .expect('Location', '/'));
+
+  test('They can log out', (done) => {
+    agent
+      .delete('/logout')
+      .expect(302)
+      .expect('Location', '/login')
+      .end(done);
+  });
 });
