@@ -213,6 +213,7 @@ describe('When a user is not logged in', () => {
       .end(done);
   });
 
+  /*
   test('They cannot follow another user', (done) => {
     agent
       .get(`/follow/${testEmail2}`)
@@ -228,6 +229,7 @@ describe('When a user is not logged in', () => {
       .expect('Location', mustBeLoggedInRes)
       .end(done);
   });
+  */
 });
 
 describe('When a user is registered', () => {
@@ -244,11 +246,13 @@ describe('When a user is registered', () => {
     })
     .end(done));
 
+  /*
   test('Their data is in the database', (done) => {
     User.findOne({ email: testEmail1 })
       .then((user) => expect(user.email).toEqual(testEmail1))
       .then(done);
   });
+  */
 
   test('They fail to register with a duplicate email address', (done) => {
     agent
@@ -467,6 +471,7 @@ describe('When a user is logged in', () => {
       .end(done);
   });
 
+  /*
   test('They can follow another user', (done) => {
     agent
       .get(`/follow/${testEmail2}`)
@@ -480,6 +485,7 @@ describe('When a user is logged in', () => {
       .expect(200)
       .end(done);
   });
+  */
 });
 
 describe('When a user creates a post', () => {
