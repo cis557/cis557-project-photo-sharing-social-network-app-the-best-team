@@ -10,4 +10,4 @@
 
 In the future, the GUI for uploading an image will be elsewhere (e.g., on the feed page). For now, though, it resides on the profile page.
 
-Note that users and posts (the two resources we are managing) are stored in a MongoDB Atlas database, so if you restart the server, your account and your uploaded images will persist. At this time, there is no way to delete them through the app.
+Note that users and posts (the two resources we are managing) are stored in a MongoDB Atlas database, so if you restart the server, your account and your uploaded images will persist.
