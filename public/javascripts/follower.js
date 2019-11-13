@@ -55,7 +55,7 @@ async function generateFollower(name) {
 }
 
 // eslint-disable-next-line no-unused-vars
-async function generateNames() {
+async function generateFollowers() {
   const userRes = await fetch('/user');
   const userJSON = await userRes.json();
   const userFollower = userJSON.followers;

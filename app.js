@@ -123,10 +123,9 @@ app.get('/profile', checkAuthenticated, (req, res) => {
 });
 
 app.get('/follow', checkAuthenticated, (req, res) => {
-  console.log('1');
   User.find({}, (err, data) => {
     res.render('follow.ejs', {
-      user: req.username,
+      user: req.body.username,
       names: data,
     });
   });
@@ -155,13 +154,34 @@ app.get('/followee', checkAuthenticated, (req, res) => {
  * POST routes for registration/login.
  */
 
-app.post('/follow', checkAuthenticated, (req, res) => {
-  console.log(req);
+app.post('/follower', checkAuthenticated, async (req, res) => {
+  console.log(req.body.username);
   try {
     const user = req.body.username;
     const userFollowers = req.body.followArray;
-    userFollowers.push(req.body.followname);
-    User.findOneAndUpdate({ username: user }, { followers: userFollowers }, { new: true });
+    console.log(userFollowers.indexOf(req.body.followname));
+    if (!(userFollowers.indexOf(req.body.followname) > -1)) {
+      userFollowers.push(req.body.followname);
+      console.log(userFollowers);
+      await User.findOneAndUpdate({ username: user }, { $set: { followers: userFollowers } });
+    }
+  } catch (error) {
+    res.redirect('/feed');
+  }
+});
+
+app.post('/followee', checkAuthenticated, async (req, res) => {
+  console.log(req.body.username);
+  try {
+    const user = req.body.username;
+    const userFollowers = req.body.followArray;
+    console.log(userFollowers.indexOf(req.body.followname));
+    if (userFollowers.indexOf(req.body.followname) > -1) {
+      console.log(userFollowers);
+      userFollowers.splice(userFollowers.indexOf(req.body.followname), 1);
+      console.log(userFollowers);
+      await User.findOneAndUpdate({ username: user }, { $set: { followers: userFollowers } });
+    }
   } catch (error) {
     res.redirect('/feed');
   }

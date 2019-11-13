@@ -6,8 +6,8 @@
 async function addFriend(event) {
   const userInfo = await fetch('/user');
   const user = await userInfo.json();
-  console.log('hi');
-  await fetch('/follow',
+  console.log(user.email);
+  await fetch('/follower',
     {
       method: 'POST',
       body: JSON.stringify({
@@ -17,11 +17,28 @@ async function addFriend(event) {
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json; charset=UTF-8',
       },
-    })
-    .then((response) => response.text())
-    .then((json) => console.log(json));
-  console.log('done');
+    });
+}
+// We post to /followee for now!
+async function deleteFriend(event) {
+  const userInfo = await fetch('/user');
+  const user = await userInfo.json();
+  console.log(user.email);
+  await fetch('/followee',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        username: user.username,
+        followname: event.target.value,
+        followArray: user.followers,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json; charset=UTF-8',
+      },
+    });
 }
 
 async function generatePossibleFollow(other) {
@@ -46,6 +63,8 @@ async function generatePossibleFollow(other) {
   const unfollowList = document.createElement('li');
   const unfollow = document.createElement('button');
   unfollow.innerText = 'Unfollow';
+  unfollow.setAttribute('value', other.username);
+  unfollow.addEventListener('click', deleteFriend);
   unfollowList.appendChild(unfollow);
 
   const followList = document.createElement('li');
