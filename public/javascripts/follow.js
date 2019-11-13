@@ -6,7 +6,14 @@
 async function addFriend(event) {
   const userInfo = await fetch('/user');
   const user = await userInfo.json();
-  console.log(user.email);
+  const allUsersInfo = await fetch('/users');
+  const allUsers = await allUsersInfo.json();
+  let followerFollowee;
+  allUsers.forEach((element) => {
+    if (element.username === event.target.value) {
+      followerFollowee = element.followees;
+    }
+  });
   await fetch('/follower',
     {
       method: 'POST',
@@ -14,6 +21,7 @@ async function addFriend(event) {
         username: user.username,
         followname: event.target.value,
         followArray: user.followers,
+        followeeArray: followerFollowee,
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
@@ -25,7 +33,14 @@ async function addFriend(event) {
 async function deleteFriend(event) {
   const userInfo = await fetch('/user');
   const user = await userInfo.json();
-  console.log(user.email);
+  const allUsersInfo = await fetch('/users');
+  const allUsers = await allUsersInfo.json();
+  let followerFollowee;
+  allUsers.forEach((element) => {
+    if (element.username === event.target.value) {
+      followerFollowee = element.followees;
+    }
+  });
   await fetch('/followee',
     {
       method: 'POST',
@@ -33,6 +48,7 @@ async function deleteFriend(event) {
         username: user.username,
         followname: event.target.value,
         followArray: user.followers,
+        followeeArray: followerFollowee,
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
