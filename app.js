@@ -125,16 +125,17 @@ app.get('/profile', checkAuthenticated, (req, res) => {
 app.get('/follow', checkAuthenticated, (req, res) => {
   User.find({}, (err, data) => {
     res.render('follow.ejs', {
-      user: req.user.name,
+      user: req.body.username,
       names: data,
     });
   });
 });
 
+
 app.get('/follower', checkAuthenticated, (req, res) => {
   User.find({}, (err, data) => {
     res.render('follower.ejs', {
-      user: req.user.name,
+      user: req.body.username,
       names: data,
     });
   });
@@ -143,7 +144,7 @@ app.get('/follower', checkAuthenticated, (req, res) => {
 app.get('/followee', checkAuthenticated, (req, res) => {
   User.find({}, (err, data) => {
     res.render('followee.ejs', {
-      user: req.user.name,
+      user: req.body.username,
       names: data,
     });
   });
@@ -152,6 +153,42 @@ app.get('/followee', checkAuthenticated, (req, res) => {
 /**
  * POST routes for registration/login.
  */
+
+app.post('/follower', checkAuthenticated, async (req, res) => {
+  console.log(req.body.username);
+  try {
+    const user = req.body.username;
+    const userFollowers = req.body.followArray;
+    const { followeeArray } = req.body;
+    if (!(userFollowers.indexOf(req.body.followname) > -1)) {
+      userFollowers.push(req.body.followname);
+      console.log(userFollowers);
+      followeeArray.push(user);
+      console.log(followeeArray);
+      await User.findOneAndUpdate({ username: user }, { $set: { followers: userFollowers } });
+      await User.findOneAndUpdate({ username: req.body.followname }, { $set: { followees: followeeArray } });
+    }
+  } catch (error) {
+    res.redirect('/feed');
+  }
+});
+
+app.post('/followee', checkAuthenticated, async (req, res) => {
+  console.log(req.body.username);
+  try {
+    const user = req.body.username;
+    const userFollowers = req.body.followArray;
+    const { followeeArray } = req.body;
+    if (userFollowers.indexOf(req.body.followname) > -1) {
+      userFollowers.splice(userFollowers.indexOf(req.body.followname), 1);
+      followeeArray.splice(followeeArray.indexOf(user), 1);
+      await User.findOneAndUpdate({ username: user }, { $set: { followers: userFollowers } });
+      await User.findOneAndUpdate({ username: req.body.followname }, { $set: { followees: followeeArray } });
+    }
+  } catch (error) {
+    res.redirect('/feed');
+  }
+});
 
 app.post('/register', checkNotAuthenticated, parser.single('image'), async (req, res) => {
   try {
