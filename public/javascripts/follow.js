@@ -1,13 +1,70 @@
 /* global document fetch */
+/* eslint-disable no-console */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable max-len */
 
-async function generatePossibleFollow(name) {
+async function addFriend(event) {
+  const userInfo = await fetch('/user');
+  const user = await userInfo.json();
+  const allUsersInfo = await fetch('/users');
+  const allUsers = await allUsersInfo.json();
+  let followerFollowee;
+  allUsers.forEach((element) => {
+    if (element.username === event.target.value) {
+      followerFollowee = element.followees;
+    }
+  });
+  await fetch('/follower',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        username: user.username,
+        followname: event.target.value,
+        followArray: user.followers,
+        followeeArray: followerFollowee,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json; charset=UTF-8',
+      },
+    });
+}
+// We post to /followee for now!
+async function deleteFriend(event) {
+  const userInfo = await fetch('/user');
+  const user = await userInfo.json();
+  const allUsersInfo = await fetch('/users');
+  const allUsers = await allUsersInfo.json();
+  let followerFollowee;
+  allUsers.forEach((element) => {
+    if (element.username === event.target.value) {
+      followerFollowee = element.followees;
+    }
+  });
+  await fetch('/followee',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        username: user.username,
+        followname: event.target.value,
+        followArray: user.followers,
+        followeeArray: followerFollowee,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json; charset=UTF-8',
+      },
+    });
+}
+
+async function generatePossibleFollow(other) {
   const container = document.getElementById('possible');
 
   // dt
   const nameHolder = document.createElement('dt');
   nameHolder.className = 'uk-text uk-margin';
   const names = document.createElement('h3');
-  names.innerText = name;
+  names.innerText = other.username;
   nameHolder.appendChild(names);
   container.appendChild(nameHolder);
 
@@ -20,15 +77,18 @@ async function generatePossibleFollow(name) {
   buttonHolder.setAttribute('uk-switcher', 'animation: uk-animation-fade');
 
   const unfollowList = document.createElement('li');
-  const unfollow = document.createElement('a');
-  unfollow.setAttribute('href', '#');
+  const unfollow = document.createElement('button');
   unfollow.innerText = 'Unfollow';
+  unfollow.setAttribute('value', other.username);
+  unfollow.addEventListener('click', deleteFriend);
   unfollowList.appendChild(unfollow);
 
   const followList = document.createElement('li');
-  const follow = document.createElement('a');
-  follow.setAttribute('href', '#');
+  const follow = document.createElement('button');
   follow.innerHTML = 'Follow';
+  follow.setAttribute('value', other.username);
+  follow.addEventListener('click', addFriend);
+  // follow.onclick = addFriend(user, other);
   followList.appendChild(follow);
 
   buttonHolder.appendChild(unfollowList);
@@ -62,7 +122,7 @@ async function generateNames() {
   const users = await allRes.json();
   users.forEach((others) => {
     if (userJSON.username !== others.username && (users).length !== 1) {
-      generatePossibleFollow(others.username);
+      generatePossibleFollow(others);
     }
   });
 }
