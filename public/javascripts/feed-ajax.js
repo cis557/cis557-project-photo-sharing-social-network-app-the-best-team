@@ -44,7 +44,8 @@ const generatePost = async function generatePost(imgId, email) {
   const likeIcon = $('<i></i>')
     .attr('id', imgId)
     .attr('class', 'far fa-heart not-liked')
-    .click(function click() {
+    .click(function click(e) {
+      e.preventDefault();
       const cls = $(this).attr('class');
       if (cls.includes('not-liked')) {
         $(this).removeAttr('class');
