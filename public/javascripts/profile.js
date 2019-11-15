@@ -54,7 +54,7 @@ async function generatePost(imgId) {
   body.appendChild(commentIcon);
 }
 
-async function generateProfile(email, usern, name, followers, followees) {
+async function generateProfile(email, usern, name, followers, followees, postsLength) {
   const img = document.getElementById('profile-image');
   img.src = `/profile/${email}`;
   const username = document.getElementById('username');
@@ -62,9 +62,11 @@ async function generateProfile(email, usern, name, followers, followees) {
   const fullname = document.getElementById('name');
   fullname.innerHTML = name;
   const following = document.getElementById('following');
-  following.innerHTML = `Following: ${followees.length}`;
+  following.innerHTML = `${followees.length}`;
   const followed = document.getElementById('followers');
-  followed.innerHTML = `Followers: ${followers.length}`;
+  followed.innerHTML = `${followers.length}`;
+  const post = document.getElementById('posts');
+  post.innerHTML = `${postsLength}`;
 }
 
 // This function is called in feed.ejs.
@@ -76,5 +78,5 @@ async function generateRecentPosts() {
     generatePost(user.posts[user.posts.length - 1]);
   }
   const name = `${user.firstName} ${user.lastName}`;
-  generateProfile(user.email, user.username, name, user.followers, user.followees);
+  generateProfile(user.email, user.username, name, user.followers, user.followees, user.posts.length);
 }

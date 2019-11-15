@@ -43,8 +43,9 @@ async function generatePost(imgId) {
   body.appendChild(text);
 
   const likeIcon = document.createElement('a');
-  likeIcon.href = '';
   likeIcon.setAttribute('uk-icon', 'heart');
+  likeIcon.className = 'not-liked';
+  likeIcon.id = imgId;
   body.appendChild(likeIcon);
 
   const commentIcon = document.createElement('a');
