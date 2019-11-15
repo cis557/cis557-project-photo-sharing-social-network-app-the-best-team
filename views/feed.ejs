@@ -7,12 +7,23 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/uikit.min.css">
     <script src="javascripts/uikit.min.js"></script>
     <script src="javascripts/uikit-icons.min.js"></script>
-    <script src="javascripts/feed.js"></script>
+    <script src="https://kit.fontawesome.com/38a434c2e6.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="javascripts/feed-ajax.js"></script>
     <link rel="icon" href="images/logo.ico" type="image/x-icon">
     <title>Feed | Photogram</title>
+    <style>
+        .liked {
+            color: red;
+        }
+
+        i:hover {
+            cursor: pointer;
+        }
+    </style>
 </head>
 
-<body onload="generatePosts();">
+<body>
     <header class="uk-margin-medium-bottom" style="background-color: #fff; border-bottom: 1px solid #dbdbdb"
         data-uk-sticky="show-on-up: true; animation: uk-animation-fade">
         <div class="uk-container uk-container-small">

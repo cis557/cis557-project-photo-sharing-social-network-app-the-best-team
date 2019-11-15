@@ -151,6 +151,7 @@ app.post('/register', checkNotAuthenticated, parser.single('image'), async (req,
       followers: [],
       followees: [],
       image: Buffer.from(defaultImg, 'base64'),
+      likes: [],
     };
 
     User.findOne({ email: incomingUser.email })
@@ -190,6 +191,7 @@ app.post('/register', checkNotAuthenticated, parser.single('image'), async (req,
                   followees: incomingUser.followees,
                   image: incomingUser.image,
                   username: incomingUser.username,
+                  likes: incomingUser.likes,
                 });
 
                 newUser.save()
@@ -342,15 +344,55 @@ app.delete('/post/:id', checkAuthenticated, (req, res) => {
  * Routes for liking posts.
  */
 
-/*
-app.post('/like', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
+app.get('/like/:_id', checkAuthenticated, (req, res) => {
+  const { _id } = req.params;
+  Post.findOne({ _id: ObjectId(_id) }, (err, result) => {
+    if (err) {
+      // TODO: Report error to user.
+    } else if (result == null || result.likes == null) {
+      // TODO: Report error to user.
+    } else {
+      res.send(result.likes);
+    }
+  });
 });
 
-app.delete('/like', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
+app.post('/like/:_id', checkAuthenticated, (req, res) => {
+  const { _id } = req.params;
+  const user = req.user.email;
+  Post.findOneAndUpdate({ _id: ObjectId(_id) }, { $push: { likes: user } })
+    .then(() => {
+      User.findOneAndUpdate({ email: user }, { $push: { likes: _id } })
+        .then(() => {
+          res.send({ code: 200 });
+        })
+        .catch(() => {
+          res.send({ code: 400 });
+        });
+    })
+    .catch(() => {
+      // TODO
+    });
 });
-*/
+
+app.delete('/like/:_id', checkAuthenticated, (req, res) => {
+  const { _id } = req.params;
+  const user = req.user.email;
+  Post.findOneAndUpdate({ _id: ObjectId(_id) }, { $pull: { likes: user } })
+    .then(() => {
+      User.findOneAndUpdate({ email: user }, { $pull: { likes: _id } })
+        .then(() => {
+          res.send({ code: 200 });
+        })
+        .catch(() => {
+          res.send({ code: 400 });
+        });
+    })
+    .catch(() => {
+      // TODO
+    });
+});
+
 
 /**
  * Routes for commenting on posts.
