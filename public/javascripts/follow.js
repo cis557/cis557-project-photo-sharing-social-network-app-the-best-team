@@ -11,7 +11,8 @@ async function addFriend(event) {
   let followerFollowee;
   allUsers.forEach((element) => {
     if (element.username === event.target.value) {
-      followerFollowee = element.followees;
+      // change
+      followerFollowee = element.followers;
     }
   });
   await fetch('/follower',
@@ -20,7 +21,8 @@ async function addFriend(event) {
       body: JSON.stringify({
         username: user.username,
         followname: event.target.value,
-        followArray: user.followers,
+        // change
+        followArray: user.followees,
         followeeArray: followerFollowee,
       }),
       headers: {
@@ -38,7 +40,8 @@ async function deleteFriend(event) {
   let followerFollowee;
   allUsers.forEach((element) => {
     if (element.username === event.target.value) {
-      followerFollowee = element.followees;
+      // change
+      followerFollowee = element.followers;
     }
   });
   await fetch('/followee',
@@ -47,7 +50,8 @@ async function deleteFriend(event) {
       body: JSON.stringify({
         username: user.username,
         followname: event.target.value,
-        followArray: user.followers,
+        // change
+        followArray: user.followees,
         followeeArray: followerFollowee,
       }),
       headers: {

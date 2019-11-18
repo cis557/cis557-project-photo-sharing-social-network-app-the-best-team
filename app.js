@@ -158,15 +158,15 @@ app.post('/follower', checkAuthenticated, async (req, res) => {
   console.log(req.body.username);
   try {
     const user = req.body.username;
-    const userFollowers = req.body.followArray;
+    const userFollowees = req.body.followArray;
     const { followeeArray } = req.body;
-    if (!(userFollowers.indexOf(req.body.followname) > -1)) {
-      userFollowers.push(req.body.followname);
-      console.log(userFollowers);
+    if (!(userFollowees.indexOf(req.body.followname) > -1)) {
+      userFollowees.push(req.body.followname);
+      console.log(userFollowees);
       followeeArray.push(user);
       console.log(followeeArray);
-      await User.findOneAndUpdate({ username: user }, { $set: { followers: userFollowers } });
-      await User.findOneAndUpdate({ username: req.body.followname }, { $set: { followees: followeeArray } });
+      await User.findOneAndUpdate({ username: user }, { $set: { followees: userFollowees } });
+      await User.findOneAndUpdate({ username: req.body.followname }, { $set: { followers: followeeArray } });
     }
   } catch (error) {
     res.redirect('/feed');
@@ -182,8 +182,8 @@ app.post('/followee', checkAuthenticated, async (req, res) => {
     if (userFollowers.indexOf(req.body.followname) > -1) {
       userFollowers.splice(userFollowers.indexOf(req.body.followname), 1);
       followeeArray.splice(followeeArray.indexOf(user), 1);
-      await User.findOneAndUpdate({ username: user }, { $set: { followers: userFollowers } });
-      await User.findOneAndUpdate({ username: req.body.followname }, { $set: { followees: followeeArray } });
+      await User.findOneAndUpdate({ username: user }, { $set: { followees: userFollowers } });
+      await User.findOneAndUpdate({ username: req.body.followname }, { $set: { followers: followeeArray } });
     }
   } catch (error) {
     res.redirect('/feed');
