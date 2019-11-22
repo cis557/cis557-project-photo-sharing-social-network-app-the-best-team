@@ -1,18 +1,6 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-  image: {
-    type: Buffer,
-    required: false,
-  },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
@@ -23,11 +11,27 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,
   },
+  image: {
+    type: Buffer,
+    required: false,
+  },
   posts: {
+    type: Array,
+    required: false,
+  },
+  likes: {
     type: Array,
     required: false,
   },
@@ -36,10 +40,6 @@ const UserSchema = new mongoose.Schema({
     required: false,
   },
   followees: {
-    type: Array,
-    required: false,
-  },
-  likes: {
     type: Array,
     required: false,
   },
