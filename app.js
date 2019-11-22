@@ -336,6 +336,7 @@ app.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
 
 app.get('/post/:_id', checkAuthenticated, (req, res) => {
   const { _id } = req.params;
+
   Post.findOne({ _id: ObjectId(_id) }, (err, result) => {
     if (err) {
       // TODO: Report error to user.
@@ -408,24 +409,38 @@ app.delete('/like/:_id', checkAuthenticated, (req, res) => {
  * Routes for commenting on posts.
  */
 
-app.post('/comment/:_id', checkAuthenticated, (req, res) => {
-  const { _id } = req.params;
-  const user = req.user.email;
+app.post('/comment/:postId', checkAuthenticated, (req, res) => {
+  const { postId } = req.params;
+  const { username } = req.user;
+  const { text } = req.body;
 
   const comment = {
-    email: user,
+    username,
     datetime: Date.now(),
-    text: req.body.text,
+    text,
     mentions: [],
   };
 
-  Post.findOneAndUpdate({ _id: ObjectId(_id) }, { $push: { comments: comment } })
+  Post.findOneAndUpdate({ _id: ObjectId(postId) }, { $push: { comments: comment } })
     .then(() => {
-      res.redirect('/feed');
+      res.sendStatus(201);
     })
     .catch(() => {
-      const message = encodeURIComponent('Post not found');
-      res.redirect(`/feed?error=${message}`);
+      res.sendStatus(500);
+    });
+});
+
+app.delete('/comment/:postId/:commentId', checkAuthenticated, (req, res) => {
+  const { postId } = req.params;
+  const { commentId } = req.params;
+  const { username } = req.user;
+
+  Post.findOneAndUpdate({ _id: ObjectId(postId) }, { $pull: { comments: { username, _id: ObjectId(commentId) } } })
+    .then(() => {
+      res.sendStatus(202);
+    })
+    .catch(() => {
+      res.sendStatus(500);
     });
 });
 

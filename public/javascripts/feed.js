@@ -1,6 +1,119 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
 
-async function generatePost(user, i) {
+// TODO: Clean up the vanilla/jQuery mixing in this file.
+
+let user;
+
+function clickLikeButton(e) {
+  e.preventDefault();
+  const cls = $(this).attr('class');
+  if (cls.includes('not-liked')) {
+    $(this).removeAttr('class');
+    $(this).attr('class', 'fas fa-heart liked');
+    const postId = $(this).attr('postId');
+    $.post(`/like/${postId}`, function success(data) {
+      if (data.code !== 200) {
+        $(this).removeAttr('class');
+        $(this).attr('class', 'far fa-heart not-liked');
+      }
+    });
+  } else {
+    $(this).removeAttr('class');
+    $(this).attr('class', 'far fa-heart not-liked');
+    const postId = $(this).attr('postId');
+    $.ajax({
+      url: `/like/${postId}`,
+      type: 'DELETE',
+      success: function success(data) {
+        if (data.code !== 200) {
+          $(this).removeAttr('class');
+          $(this).attr('class', 'fas fa-heart liked');
+        }
+      },
+    });
+  }
+}
+
+function clickAddCommentButton(e) {
+  e.preventDefault();
+
+  const postId = $(this).attr('postId');
+  const commentInput = document.getElementById(`commentInput-${postId}`);
+
+  if (commentInput.value === '') {
+    return;
+  }
+
+  $.ajax({
+    url: `/comment/${postId}`,
+    type: 'POST',
+    data: {
+      text: commentInput.value,
+    },
+    success: function success() {
+      updatePostComments(postId);
+    },
+  });
+
+  commentInput.value = '';
+}
+
+function clickDeleteCommentButton(e) {
+  e.preventDefault();
+
+  const postId = $(this).attr('postId');
+  const commentId = $(this).attr('commentId');
+  const username = $(this).attr('username');
+
+  if (username !== user.username) {
+    return;
+  }
+
+  $.ajax({
+    url: `/comment/${postId}/${commentId}`,
+    type: 'DELETE',
+    success: function success() {
+      updatePostComments(postId);
+    },
+  });
+}
+
+async function updatePostComments(postId) {
+  const commentsContainer = document.getElementById(`commentsContainer-${postId}`);
+
+  let child = commentsContainer.lastElementChild;
+
+  while (child) {
+    commentsContainer.removeChild(child);
+    child = commentsContainer.lastElementChild;
+  }
+
+  const postRes = await fetch(`/post/${postId}`);
+  const postJson = await postRes.json();
+
+  for (let j = 0; j < postJson.comments.length; j += 1) {
+    const comment = document.createElement('div');
+    comment.setAttribute('postId', postId);
+    comment.setAttribute('class', 'comment');
+    comment.innerHTML = `${postJson.comments[j].username}: ${postJson.comments[j].text}`;
+    commentsContainer.appendChild(comment);
+
+    if (postJson.comments[j].username === user.username) {
+      const deleteButton = document.createElement('input');
+      deleteButton.setAttribute('type', 'button');
+      deleteButton.setAttribute('postId', postId);
+      deleteButton.setAttribute('commentId', postJson.comments[j]._id);
+      deleteButton.setAttribute('username', user.username);
+      deleteButton.setAttribute('value', 'X');
+      deleteButton.onclick = clickDeleteCommentButton;
+      commentsContainer.appendChild(deleteButton);
+    }
+  }
+}
+
+async function generatePost(i) {
   const posts = $('#posts');
 
   const postId = user.posts[i];
@@ -10,6 +123,7 @@ async function generatePost(user, i) {
   const post = $('<div></div>')
     .attr('class', 'uk-card uk-card-default uk-card-hover uk-align-center')
     .attr('uk-scrollspy', 'cls: uk-animation-fade; repeat: true');
+  posts.append(post);
 
   const title = $('<h3></h3>')
     .attr('class', 'uk-card-title uk-text-left-medium')
@@ -42,37 +156,9 @@ async function generatePost(user, i) {
   body.append(description);
 
   const likeIcon = $('<i></i>')
-    .attr('id', postId)
+    .attr('postId', postId)
     .attr('class', 'far fa-heart not-liked')
-    .click(function click(e) {
-      e.preventDefault();
-      const cls = $(this).attr('class');
-      if (cls.includes('not-liked')) {
-        $(this).removeAttr('class');
-        $(this).attr('class', 'fas fa-heart liked');
-        const id = $(this).attr('id');
-        $.post(`/like/${id}`, function success(data) {
-          if (data.code !== 200) {
-            $(this).removeAttr('class');
-            $(this).attr('class', 'far fa-heart not-liked');
-          }
-        });
-      } else {
-        $(this).removeAttr('class');
-        $(this).attr('class', 'far fa-heart not-liked');
-        const id = $(this).attr('id');
-        $.ajax({
-          url: `/like/${id}`,
-          type: 'DELETE',
-          success: function success(data) {
-            if (data.code !== 200) {
-              $(this).removeAttr('class');
-              $(this).attr('class', 'fas fa-heart liked');
-            }
-          },
-        });
-      }
-    });
+    .click(clickLikeButton);
   $.get(`/like/${postId}`, (data) => {
     if (data.includes(user.email)) {
       likeIcon.removeAttr('class');
@@ -81,19 +167,30 @@ async function generatePost(user, i) {
   });
   body.append(likeIcon);
 
-  const commentIcon = $('<a></a>')
-    .attr('uk-icon', 'comments');
-  body.append(commentIcon);
+  const commentInput = $('<textarea></textarea>')
+    .attr('id', `commentInput-${postId}`);
+  body.append(commentInput);
 
-  posts.append(post);
+  const commentSubmit = $('<input></input>')
+    .attr('type', 'button')
+    .attr('value', 'Submit')
+    .attr('postId', postId)
+    .click(clickAddCommentButton);
+  body.append(commentSubmit);
+
+  const commentsContainer = $('<div></div>')
+    .attr('id', `commentsContainer-${postId}`);
+  body.append(commentsContainer);
+
+  updatePostComments(postId);
 }
 
 const generatePosts = async function generatePosts() {
   const res = await fetch('/user');
-  const user = await res.json();
+  user = await res.json();
 
   for (let i = user.posts.length - 1; i >= 0; i -= 1) {
-    generatePost(user, i);
+    generatePost(i);
   }
 };
 
