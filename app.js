@@ -122,34 +122,6 @@ app.get('/profile', checkAuthenticated, (req, res) => {
   res.render('profile.ejs', { name: req.user.firstName });
 });
 
-app.get('/follow', checkAuthenticated, (req, res) => {
-  User.find({}, (err, data) => {
-    res.render('follow.ejs', {
-      user: req.body.username,
-      names: data,
-    });
-  });
-});
-
-
-app.get('/follower', checkAuthenticated, (req, res) => {
-  User.find({}, (err, data) => {
-    res.render('follower.ejs', {
-      user: req.body.username,
-      names: data,
-    });
-  });
-});
-
-app.get('/followee', checkAuthenticated, (req, res) => {
-  User.find({}, (err, data) => {
-    res.render('followee.ejs', {
-      user: req.body.username,
-      names: data,
-    });
-  });
-});
-
 /**
  * POST routes for registration/login.
  */
@@ -292,6 +264,17 @@ app.get('/users', checkAuthenticated, (req, res) => {
   });
 });
 
+app.get('/profile/:email', checkAuthenticated, (req, res) => {
+  const { email } = req.params;
+  User.findOne({ email }, (err, result) => {
+    if (err) {
+      // TODO: Report error to user.
+    } else {
+      res.send(Buffer.from(result.image, 'binary'));
+    }
+  });
+});
+
 app.delete('/logout', checkAuthenticated, (req, res) => {
   req.logOut();
   res.redirect('/login');
@@ -359,33 +342,12 @@ app.get('/post/:_id', checkAuthenticated, (req, res) => {
     } else if (result == null || result.image == null) {
       // TODO: Report error to user.
     } else {
-      res.send(Buffer.from(result.image, 'binary'));
+      const post = result;
+      post.image = Buffer.from(result.image, 'binary');
+      res.send(post);
     }
   });
 });
-
-app.get('/profile/:email', checkAuthenticated, (req, res) => {
-  const { email } = req.params;
-  User.findOne({ email }, (err, result) => {
-    if (err) {
-      // TODO: Report error to user.
-    } else {
-      res.send(Buffer.from(result.image, 'binary'));
-    }
-  });
-});
-
-// TODO: The routes below are for future milestones.
-
-/*
-app.post('/post/:id', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
-
-app.delete('/post/:id', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
-*/
 
 /**
  * Routes for liking posts.
@@ -418,7 +380,8 @@ app.post('/like/:_id', checkAuthenticated, (req, res) => {
         });
     })
     .catch(() => {
-      // TODO
+      const message = encodeURIComponent('Post not found');
+      res.redirect(`/feed?error=${message}`);
     });
 });
 
@@ -436,49 +399,66 @@ app.delete('/like/:_id', checkAuthenticated, (req, res) => {
         });
     })
     .catch(() => {
-      // TODO
+      const message = encodeURIComponent('Post not found');
+      res.redirect(`/feed?error=${message}`);
     });
 });
-
 
 /**
  * Routes for commenting on posts.
  */
 
-/*
-app.post('/comment', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
+app.post('/comment/:_id', checkAuthenticated, (req, res) => {
+  const { _id } = req.params;
+  const user = req.user.email;
 
-app.post('/comment/:id', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
-});
+  const comment = {
+    email: user,
+    datetime: Date.now(),
+    text: req.body.text,
+    mentions: [],
+  };
 
-app.delete('/comment:id', checkAuthenticated, (req, res) => {
-  // TODO: Implement this route.
+  Post.findOneAndUpdate({ _id: ObjectId(_id) }, { $push: { comments: comment } })
+    .then(() => {
+      res.redirect('/feed');
+    })
+    .catch(() => {
+      const message = encodeURIComponent('Post not found');
+      res.redirect(`/feed?error=${message}`);
+    });
 });
-*/
 
 /**
- * Routes for followers and followees.
+ * Routes for following users.
  */
 
+app.get('/follow', checkAuthenticated, (req, res) => {
+  User.find({}, (err, data) => {
+    res.render('follow.ejs', {
+      user: req.body.username,
+      names: data,
+    });
+  });
+});
 
-// app.post('/follow', checkAuthenticated, (req, res) => {
-//   // TODO: Implement this route.
-// });
+app.get('/follower', checkAuthenticated, (req, res) => {
+  User.find({}, (err, data) => {
+    res.render('follower.ejs', {
+      user: req.body.username,
+      names: data,
+    });
+  });
+});
 
-// app.delete('/follow', checkAuthenticated, (req, res) => {
-//   // TODO: Implement this route.
-// });
-
-// app.get('/followers', checkAuthenticated, (req, res) => {
-//   // TODO: Implement this route.
-// });
-
-// app.get('/followees', checkAuthenticated, (req, res) => {
-//   // TODO: Implement this route.
-// });
+app.get('/followee', checkAuthenticated, (req, res) => {
+  User.find({}, (err, data) => {
+    res.render('followee.ejs', {
+      user: req.body.username,
+      names: data,
+    });
+  });
+});
 
 module.exports = {
   app,

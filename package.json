@@ -8,7 +8,7 @@
     "test": "jest --coverage --detectOpenHandles --testTimeout=10000"
   },
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^2.0.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -19,7 +19,6 @@
     "express-flash": "0.0.2",
     "express-session": "^1.17.0",
     "http-errors": "~1.6.3",
-    "http-shutdown": "^1.2.1",
     "jquery": "^3.4.1",
     "jsdom": "^15.2.1",
     "json-stringify-safe": "^5.0.1",
