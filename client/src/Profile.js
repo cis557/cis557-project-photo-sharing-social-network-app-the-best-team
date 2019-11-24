@@ -4,17 +4,21 @@ import { api } from './api.js'
 import './stylesheets/uikit.min.css';
 
 let data = {
-    name: "Yiwen"
+    name: "Yiwen Tang",
+    username: "Yiwen123",
+    post: ["1","2"],
+    followerArr: ["John", "Jack"],
+    followeeArr: ["Tom", "Jerry"],
+    self: true
+    // FIXME: Profile Image Missing!! 
 }
 
 class Profile extends Component
  {
     constructor(props) {
         super(props);
-        this.x = Math.random()
         this.state = { visibility: 1,
                        data: data };
-        console.log(this.x)
     }
 
     callAPI() {
@@ -28,7 +32,9 @@ class Profile extends Component
         this.callAPI();
     }
 
-    render(data) {
+    render() {
+        const contents = this.state.data;
+        const followButton = contents.self;
         if(this.state.visibility == 1){
         return (
             <div className="uk-flex uk-flex-center uk-background-default">
@@ -38,21 +44,36 @@ class Profile extends Component
                             <img className="uk-border-pill" style= {{height: "150px", width: "150px"}} id="profile-image" src={require('./images/photogram.png')} alt=""></img>
                         </div>
                     <div className="uk-width-expand uk-padding-small uk-flex uk-flex-column">
-                        <p id="username" className="uk-text-lead uk-text-light">Yiwen123</p>
-                        <span> <p id="followers" className="uk-text-bold">Follower: 1</p><p id="following" className="uk-text-bold">Following: 1</p> </span>
-                        <p id="name" className="uk-text-bold uk-text-small">data</p>
+                       <h1 id="username" className="uk-text-light uk-margin-remove uk-heading-xsmall">{contents.username}</h1>
+                       {followButton && <a className="uk-button uk-button-default uk-margin-right uk-margin-small" style={{height: "40px"}, {width: "120px"}} href="#follow">Follow</a>}
+                       <span className="uk-margin-small"> 
+                            <h5 id="followers" className="uk-text-bold">{"Follower: " + (contents.followerArr).length}</h5>
+                            <h5 id="following" className="uk-text-bold">{"Followee: " + (contents.followerArr).length}</h5>
+                            <h5 id="name" className="uk-text-bold">{"Name: "+ contents.name}</h5>
+                        </span>
                     </div>
                 </div>
-                <form className="uk-margin-small-bottom" action="/post" encType="multipart/form-data" method="POST" className="uk-form-stacked">
-                    <div className="uk-margin">
+                <div className = "uk-section">
+                    <form>
+                    <fieldset className="uk-fieldset">
+                        <p className="uk-legend">Create Post</p>
+                        <div className="">
+                        <input className="uk-input" type="text" placeholder="Title"></input>
+                        </div>
+                        <div className="uk-margin">
+                        <textarea className="uk-textarea" rows="5" placeholder="Description"></textarea>
+                        </div>
+                        <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                        <label><input className="uk-radio" type="radio" name="radio2" checked></input>Private</label>
+                        <label><input className="uk-radio" type="radio" name="radio2"></input>Public</label>
+                        </div>
+                        <div className="uk-margin">
                         <label for="image" className="uk-form-label uk-text-large">Select an image to upload:</label>
-                        <input id="image" className="uk-input uk-form-width-large" type="file" name="image" accept="image/*" />
-                        <input type="submit" className="uk-button-muted uk-button-small" value="Upload" />
-                    </div>
-                </form>
-                <div className="uk-container uk-container-small uk-margin-top">
-                    <div id="recentPost" className="uk-child-width-1-2@m uk-align-center uk-background-default">
-                    </div>
+                        <input id="image" className="uk-input uk-form-width-xxlarge" type="file" name="image" accept="image/*" />
+                        </div>
+                    <input type="submit" className="uk-button-primary uk-button" value="Upload" />
+                    </fieldset>
+                    </form>
                 </div>
             </div>
         </div>
