@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import './stylesheets/uikit.min.css';
 import { rgba } from 'polished'
-import { api } from './api.js'
+import { api } from '../api.js'
 
 class Login extends Component {
   constructor(props) {
@@ -22,12 +21,9 @@ class Login extends Component {
 
   render() {
     return (
-      <div id="Login">
-        <div id="slide-show" className="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
-          <div className="uk-position-cover uk-overlay-primary"></div>
           <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{backgroundColor: rgba(253, 253, 253, 0.253)}}>
             <div className="uk-text-center uk-margin">
-              <img src={require('./images/photogram.png')} alt="Logo"></img>
+              <img src={require('../images/photogram.png')} alt="Logo"></img>
             </div>
             <h4 className="uk-heading-line uk-text-center" style={{color: rgba(255, 255, 255, .8)}}><span>Log In</span></h4>
             <form action={api.url + "/login"} method="POST" className="toggle-class">
@@ -51,8 +47,6 @@ class Login extends Component {
               </fieldset>
             </form>
           </div>
-        </div>
-      </div>
     );
   }
 }
