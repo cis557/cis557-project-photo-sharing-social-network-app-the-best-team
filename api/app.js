@@ -26,7 +26,7 @@ mongoose.connect(process.env.DB_URL, {
   useUnifiedTopology: true,
 }, (err) => {
   if (err) {
-    console.log(err);
+    console.log(`[!] Cound not connect to MongoDB Atlas: ${err}`);
   } else {
     console.log('Connected to MongoDB Atlas');
   }
@@ -144,7 +144,7 @@ expressApp.use((err, req, res) => {
   res.sendStatus(err.status || 500);
 });
 
-// The routes depend on these exports, so we must export them first.
+// The routes depend on these exports, so export them first.
 module.exports = {
   checkAuthenticated,
   checkNotAuthenticated,
@@ -155,5 +155,6 @@ module.exports = {
 
 expressApp.use(require('./routes/authRouter'));
 expressApp.use(require('./routes/followRouter'));
+expressApp.use(require('./routes/postRouter'));
 expressApp.use(require('./routes/testRouter'));
 expressApp.use(require('./routes/userRouter'));
