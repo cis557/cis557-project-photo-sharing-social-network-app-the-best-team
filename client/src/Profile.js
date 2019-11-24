@@ -3,12 +3,17 @@ import {rgba} from 'polished';
 import { api } from './api.js'
 import './stylesheets/uikit.min.css';
 
+let data = {
+    name: "Yiwen"
+}
+
 class Profile extends Component
  {
     constructor(props) {
         super(props);
         this.x = Math.random()
-        this.state = { visibility: 1 };
+        this.state = { visibility: 1,
+                       data: data };
         console.log(this.x)
     }
 
@@ -23,59 +28,32 @@ class Profile extends Component
         this.callAPI();
     }
 
-    render() {
+    render(data) {
         if(this.state.visibility == 1){
         return (
-            <div id="slide-show" className="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
-            <div className ="uk-position-cover uk-overlay-primary"></div>
-            <div className ="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{backgroundColor: rgba(253, 253, 253, 0.253)}}>
-                <div className ="uk-text-center uk-margin"> <img src={require('./images/photogram.png')} alt="Logo"></img></div>
-                <h4 className ="uk-heading-line uk-text-center" style= {{color: rgba(255, 255, 255, .8)}}><span> Registration </span></h4>
-                <form action={api.url + "#/register"} encType="multipart/form-data" method="POST" className="toggle-class">
-                    <fieldset className ="uk-fieldset">
-                        <div className ="uk-margin-small">
-                            <div className ="uk-inline uk-width-1-1">
-                                <span className ="uk-form-icon uk-form-icon-flip"></span>
-                                <input id="firstname" name="firstname" className="uk-input uk-border-pill" placeholder="First Name" type="text" required></input>
-                            </div>
+            <div className="uk-flex uk-flex-center uk-background-default">
+                <div className="uk-container uk-container-small">
+                    <div className="uk-grid" uk-grid>
+                        <div className="uk-width-1-3 uk-flex uk-flex-middle uk-flex-center">
+                            <img className="uk-border-pill" style= {{height: "150px", width: "150px"}} id="profile-image" src={require('./images/photogram.png')} alt=""></img>
                         </div>
-                        <div className ="uk-margin-small">
-                            <div className ="uk-inline uk-width-1-1">
-                                <span className ="uk-form-icon uk-form-icon-flip"></span>
-                                <input id="lastname" name="lastname" className="uk-input uk-border-pill" placeholder="Last Name" type="text" required></input>
-                            </div>
-                        </div>
-                        <div className="uk-margin-small">
-                            <div className="uk-inline uk-width-1-1">
-                                <span className="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: mail"></span>
-                                <input id="email" name="email" className="uk-input uk-border-pill" placeholder="Email" type="email" required></input>
-                                    </div>
-                            </div> 
-                        <div className="uk-margin-small">
-                            <div className="uk-inline uk-width-1-1">
-                                <span className="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: user"></span>
-                                <input id="username" name="username" className="uk-input uk-border-pill" placeholder="Username" type="text" required></input>
-                            </div>
-                        </div>
-                        <div className ="uk-margin-small">
-                            <div className ="uk-inline uk-width-1-1">
-                                <span className ="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: lock"></span>
-                                <input id="password" name="password" className="uk-input uk-border-pill" placeholder="Password" type="password" required></input>
-                            </div>
-                        </div>
-                        <div className ="uk-margin">
-                            <div className ="uk-inline uk-width-1-1" uk-form-custom="target: true">
-                                <input id="image" name="image" type="file" accept="image/*"></input>
-                                <input className="uk-input uk-border-pill" type="text" placeholder="Select profile image"></input>
-                            </div>
-                        </div>
-                        <div className ="uk-margin-bottom" style= {{textAlign: "center"}}>
-                            <button type="submit" className ="uk-button uk-button-primary uk-border-pill uk-width-1-1"
-                                id="submit">Register</button>
-                            <p>Already have an account? <a href="/login" id="login" className ="uk-position-relative">Login</a></p>
-                        </div>
-                    </fieldset>
+                    <div className="uk-width-expand uk-padding-small uk-flex uk-flex-column">
+                        <p id="username" className="uk-text-lead uk-text-light">Yiwen123</p>
+                        <span> <p id="followers" className="uk-text-bold">Follower: 1</p><p id="following" className="uk-text-bold">Following: 1</p> </span>
+                        <p id="name" className="uk-text-bold uk-text-small">data</p>
+                    </div>
+                </div>
+                <form className="uk-margin-small-bottom" action="/post" encType="multipart/form-data" method="POST" className="uk-form-stacked">
+                    <div className="uk-margin">
+                        <label for="image" className="uk-form-label uk-text-large">Select an image to upload:</label>
+                        <input id="image" className="uk-input uk-form-width-large" type="file" name="image" accept="image/*" />
+                        <input type="submit" className="uk-button-muted uk-button-small" value="Upload" />
+                    </div>
                 </form>
+                <div className="uk-container uk-container-small uk-margin-top">
+                    <div id="recentPost" className="uk-child-width-1-2@m uk-align-center uk-background-default">
+                    </div>
+                </div>
             </div>
         </div>
         )
@@ -86,4 +64,4 @@ class Profile extends Component
     }
 }
 
-export default Registration;
+export default Profile;
