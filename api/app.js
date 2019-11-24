@@ -13,7 +13,6 @@ const session = require('express-session');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const fs = require('fs');
 const multer = require('multer');
 const { ObjectId } = require('mongoose').Types;
 const User = require('./models/User');
@@ -132,96 +131,6 @@ expressApp.use(passport.initialize());
 expressApp.use(passport.session());
 expressApp.use(methodOverride('_method'));
 
-const pageRouter = express.Router();
-expressApp.use(pageRouter);
-
-pageRouter.get('/testAPI', (req, res) => {
-  res.send('API is working properly');
-});
-
-const authRouter = express.Router();
-expressApp.use(authRouter);
-
-authRouter.post('/register', checkNotAuthenticated, parser.single('image'), async (req, res) => {
-  try {
-    const defaultImg = fs.readFileSync(path.join(__dirname, 'public/images/default-profile.png'));
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const incomingUser = {
-      _id: Date.now().toString(),
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      password: hashedPassword,
-      username: req.body.username,
-      posts: [],
-      followers: [],
-      followees: [],
-      image: Buffer.from(defaultImg, 'base64'),
-      likes: [],
-    };
-
-    User.findOne({ email: incomingUser.email })
-      .then((user) => {
-        if (user) {
-          // Email address is already in use
-          res.sendStatus(400);
-        } else {
-          User.findOne({ username: incomingUser.username })
-            .then((userTwo) => {
-              if (userTwo) {
-                // Username is already in use
-                res.sendStatus(400);
-              } else {
-                if (req.file) {
-                  let bytes;
-                  try {
-                    const img = fs.readFileSync(req.file.path);
-                    bytes = img.toString('base64');
-                    fs.unlinkSync(req.file.path);
-                  } catch (error) {
-                    // Error while reading profile picture
-                    res.sendStatus(500);
-                  }
-                  incomingUser.image = Buffer.from(bytes, 'base64');
-                }
-
-                const newUser = new User({
-                  _id: incomingUser.id,
-                  firstName: incomingUser.firstname,
-                  lastName: incomingUser.lastname,
-                  email: incomingUser.email,
-                  password: incomingUser.password,
-                  posts: incomingUser.posts,
-                  followers: incomingUser.followers,
-                  followees: incomingUser.followees,
-                  image: incomingUser.image,
-                  username: incomingUser.username,
-                  likes: incomingUser.likes,
-                });
-
-                newUser.save()
-                  .then(() => {})
-                  .catch((err) => console.log(err));
-
-                res.sendStatus(200);
-              }
-            });
-        }
-      });
-  } catch (error) {
-    // Error while registering
-    res.sendStatus(500);
-  }
-});
-
-authRouter.post('/login', checkNotAuthenticated, passport.authenticate('local',
-  (req, res) => {
-    res.sendStatus(200);
-  },
-  (req, res) => {
-    res.sendStatus(400);
-  }));
-
 // Catch 404 and forward to error handler.
 expressApp.use((req, res, next) => {
   next(createError(404));
@@ -237,6 +146,14 @@ expressApp.use((err, req, res) => {
   res.sendStatus(err.status || 500);
 });
 
+// The routes depend on these exports, so we must export them first.
 module.exports = {
+  checkAuthenticated,
+  checkNotAuthenticated,
   expressApp,
+  passport,
+  parser,
 };
+
+expressApp.use(require('./routes/authRouter'));
+expressApp.use(require('./routes/pageRouter'));
