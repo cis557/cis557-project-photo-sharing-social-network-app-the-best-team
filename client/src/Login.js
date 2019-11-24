@@ -30,7 +30,7 @@ class Login extends Component {
               <img src={require('./images/photogram.png')} alt="Logo"></img>
             </div>
             <h4 className="uk-heading-line uk-text-center" style={{color: rgba(255, 255, 255, .8)}}><span>Log In</span></h4>
-            <form action={api.url + "#/login"} method="POST" className="toggle-class">
+            <form action={api.url + "/login"} method="POST" className="toggle-class">
               <fieldset className="uk-fieldset">
                 <div className="uk-margin-small">
                   <div className="uk-inline uk-width-1-1">
@@ -46,7 +46,7 @@ class Login extends Component {
                 </div>
                 <div className="uk-margin-bottom" style={{textAlign: "center"}}>
                   <button type="submit" className="uk-button uk-button-primary uk-border-pill uk-width-1-1" id="submit">Login</button>
-                  <p>Don't have an account? <a href={api.url + "#/register"} id="register" className="uk-position-relative">Register.</a></p> 
+                  <p>Don't have an account? <a href="/register" id="register" className="uk-position-relative">Register.</a></p> 
                 </div>
               </fieldset>
             </form>

@@ -31,7 +31,7 @@ class Registration extends Component
             <div className ="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{backgroundColor: rgba(253, 253, 253, 0.253)}}>
                 <div className ="uk-text-center uk-margin"> <img src={require('./images/photogram.png')} alt="Logo"></img></div>
                 <h4 className ="uk-heading-line uk-text-center" style= {{color: rgba(255, 255, 255, .8)}}><span> Registration </span></h4>
-                <form action={api.url + "#/register"} encType="multipart/form-data" method="POST" className="toggle-class">
+                <form action={api.url + "/register"} encType="multipart/form-data" method="POST" className="toggle-class">
                     <fieldset className ="uk-fieldset">
                         <div className ="uk-margin-small">
                             <div className ="uk-inline uk-width-1-1">
