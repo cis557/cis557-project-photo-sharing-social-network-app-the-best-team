@@ -16,7 +16,6 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const { ObjectId } = require('mongoose').Types;
 const User = require('./models/User');
-const Post = require('./models/Post');
 require('dotenv').config();
 
 /**
@@ -156,4 +155,6 @@ module.exports = {
 };
 
 expressApp.use(require('./routes/authRouter'));
-expressApp.use(require('./routes/pageRouter'));
+expressApp.use(require('./routes/followRouter'));
+expressApp.use(require('./routes/testRouter'));
+expressApp.use(require('./routes/userRouter'));

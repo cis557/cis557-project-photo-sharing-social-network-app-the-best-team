@@ -7,86 +7,86 @@ const { passport } = require('../app');
 const { parser } = require('../app');
 const { checkNotAuthenticated } = require('../app');
 
-const authRouter = express.Router();
+const router = express.Router();
 
-authRouter.post('/register', checkNotAuthenticated, parser.single('image'), async (req, res) => {
+router.post('/register', checkNotAuthenticated, parser.single('image'), async (req, res) => {
+  const { firstName } = req.body;
+  const { lastName } = req.body;
+  const { email } = req.body;
+  const { password } = req.body;
+  const { username } = req.body;
+  const { file } = req;
+
   try {
     const defaultImg = fs.readFileSync(path.join(__dirname, 'public/images/default-profile.png'));
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const incomingUser = {
-      _id: Date.now().toString(),
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      password: hashedPassword,
-      username: req.body.username,
-      posts: [],
-      followers: [],
-      followees: [],
-      image: Buffer.from(defaultImg, 'base64'),
-      likes: [],
-    };
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let image = Buffer.from(defaultImg, 'base64');
+    const userId = Date.now().toString();
 
-    User.findOne({ email: incomingUser.email })
-      .then((user) => {
-        if (user) {
-          // Email address is already in use
-          res.sendStatus(400);
+    User.findOne({ email })
+      .then((userFoundByEmail) => {
+        if (userFoundByEmail) {
+          res.status(400);
+          res.send(`[!] Email address is already in use: ${email}`);
         } else {
-          User.findOne({ username: incomingUser.username })
-            .then((userTwo) => {
-              if (userTwo) {
-                // Username is already in use
-                res.sendStatus(400);
+          User.findOne({ username })
+            .then((userFoundByUsername) => {
+              if (userFoundByUsername) {
+                res.status(400);
+                res.send(`[!] Username is already in use: ${username}`);
               } else {
-                if (req.file) {
+                if (file) {
                   let bytes;
+
                   try {
-                    const img = fs.readFileSync(req.file.path);
+                    const img = fs.readFileSync(file.path);
                     bytes = img.toString('base64');
-                    fs.unlinkSync(req.file.path);
-                  } catch (error) {
-                    // Error while reading profile picture
-                    res.sendStatus(500);
+                    fs.unlinkSync(file.path);
+                  } catch (err) {
+                    res.status(400);
+                    res.send(`[!] Could not read profile picture: ${err}`);
                   }
-                  incomingUser.image = Buffer.from(bytes, 'base64');
+
+                  image = Buffer.from(bytes, 'base64');
                 }
 
                 const newUser = new User({
-                  _id: incomingUser.id,
-                  firstName: incomingUser.firstname,
-                  lastName: incomingUser.lastname,
-                  email: incomingUser.email,
-                  password: incomingUser.password,
-                  posts: incomingUser.posts,
-                  followers: incomingUser.followers,
-                  followees: incomingUser.followees,
-                  image: incomingUser.image,
-                  username: incomingUser.username,
-                  likes: incomingUser.likes,
+                  _id: userId,
+                  email,
+                  username,
+                  firstName,
+                  lastName,
+                  password: hashedPassword,
+                  image,
+                  posts: [],
+                  likes: [],
+                  followers: [],
+                  followees: [],
                 });
 
                 newUser.save()
-                  .then(() => {})
-                  .catch((err) => console.log(err));
-
-                res.sendStatus(200);
+                  .then(() => res.sendStatus(200))
+                  .catch((err) => {
+                    res.status(500);
+                    res.send(`[!] Could not register user: ${err}`);
+                  });
               }
             });
         }
       });
-  } catch (error) {
-    // Error while registering
-    res.sendStatus(500);
+  } catch (err) {
+    res.status(500);
+    res.send(`[!] Could not register user: ${err}`);
   }
 });
 
-authRouter.post('/login', checkNotAuthenticated, passport.authenticate('local',
+router.post('/login', checkNotAuthenticated, passport.authenticate('local',
   (req, res) => {
     res.sendStatus(200);
   },
   (req, res) => {
-    res.sendStatus(400);
+    res.status(400);
+    res.send('[!] Invalid login credentials');
   }));
 
-module.exports = authRouter;
+module.exports = router;
