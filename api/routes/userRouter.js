@@ -9,14 +9,25 @@ router.get('/user', checkAuthenticated, (req, res) => {
   const { username } = req.body;
 
   User.findOne({ username })
-    .then((user) => {
-      if (user) {
-        const userExcerpt = user;
-        delete userExcerpt.password;
-        res.send(userExcerpt);
+    .then((userInDatabase) => {
+      if (userInDatabase) {
+        const userToSend = userInDatabase;
+
+        // Don't send the user's password.
+        delete userToSend.password;
+
+        // Send the profile picture as a Buffer.
+        // There is no Buffer class in the browser, so it is better to do this step in the back end.
+        // To display the image on the client side, set an img element's "src" to the following,
+        // where "resJson" is the response from this route as a JSON object:
+        // `data:image/png;base64,${btoa(String.fromCharCode.apply(null, resJson.image.data))}`
+        userToSend.image = Buffer.from(userInDatabase.image, 'binary');
+
+        res.status(200);
+        res.send(userToSend);
       } else {
-        // User not found
-        res.sendStatus(500);
+        res.status(500);
+        res.send(`[!] User not found: ${username}`);
       }
     })
     .catch((err) => {
@@ -26,23 +37,47 @@ router.get('/user', checkAuthenticated, (req, res) => {
 });
 
 router.delete('/user', checkAuthenticated, (req, res) => {
-  Post.deleteMany({ email: req.user.email })
-    .catch((err) => console.log(err));
-  User.deleteOne({ email: req.user.email })
-    .catch((err) => console.log(err));
+  const usernameToDelete = req.body.username;
+  const usernameLoggedIn = req.user.username;
 
-  // TODO: The response should vary based on whether the deletion was successful.
+  if (usernameToDelete !== usernameLoggedIn) {
+    res.status(500);
+    res.send(`[!] Cannot delete another user: ${usernameToDelete}`);
+  }
+
+  Post.deleteMany({ username: usernameToDelete })
+    .catch((err) => {
+      res.status(500);
+      res.send(`[!] Could not delete user: ${err}`);
+    });
+  User.deleteOne({ username: usernameToDelete })
+    .catch((err) => {
+      res.status(500);
+      res.send(`[!] Could not delete user: ${err}`);
+    });
+
   res.sendStatus(200);
 });
 
-router.get('/users', checkAuthenticated, (req, res) => {
-  User.find({}, (err, users) => {
-    const userArray = [];
-    users.forEach((user) => {
-      userArray.push(user);
+router.get('/users', checkAuthenticated, (res) => {
+  User.find({}, (usersInDatabase) => {
+    const usersToSend = [];
+
+    usersInDatabase.forEach((user) => {
+      usersToSend.push(user.username);
     });
-    res.send(userArray);
-  });
+
+    res.send(usersToSend);
+  })
+    .catch((err) => {
+      res.status(500);
+      res.send(`[!] Could not retrieve users: ${err}`);
+    });
+});
+
+router.delete('/logout', checkAuthenticated, (req, res) => {
+  req.logOut();
+  res.sendStatus(200);
 });
 
 module.exports = router;

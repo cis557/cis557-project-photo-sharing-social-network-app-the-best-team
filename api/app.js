@@ -14,7 +14,6 @@ const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const { ObjectId } = require('mongoose').Types;
 const User = require('./models/User');
 require('dotenv').config();
 
