@@ -18,9 +18,9 @@ const router = express.Router();
 router.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
   let image;
 
+  const { username } = req.user;
   const { title } = req.body;
   const { description } = req.body;
-  const { username } = req.user;
   const { file } = req;
 
   const contentType = file.mimetype;
@@ -68,6 +68,25 @@ router.post('/post', checkAuthenticated, parser.single('image'), (req, res) => {
     });
 });
 
+router.post('/post/:postId', checkAuthenticated, (req, res) => {
+  const { username } = req.user;
+  const { postId } = req.params;
+  const { title } = req.body;
+  const { description } = req.body;
+
+  Post.findOneAndUpdate(
+    { _id: ObjectId(postId), username },
+    { $set: { title, description } },
+  )
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      res.status(500);
+      res.send(`[!] Could not edit post: ${err}`);
+    });
+});
+
 router.get('/post/:postId', checkAuthenticated, (req, res) => {
   const { postId } = req.params;
 
@@ -89,6 +108,20 @@ router.get('/post/:postId', checkAuthenticated, (req, res) => {
     .catch((err) => {
       res.status(500);
       res.send(`[!] Could not find post: ${err}`);
+    });
+});
+
+router.delete('/post/:postId', checkAuthenticated, (req, res) => {
+  const { username } = req.user;
+  const { postId } = req.params;
+
+  Post.deleteOne({ _id: ObjectId(postId), username })
+    .then(() => {
+      res.sendStatus(200);
+    })
+    .catch((err) => {
+      res.status(500);
+      res.send(`[!] Could not delete post: ${err}`);
     });
 });
 

@@ -63,3 +63,5 @@ router.post('/unfollow', checkAuthenticated, async (req, res) => {
     res.send(`[!] Could not unfollow user: ${err}`);
   }
 });
+
+module.exports = router;

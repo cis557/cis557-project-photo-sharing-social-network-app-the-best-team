@@ -154,7 +154,9 @@ module.exports = {
 };
 
 expressApp.use(require('./routes/authRouter'));
+expressApp.use(require('./routes/commentRouter'));
 expressApp.use(require('./routes/followRouter'));
+expressApp.use(require('./routes/likeRouter'));
 expressApp.use(require('./routes/postRouter'));
 expressApp.use(require('./routes/testRouter'));
 expressApp.use(require('./routes/userRouter'));

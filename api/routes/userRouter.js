@@ -37,8 +37,8 @@ router.get('/user', checkAuthenticated, (req, res) => {
 });
 
 router.delete('/user', checkAuthenticated, (req, res) => {
-  const usernameToDelete = req.body.username;
   const usernameLoggedIn = req.user.username;
+  const usernameToDelete = req.body.username;
 
   if (usernameToDelete !== usernameLoggedIn) {
     res.status(500);
@@ -54,9 +54,10 @@ router.delete('/user', checkAuthenticated, (req, res) => {
     .catch((err) => {
       res.status(500);
       res.send(`[!] Could not delete user: ${err}`);
+    })
+    .then(() => {
+      res.sendStatus(200);
     });
-
-  res.sendStatus(200);
 });
 
 router.get('/users', checkAuthenticated, (res) => {
