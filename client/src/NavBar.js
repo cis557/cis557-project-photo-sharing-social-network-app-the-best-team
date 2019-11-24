@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './stylesheets/uikit.min.css';
 import { api } from './api.js'
 
 class NavBar extends Component {
