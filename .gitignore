@@ -6,3 +6,4 @@ api/uploads/*
 api/debug.log
 client/node_modules
 client/coverage
+node_modules
