@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-  },
   username: {
     type: String,
     required: true,
@@ -24,7 +20,7 @@ const CommentSchema = new mongoose.Schema({
 });
 
 const PostSchema = new mongoose.Schema({
-  email: {
+  username: {
     type: String,
     required: true,
   },
