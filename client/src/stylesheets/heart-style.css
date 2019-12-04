@@ -1,0 +1,13 @@
+svg.not-liked:hover {
+  color: rgb(255, 0, 0);
+  cursor: pointer;
+}
+
+svg.liked:hover {
+  color: rgb(112, 0, 0);
+  cursor: pointer;
+}
+
+svg.liked {
+  color: rgb(255, 0, 0);
+}
