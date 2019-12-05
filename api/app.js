@@ -234,13 +234,6 @@ function handleInputCheck(req, res, next) {
   const extractedErrors = [];
   errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
 
-  // TODO: Remove this.
-  const errorArray = errors.array();
-
-  for (let i = 0; i < errorArray.length; i += 1) {
-    console.log(errorArray[i]);
-  }
-
   return res.status(422).json({
     errors: extractedErrors,
   });
