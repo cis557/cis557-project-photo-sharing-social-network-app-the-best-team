@@ -89,11 +89,11 @@ class Post extends Component {
     const { likes } = data;
 
     //New: Come back
-  //   const renderComments = [];
+     const renderComments = [];
     
-  //   comments.forEach((comment) => {
-  //   renderComments.push(<Comment postid={postid} commentid = {comment.comment_id} currentUser = {currentUser}/>);
-  // });
+     comments.forEach((comment) => {
+     renderComments.push(<Comment postid={postid} commentid = {comment.comment_id} currentUser = {currentUser}/>);
+   });
 
     //END
 

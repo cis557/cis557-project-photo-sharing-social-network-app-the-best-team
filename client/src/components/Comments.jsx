@@ -3,41 +3,46 @@ import React, { Component } from 'react';
 import { api } from '../api';
 import PropTypes from 'prop-types';
 import { addComment, editComment, deleteComment} from '../javascripts/commentRequests';
+import { getPost } from '../javascripts/postRequests';
 
 //function used to do the spliting, move the the backend
-
-// let stringToArray = function(s){
-//   const res = s.split(",")
-//   return res
-// }
-
-// const testData = {
-//     postID: 'abcd',
-//     comments: [{
-//       mentions: ['Jeff'],
-//       username: 'Nick1',
-//       text: "I like it!"
-//     },{
-//       mentions: ['Jack'],
-//       username: 'Nick2',
-//       text: "I love it!"
-//     }]
-//   };
 
 class Comment extends Component {
   constructor(props) {
     super(props);
     
     this.state = { 
+      postid: props.postid,
+      commentid: props.commentid,
       data: null,
       isLoading: true,
-      currentUser: null,
+      currentUser: props.currentUser,
     };
   }
 
+  componentDidMount() {
+    const { postid } = this.state;
+
+    getPost(postid)
+      .then((data) => {
+        data.json()
+          .then((post) => {
+            this.setState({ isLoading: false, data: post.comments });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
 render() {
-  const {data} = this.state;
-    const comments = data.comments.map((comment) => { return(
+  const {data, commentid } = this.state;
+  const comments = data.comments.map((comment) => { 
+    if(comment._id == commentid){
+      return(
         <article className="uk-comment-primary uk-visible-toggle uk-box-shadow-hover-small" tabindex="-1">
           <header className="uk-comment-header uk-position-relative">
               <div className="uk-grid-medium uk-flex-middle" uk-grid>
@@ -51,14 +56,14 @@ render() {
       <p className = "uk-text-large">{comment.text}</p>
     </div>
   </article>
-  )});
-    return (
-    <div className="uk-container uk-container-small">
-
-    </div>
-    );
+    )};
+  })    
+  return(
+    <div></div>
+    )
   }
 }
+
 
 Comment.propTypes = {
   postid: PropTypes.string.isRequired,
