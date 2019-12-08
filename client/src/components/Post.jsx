@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Heart from './Heart';
 import { getPost } from '../javascripts/postRequests';
 import loading from '../images/loading-post.svg';
-import Comment from '../components/Comments';
+import Comment from './Comment';
 import { addComment } from '../javascripts/commentRequests';
 
 class Post extends Component {
@@ -12,21 +12,26 @@ class Post extends Component {
     super(props);
 
     this.state = {
-      postid: props.postid,
+      postId: props.postId,
       isLoading: true,
       currentUser: props.currentUser,
-      data: [],
+      data: {},
       text: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.refresh = this.refresh.bind(this);
   }
 
   componentDidMount() {
-    const { postid } = this.state;
+    this.refresh();
+  }
 
-    getPost(postid)
+  refresh() {
+    const { postId } = this.state;
+
+    getPost(postId)
       .then((data) => {
         data.json()
           .then((post) => {
@@ -45,7 +50,7 @@ class Post extends Component {
     this.setState({ [event.target.id]: event.target.value });
   }
 
-  handleSubmit(event){
+  handleSubmit(event) {
     event.preventDefault();
 
     const { text } = this.state;
@@ -54,22 +59,18 @@ class Post extends Component {
     addComment(
       postId,
       text,
-      )
-      .then((res) => {
-        if(res.ok){
-          console.log(text);
-        } else {
-          console.log(res)
-        }
+    )
+      .then(() => {
+        this.refresh();
       })
       .catch((err) => {
         console.log(err);
       });
   }
-  
+
   render() {
     const { data, isLoading, currentUser } = this.state;
-    console.log(data.comments);
+
     if (isLoading) {
       return (
         <div className="uk-card uk-card-default uk-card-hover uk-align-center" uk-scrollspy="cls: uk-animation-slide-left; repeat: true">
@@ -83,19 +84,26 @@ class Post extends Component {
     }
 
     // eslint-disable-next-line no-underscore-dangle
-    const postid = data._id;
+    const postId = data._id;
     let isLiked = false;
-    const comments = data.comments;
+    const { comments } = data;
     const { likes } = data;
 
-    //New: Come back
-     const renderComments = [];
-    
-     comments.forEach((comment) => {
-     renderComments.push(<Comment postid={postid} commentid = {comment.comment_id} currentUser = {currentUser}/>);
-   });
+    // New: Come back
+    const renderComments = [];
 
-    //END
+    comments.forEach((comment) => {
+      renderComments.push(<Comment
+        key={comment._id}
+        postId={postId}
+        commentId={comment._id}
+        username={comment.username}
+        datetime={comment.datetime}
+        text={comment.text}
+      />);
+    });
+
+    // END
 
     if (likes.indexOf(currentUser) !== -1) {
       isLiked = true;
@@ -116,7 +124,7 @@ class Post extends Component {
               <a href="/">{` ${data.username}`}</a>
             </h3>
             <p id="">{data.description}</p>
-            <Heart isLiked={isLiked} postid={postid} />
+            <Heart isLiked={isLiked} postId={postId} />
           </div>
           {renderComments}
         </div>
@@ -137,19 +145,20 @@ class Post extends Component {
             <a href="/">{` ${data.username}`}</a>
           </h3>
           <p id="">{data.description}</p>
-          <Heart isLiked={isLiked} postid={postid} />
+          <Heart isLiked={isLiked} postId={postId} />
         </div>
         <form onSubmit={this.handleSubmit}>
-        <textarea onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply"></textarea>
-        <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Sumbit</button>
-      </form>
+          <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
+          <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
+        </form>
+        {renderComments}
       </div>
     );
   }
 }
 
 Post.propTypes = {
-  postid: PropTypes.string.isRequired,
+  postId: PropTypes.string.isRequired,
   currentUser: PropTypes.string.isRequired,
 };
 

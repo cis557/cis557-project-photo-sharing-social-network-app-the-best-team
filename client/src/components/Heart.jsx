@@ -13,7 +13,7 @@ class Heart extends Component {
     super(props);
 
     this.state = {
-      postid: props.postid,
+      postId: props.postId,
       liked: props.isLiked,
     };
 
@@ -23,10 +23,10 @@ class Heart extends Component {
   handleEvent(e) {
     e.preventDefault();
 
-    const { postid, liked } = this.state;
+    const { postId, liked } = this.state;
 
     if (liked) {
-      deleteLike(postid)
+      deleteLike(postId)
         .then(() => {
           this.setState({ liked: false });
         })
@@ -34,7 +34,7 @@ class Heart extends Component {
           console.log(err);
         });
     } else {
-      addLike(postid)
+      addLike(postId)
         .then(() => {
           this.setState({ liked: true });
         })
@@ -60,7 +60,7 @@ class Heart extends Component {
 }
 
 Heart.propTypes = {
-  postid: PropTypes.string.isRequired,
+  postId: PropTypes.string.isRequired,
   isLiked: PropTypes.bool.isRequired,
 };
 

@@ -1,5 +1,5 @@
-// App.js is the root of our website, it is where all the different
-// components come together and work as a whole entity
+// App.js is the root of our website.
+// It is where all the components come together and work as a whole entity.
 
 import React, { PureComponent } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -8,7 +8,7 @@ import Feed from './Feed';
 import Profile from './Profile';
 import Register from './Register';
 import MakePost from './MakePost';
-import Comments from './Comments';
+import Comment from './Comment';
 import Follow from './Follow';
 import Followee from './Followee';
 import Follower from './Follower';
@@ -25,7 +25,7 @@ class App extends PureComponent {
           <Route exact path="/makePost" component={RouteProtector(MakePost)} />
           <Route exact path="/" component={RouteProtector(Feed)} />
           <Route exact path="/profile" component={RouteProtector(Profile)} />
-          <Route exact path="/comments" component={RouteProtector(Comments)} />
+          <Route exact path="/comment" component={RouteProtector(Comment)} />
           <Route exact path="/register" component={RouteVerifier(Register)} />
           <Route exact path="/follow" component={RouteProtector(Follow)} />
           <Route exact path="/followee" component={RouteProtector(Followee)} />

@@ -43,7 +43,7 @@ class Feed extends Component {
     const renderPosts = [];
 
     posts.forEach((id) => {
-      renderPosts.push(<Post key={id} postid={id} currentUser={currentUser} />);
+      renderPosts.push(<Post key={id} postId={id} currentUser={currentUser} />);
     });
 
     if (isLoading) {
