@@ -21,7 +21,7 @@ async function addComment(postId, text) {
 }
 
 async function editComment(postId, commentId, text) {
-  return fetch(`${api.url}/editComment`,
+  return fetch(`${api.url}/Comment`,
     {
       method: 'POST',
       body: JSON.stringify({

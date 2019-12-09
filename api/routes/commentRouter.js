@@ -55,6 +55,24 @@ router.post('/Comment',
         res.send(`[!] Could not delete comment: ${err}`);
       });
     }
+  if(req.body.method == 'edit'){
+    const { username } = req.user;
+    const { postId } = req.body;
+    const { commentId } = req.body;
+    const { text } = req.body;
+
+    Post.findOneAndUpdate(
+      { _id: ObjectId(postId), comments: { $elemMatch: { _id: ObjectId(commentId), username } } },
+      { $set: { 'comments.$.text': text } },
+    )
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch((err) => {
+        res.status(550);
+        res.send(`[!] Could not edit comment: ${err}`);
+      });
+    }  
   }
 );
 
