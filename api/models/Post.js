@@ -53,6 +53,10 @@ const PostSchema = new mongoose.Schema({
     required: false,
   },
   comments: [CommentSchema],
+  privacy: {
+    type: Boolean,
+    required: true,
+  }
 });
 
 const Post = mongoose.model('Post', PostSchema);

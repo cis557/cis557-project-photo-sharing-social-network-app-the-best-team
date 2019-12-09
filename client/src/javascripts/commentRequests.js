@@ -3,10 +3,11 @@
 import { api } from '../api';
 
 async function addComment(postId, text) {
-  return fetch(`${api.url}/addComment`,
+  return fetch(`${api.url}/Comment`,
     {
       method: 'POST',
       body: JSON.stringify({
+        method: 'add',
         postId,
         text,
       }),
@@ -20,13 +21,14 @@ async function addComment(postId, text) {
 }
 
 async function editComment(postId, commentId, text) {
-  return fetch(`${api.url}/editComment`,
+  return fetch(`${api.url}/Comment`,
     {
       method: 'POST',
       body: JSON.stringify({
         postId,
         commentId,
         text,
+        method:'edit',
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
@@ -38,12 +40,13 @@ async function editComment(postId, commentId, text) {
 }
 
 async function deleteComment(postId, commentId) {
-  return fetch(`${api.url}/deleteComment`,
+  return fetch(`${api.url}/Comment`,
     {
-      method: 'DELETE',
+      method: 'POST',
       body: JSON.stringify({
         postId,
         commentId,
+        method: 'delete',
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',

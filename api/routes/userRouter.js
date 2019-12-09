@@ -71,7 +71,7 @@ router.delete('/deleteUser', checkAuthenticated, (req, res) => {
 });
 
 router.get('/getUsers', checkAuthenticated, (req, res) => {
-  User.find()
+  User.find().limit(5)
     .then((usersInDatabase) => {
       const usersToSend = [];
 

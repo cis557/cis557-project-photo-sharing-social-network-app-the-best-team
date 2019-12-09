@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import NavBar from './NavBar';
 import Post from './Post';
 import { getUser } from '../javascripts/userRequests';
-import { getFeed } from '../javascripts/postRequests';
+import { getLikes } from '../javascripts/postRequests';
 
-class Feed extends Component {
+class Like extends Component {
   constructor(props) {
     super(props);
 
@@ -20,7 +20,7 @@ class Feed extends Component {
       .then((res) => {
         res.json()
           .then((usr) => {
-            getFeed()
+            getLikes()
               .then((feed) => {
                 feed.json()
                   .then((posts) => {
@@ -72,4 +72,4 @@ class Feed extends Component {
   }
 }
 
-export default Feed;
+export default Like;
