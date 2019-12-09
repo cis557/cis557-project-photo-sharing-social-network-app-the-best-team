@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { addComment, editComment, deleteComment } from '../javascripts/commentRequests';
+import { editComment, deleteComment } from '../javascripts/commentRequests';
+import { getPost } from '../javascripts/postRequests';
 
 // function used to do the splitting, move the the backend
 
@@ -16,10 +17,35 @@ class Comment extends Component {
       username: props.username,
       datetime: props.datetime,
       text: props.text,
+      delete: false,
     };
+    this.handleDelete = this.handleDelete.bind(this);
+    this.refresh = this.refresh.bind(this);
   }
 
-  componentDidMount() {}
+  refresh() {
+    }
+
+  componentDidMount() {
+  }
+
+  handleDelete(event){
+    event.preventDefault();
+
+    const { commentId } = this.state;
+    const { postId } = this.state;
+
+    deleteComment(
+      postId, 
+      commentId,
+      ) 
+      .then(() => {
+        this.refresh();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   render() {
     const { username, text } = this.state;
@@ -32,7 +58,8 @@ class Comment extends Component {
               <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href="#">{username}</a></h5>
             </div>
           </div>
-          <div className="uk-position-top-right uk-position-small uk-hidden-hover"><a className="uk-link-muted" href="#">Delete</a></div>
+          <div className="uk-position-top-right uk-position-small uk-hidden-hover"><a className="uk-link-muted" onClick={this.handleDelete}>Delete</a></div>
+          <div className="uk-margin uk-position-bottom-right uk-position-small uk-hidden-hover"><a className="uk-link-muted" onClick={this.handleDelete}>Edit</a></div>
         </header>
         <div className="uk-comment-body">
           <p className="uk-text-large">{text}</p>

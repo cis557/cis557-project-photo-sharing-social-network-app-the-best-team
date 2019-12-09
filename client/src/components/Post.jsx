@@ -66,6 +66,7 @@ class Post extends Component {
       .catch((err) => {
         console.log(err);
       });
+    event.target.text.value ="";
   }
 
   render() {
@@ -126,6 +127,10 @@ class Post extends Component {
             <p id="">{data.description}</p>
             <Heart isLiked={isLiked} postId={postId} />
           </div>
+          <form onSubmit={this.handleSubmit}>
+          <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
+          <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
+          </form>
           {renderComments}
         </div>
       );

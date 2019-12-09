@@ -9,11 +9,12 @@ const {
 
 const router = express.Router();
 
-router.post('/addComment',
+router.post('/Comment',
   checkAuthenticated,
   checkAndSanitizeInput(),
   handleInputCheck,
   (req, res) => {
+  if(req.body.method == 'add') {
     const { username } = req.user;
     const { postId } = req.body;
     const { text } = req.body;
@@ -36,7 +37,26 @@ router.post('/addComment',
         res.status(550);
         res.send(`[!] Could not add comment: ${err}`);
       });
-  });
+  }
+  if(req.body.method == 'delete'){
+    const { username } = req.user;
+    const { postId } = req.body;
+    const { commentId } = req.body;
+
+    Post.findOneAndUpdate(
+      { _id: ObjectId(postId) },
+      { $pull: { comments: { username, _id: ObjectId(commentId) } } },
+    )
+      .then(() => {
+        res.sendStatus(200);
+      })
+      .catch((err) => {
+        res.status(550);
+        res.send(`[!] Could not delete comment: ${err}`);
+      });
+    }
+  }
+);
 
 router.post('/editComment',
   checkAuthenticated,
@@ -61,22 +81,22 @@ router.post('/editComment',
       });
   });
 
-router.delete('/deleteComment', checkAuthenticated, (req, res) => {
-  const { username } = req.user;
-  const { postId } = req.body;
-  const { commentId } = req.body;
+// router.delete('/deleteComment', checkAuthenticated, (req, res) => {
+//   const { username } = req.user;
+//   const { postId } = req.body;
+//   const { commentId } = req.body;
 
-  Post.findOneAndUpdate(
-    { _id: ObjectId(postId) },
-    { $pull: { comments: { username, _id: ObjectId(commentId) } } },
-  )
-    .then(() => {
-      res.sendStatus(200);
-    })
-    .catch((err) => {
-      res.status(550);
-      res.send(`[!] Could not delete comment: ${err}`);
-    });
-});
+//   Post.findOneAndUpdate(
+//     { _id: ObjectId(postId) },
+//     { $pull: { comments: { username, _id: ObjectId(commentId) } } },
+//   )
+//     .then(() => {
+//       res.sendStatus(200);
+//     })
+//     .catch((err) => {
+//       res.status(550);
+//       res.send(`[!] Could not delete comment: ${err}`);
+//     });
+// });
 
 module.exports = router;
