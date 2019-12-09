@@ -75,6 +75,7 @@ class Comment extends Component {
         console.log(err);
       });
     this.setState({ editing: false });
+    this.setState({ text: textUpdate });
   }
 
   handleEditText(event){
