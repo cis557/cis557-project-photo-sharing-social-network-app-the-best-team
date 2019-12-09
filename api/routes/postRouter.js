@@ -152,6 +152,30 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
     });
 });
 
+
+router.get('/getLikes', checkAuthenticated, (req, res) => {
+  const { username } = req.user;
+  const likes = new Set();
+
+  User.findOne({ username })
+    .then((user) => {
+      if (user) {
+        user.likes.forEach((postId) => {
+          likes.add(postId);
+        });
+        res.status(200);
+        res.send(Array.from(likes));
+      } else {
+        res.status(404);
+        res.send('[!] User not found');
+      }
+    })
+    .catch((err) => {
+      res.status(550);
+      res.send(`[!] Could not retrieve user: ${err}`);
+    });
+});
+
 router.get('/getPost/:postId', checkAuthenticated, (req, res) => {
   const { postId } = req.params;
 

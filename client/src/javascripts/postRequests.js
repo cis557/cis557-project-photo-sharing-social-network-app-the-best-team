@@ -62,6 +62,19 @@ async function getFeed() {
     });
 }
 
+async function getLikes() {
+  return fetch(`${api.url}/getLikes`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json; charset=UTF-8',
+      },
+      credentials: 'include',
+      mode: 'cors',
+    });
+}
+
 async function deletePost(postId) {
   return fetch(`${api.url}/deletePost`,
     {
@@ -84,4 +97,5 @@ export {
   getPost,
   getFeed,
   deletePost,
+  getLikes,
 };

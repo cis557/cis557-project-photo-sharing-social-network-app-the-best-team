@@ -12,6 +12,7 @@ import Comment from './Comment';
 import Follow from './Follow';
 import Followee from './Followee';
 import Follower from './Follower';
+import Like from './Like';
 import RouteProtector from './RouteProtector';
 import RouteVerifier from './RouteVerifier';
 
@@ -30,6 +31,7 @@ class App extends PureComponent {
           <Route exact path="/follow" component={RouteProtector(Follow)} />
           <Route exact path="/followee" component={RouteProtector(Followee)} />
           <Route exact path="/follower" component={RouteProtector(Follower)} />
+          <Route exact path="/like" component={RouteProtector(Like)} />
         </div>
       </Router>
     );

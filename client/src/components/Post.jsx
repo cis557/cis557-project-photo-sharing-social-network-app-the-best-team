@@ -103,7 +103,6 @@ class Post extends Component {
         text={comment.text}
       />);
     });
-
     // END
 
     if (likes.indexOf(currentUser) !== -1) {
