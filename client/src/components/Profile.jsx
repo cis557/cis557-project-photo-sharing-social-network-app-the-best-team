@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import NavBar from './NavBar';
-import { getOtherUser } from '../javascripts/userRequests';
+import { getOtherUser, getUser } from '../javascripts/userRequests';
 
 class Profile extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class Profile extends Component {
   componentDidMount() {
     const { currentUser } = this.state;
 
-    getOtherUser(currentUser)
+    getUser()
       .then((data) => {
         data.json()
           .then((userInfo) => {
