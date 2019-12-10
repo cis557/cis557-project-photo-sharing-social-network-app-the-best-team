@@ -44,8 +44,8 @@ async function deleteUser(username) {
     });
 }
 
-async function getUsers() {
-  return fetch(`${api.url}/getUsers`,
+async function getSuggestedUsers() {
+  return fetch(`${api.url}/getSuggestedUsers`,
     {
       method: 'GET',
       headers: {
@@ -59,7 +59,7 @@ async function getUsers() {
 
 export {
   getUser,
-  deleteUser,
-  getUsers,
   getOtherUser,
+  deleteUser,
+  getSuggestedUsers,
 };

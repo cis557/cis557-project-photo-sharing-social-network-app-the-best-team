@@ -111,21 +111,74 @@ router.delete('/deleteUser', checkAuthenticated, (req, res) => {
     });
 });
 
-router.get('/getUsers', checkAuthenticated, (req, res) => {
-  User.find().limit(5)
-    .then((usersInDatabase) => {
-      const usersToSend = [];
+router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
+  const { username } = req.user;
 
-      usersInDatabase.forEach((user) => {
-        usersToSend.push(user.username);
+  const suggestedUsers = new Set();
+  const followeeSet = new Set();
+  const numSuggestions = 5;
+
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    res.status(550);
+    res.send(`[!] Could not find user: ${username}`);
+  }
+
+  // Keep track of who the user already follows,
+  // to make sure they don't get suggested to the user.
+  user.followees.forEach((followeeUsername) => {
+    followeeSet.add(followeeUsername);
+  });
+
+  user.followees.forEach(async (followeeUsername) => {
+    const followee = await User.findOne({ username: followeeUsername })
+      .catch((err) => {
+        res.status(550);
+        res.send(`[!] Could not retrieve users: ${err}`);
+      });
+    const followeesOfFollowee = followee.followees;
+
+    // Iterate over the followees of the followee.
+    for (let i = 0; i < followeesOfFollowee.length; i += 1) {
+      // If enough suggestions have been selected, break.
+      if (suggestedUsers.size >= numSuggestions) {
+        break;
+      }
+
+      // If the user isn't already following the followee-of-followee,
+      // add them to the set of suggested users.
+      if (!followeeSet.has(followeesOfFollowee[i])) {
+        suggestedUsers.add(followeesOfFollowee[i]);
+      }
+    }
+  });
+
+  if (suggestedUsers.size < numSuggestions) {
+    // At this point, all of the user's followees have been visited,
+    // but not enough suggestions have been generated.
+    const allUsers = await User.find()
+      .catch((err) => {
+        res.status(550);
+        res.send(`[!] Could not retrieve users: ${err}`);
       });
 
-      res.send(usersToSend);
-    })
-    .catch((err) => {
-      res.status(550);
-      res.send(`[!] Could not retrieve users: ${err}`);
-    });
+    for (let j = 0; j < allUsers.length; j += 1) {
+      // Add random users to fill out the list of suggestions.
+      if (!followeeSet.has(allUsers[j].username)) {
+        suggestedUsers.add(allUsers[j].username);
+      }
+
+      // If enough suggestions have been selected, break.
+      if (suggestedUsers.size >= numSuggestions) {
+        break;
+      }
+    }
+  }
+
+  // Send the list of suggestions.
+  res.status(200);
+  res.send(Array.from(suggestedUsers));
 });
 
 module.exports = router;

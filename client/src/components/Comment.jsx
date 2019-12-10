@@ -82,7 +82,6 @@ class Comment extends Component {
     event.preventDefault();
 
     this.setState({ editing: true });
-    console.log(this.state.editing);
     this.render();
   }
 

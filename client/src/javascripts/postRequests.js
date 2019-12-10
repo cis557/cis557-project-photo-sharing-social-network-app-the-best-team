@@ -9,7 +9,7 @@ async function addPost(title, description, privacy, image, tags) {
   formData.append('description', description);
   formData.append('privacy', privacy);
   formData.append('image', image);
-  formData.append('image', tags);
+  formData.append('tags', tags);
 
   return fetch(`${api.url}/addPost`,
     {

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -5,6 +6,7 @@ import Heart from './Heart';
 import { getPost } from '../javascripts/postRequests';
 import loading from '../images/loading-post.svg';
 import Comment from './Comment';
+import EditPost from './EditPost';
 import { addComment } from '../javascripts/commentRequests';
 import Profile from './Profile';
 
@@ -76,7 +78,8 @@ class Post extends Component {
       .catch((err) => {
         console.log(err);
       });
-    event.target.text.value ="";
+
+    event.target.text.value = '';
   }
 
   render() {
@@ -103,10 +106,23 @@ class Post extends Component {
     // eslint-disable-next-line no-underscore-dangle
     const postId = data._id;
     let isLiked = false;
+    const { description } = data;
+    const { tags } = data;
     const { comments } = data;
     const { likes } = data;
 
-    // New: Come back
+    let tagUsernames = '';
+
+    if (tags.length > 0) {
+      tagUsernames += '\n\nTagged: ';
+    }
+
+    tags.forEach((tag) => {
+      tagUsernames += `${tag} `;
+    });
+
+    console.log(description);
+
     const renderComments = [];
 
     comments.forEach((comment) => {
@@ -119,7 +135,6 @@ class Post extends Component {
         text={comment.text}
       />);
     });
-    // END
 
     if (likes.indexOf(currentUser) !== -1) {
       isLiked = true;
@@ -139,12 +154,13 @@ class Post extends Component {
               Posted by
               <a onClick={this.handleViewProfile} id = {data.username} >{` ${data.username}`}</a>
             </h3>
-            <p id="">{data.description}</p>
+            <p id="">{description}</p>
+            <p id="">{tagUsernames}</p>
             <Heart isLiked={isLiked} postId={postId} />
           </div>
           <form onSubmit={this.handleSubmit}>
-          <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
-          <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
+            <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
+            <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
           </form>
           {renderComments}
         </div>
@@ -153,8 +169,14 @@ class Post extends Component {
 
     return (
       <div className="uk-card uk-card-default uk-card-hover uk-align-center" uk-scrollspy="cls: uk-animation-slide-left; repeat: true">
-        <div className="uk-card-header">
-          <h3 className="uk-card-title uk-margin-small-top">{data.title}</h3>
+        <div className="uk-card-header uk-clearfix">
+          <button aria-label="edit" type="button" className="uk-margin-small-top uk-float-right" uk-icon="icon: more-vertical" />
+          <div className="uk-text-center uk-padding-small" uk-dropdown="mode: click">
+            <button uk-toggle="target: #edit-component" aria-label="edit" type="button" className="uk-button uk-button-text"> Edit Post </button>
+          </div>
+          <h3 className="uk-card-title uk-float-left" style={{ marginTop: '2px' }}>
+            {data.title}
+          </h3>
         </div>
         <div className="uk-card-media-top">
           <img src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
@@ -164,7 +186,8 @@ class Post extends Component {
             Posted by
             <a href={`/profile/${data.username}`}>{` ${data.username}`}</a>
           </h3>
-          <p id="">{data.description}</p>
+          <p id="">{description}</p>
+          <p id="">{tagUsernames}</p>
           <Heart isLiked={isLiked} postId={postId} />
         </div>
         <form onSubmit={this.handleSubmit}>
@@ -172,6 +195,9 @@ class Post extends Component {
           <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
         </form>
         {renderComments}
+        <div id="edit-component" uk-modal="true">
+          <EditPost id={postId} />
+        </div>
       </div>
     );
   }
