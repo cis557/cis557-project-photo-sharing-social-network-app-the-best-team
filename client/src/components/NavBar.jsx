@@ -7,22 +7,13 @@ class NavBar extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { apiResponse: '' };
-
-    this.callAPI = this.callAPI.bind(this);
-  }
-
-  componentDidMount() {
-    this.callAPI();
-  }
-
-  callAPI() {
-    fetch(`${api.url}/testAPI`)
-      .then((res) => this.setState({ apiResponse: res }))
-      .catch((err) => err);
+    this.state = {
+      currentUser: props.currentUser,
+    };
   }
 
   render() {
+    const { currentUser } = this.state;
     return (
       <header className="uk-margin-medium-bottom" style={{ backgroundColor: '#fff', borderBottom: '1px solid #dbdbdb' }} data-uk-sticky={{ 'show-on-up': 'true', animation: 'uk-animation-fade' }}>
         <div className="uk-container uk-container-small">
@@ -36,7 +27,7 @@ class NavBar extends Component {
                   <a href="/like" data-uk-icon="icon:heart"> </a>
                 </li>
                 <li>
-                  <a href="/profile" data-uk-icon="icon:user"> </a>
+                  <a href={`/profile/${currentUser}`} data-uk-icon="icon:user"> </a>
                 </li>
                 <li>
                   <a href="/makePost" data-uk-icon="icon:image"> </a>

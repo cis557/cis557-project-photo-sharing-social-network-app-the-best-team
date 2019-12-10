@@ -20,11 +20,12 @@ class Feed extends Component {
       .then((res) => {
         res.json()
           .then((usr) => {
+            this.setState({ currentUser: usr.username} );
             getFeed()
               .then((feed) => {
                 feed.json()
                   .then((posts) => {
-                    this.setState({ currentUser: usr.username, posts, isLoading: false });
+                    this.setState({ posts, isLoading: false });
                   });
               });
           })
@@ -39,9 +40,7 @@ class Feed extends Component {
 
   render() {
     const { isLoading, posts, currentUser } = this.state;
-
     const renderPosts = [];
-
     posts.forEach((id) => {
       renderPosts.push(<Post key={id} postId={id} currentUser={currentUser} />);
     });
@@ -49,7 +48,7 @@ class Feed extends Component {
     if (isLoading) {
       return (
         <div>
-          <NavBar />
+          <NavBar currentUser={currentUser}/>
           <div className="uk-container uk-container-small">
             <div id="cards" className="uk-child-width-1-2@m uk-align-center uk-background-default">
               LOADING
@@ -61,7 +60,7 @@ class Feed extends Component {
 
     return (
       <div>
-        <NavBar />
+        <NavBar currentUser={currentUser}/>
         <div className="uk-container uk-container-small">
           <div id="cards" className="uk-child-width-1-2@m uk-align-center uk-background-default">
             {renderPosts}

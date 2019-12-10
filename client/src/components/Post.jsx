@@ -152,7 +152,7 @@ class Post extends Component {
           <div className="uk-card-body">
             <h3 className="uk-card-title uk-text-small">
               Posted by
-              <a onClick={this.handleViewProfile} id = {data.username} >{` ${data.username}`}</a>
+              <a href={`/profile/${data.username}`} id = {data.username} >{` ${data.username}`}</a>
             </h3>
             <p id="">{description}</p>
             <p id="">{tagUsernames}</p>
