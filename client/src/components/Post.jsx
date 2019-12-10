@@ -85,7 +85,7 @@ class Post extends Component {
         }
       })
       .catch((err) => {
-        console.log(err);
+        this.setState({ message: err });
       });
   }
 

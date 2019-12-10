@@ -1,4 +1,4 @@
-/* globals fetch */
+/* globals */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -6,7 +6,7 @@ class NavBar extends Component {
   constructor(props) {
     super(props);
     const { currentUser } = props;
-    console.log(props);
+
     this.state = {
       user: currentUser,
     };
