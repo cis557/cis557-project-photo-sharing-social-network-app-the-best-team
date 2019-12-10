@@ -97,10 +97,10 @@ class Post extends Component {
       );
     }
 
-    if(checkingProfile){
+    if (checkingProfile) {
       return (
         <Profile currentUser={data.username} />
-      )
+      );
     }
 
     // eslint-disable-next-line no-underscore-dangle

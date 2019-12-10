@@ -1,8 +1,8 @@
 /* globals btoa */
-
 import React, { Component } from 'react';
 import NavBar from './NavBar';
 import { getOtherUser } from '../javascripts/userRequests';
+import '../stylesheets/uikit.min.css';
 
 export default class DetailsPage extends Component {
   constructor(props) {
