@@ -34,7 +34,7 @@ class Post extends Component {
     this.refresh();
   }
 
-  handleViewProfile(event){
+  handleViewProfile(event) {
     event.preventDefault();
 
     this.setState({ checkingProfile: true });
@@ -83,7 +83,12 @@ class Post extends Component {
   }
 
   render() {
-    const { data, isLoading, currentUser, checkingProfile } = this.state;
+    const {
+      data,
+      isLoading,
+      currentUser,
+      checkingProfile,
+    } = this.state;
 
     if (isLoading) {
       return (
@@ -97,10 +102,10 @@ class Post extends Component {
       );
     }
 
-    if(checkingProfile){
+    if (checkingProfile) {
       return (
         <Profile currentUser={data.username} />
-      )
+      );
     }
 
     // eslint-disable-next-line no-underscore-dangle
@@ -111,17 +116,22 @@ class Post extends Component {
     const { comments } = data;
     const { likes } = data;
 
-    let tagUsernames = '';
+    const tagLinks = [];
 
     if (tags.length > 0) {
-      tagUsernames += '\n\nTagged: ';
+      tagLinks.push('Tagged: ');
     }
 
     tags.forEach((tag) => {
-      tagUsernames += `${tag} `;
-    });
+      const url = `//localhost:3000/profile/${tag}`;
 
-    console.log(description);
+      tagLinks.push(
+        <a href={url}>
+          {tag}
+          {' '}
+        </a>,
+      );
+    });
 
     const renderComments = [];
 
@@ -152,10 +162,10 @@ class Post extends Component {
           <div className="uk-card-body">
             <h3 className="uk-card-title uk-text-small">
               Posted by
-              <a onClick={this.handleViewProfile} id = {data.username} >{` ${data.username}`}</a>
+              <a onClick={this.handleViewProfile} id={data.username}>{` ${data.username}`}</a>
             </h3>
             <p id="">{description}</p>
-            <p id="">{tagUsernames}</p>
+            <p id="">{tagLinks}</p>
             <Heart isLiked={isLiked} postId={postId} />
           </div>
           <form onSubmit={this.handleSubmit}>
@@ -187,7 +197,7 @@ class Post extends Component {
             <a href={`/profile/${data.username}`}>{` ${data.username}`}</a>
           </h3>
           <p id="">{description}</p>
-          <p id="">{tagUsernames}</p>
+          <p id="">{tagLinks}</p>
           <Heart isLiked={isLiked} postId={postId} />
         </div>
         <form onSubmit={this.handleSubmit}>
