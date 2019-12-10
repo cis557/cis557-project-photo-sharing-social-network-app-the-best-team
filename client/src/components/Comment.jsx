@@ -97,7 +97,7 @@ class Comment extends Component {
           <header className="uk-comment-header uk-position-relative">
             <div className="uk-grid-medium uk-flex-middle" uk-grid="true">
               <div className="uk-width-expand">
-                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href="#">{username}</a></h5>
+                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href={`/profile/${username}`}>{username}</a></h5>
               </div>
             </div>
             <div className="uk-position-top-right uk-position-small uk-hidden-hover"><a className="uk-link-muted" uk-icon="icon: pencil" onClick={this.handleEditText}>Edit</a></div>
@@ -116,7 +116,7 @@ class Comment extends Component {
           <header className="uk-comment-header uk-position-relative">
             <div className="uk-grid-medium uk-flex-middle" uk-grid="true">
               <div className="uk-width-expand">
-                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href="#">{username}</a></h5>
+                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href={`/profile/${username}`}>{username}</a></h5>
               </div>
             </div>
           </header>
