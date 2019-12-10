@@ -3,9 +3,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { editComment, deleteComment } from '../javascripts/commentRequests';
-import { getPost } from '../javascripts/postRequests';
-
-// function used to do the splitting, move the the backend
 
 class Comment extends Component {
   constructor(props) {
@@ -20,6 +17,7 @@ class Comment extends Component {
       deleted: false,
       editing: false,
     };
+
     this.handleDelete = this.handleDelete.bind(this);
     this.refresh = this.refresh.bind(this);
     this.handleEdit = this.handleEdit.bind(this);

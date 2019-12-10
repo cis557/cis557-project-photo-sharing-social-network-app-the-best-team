@@ -49,8 +49,6 @@ router.get('/getUser', checkAuthenticated, (req, res) => {
 router.get('/getOtherUser/:username', checkAuthenticated, (req, res) => {
   const { username } = req.params;
 
-  console.log(username);
-
   User.findOne({ username })
     .then((userInDatabase) => {
       if (userInDatabase) {
