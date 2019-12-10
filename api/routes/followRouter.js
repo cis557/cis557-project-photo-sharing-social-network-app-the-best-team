@@ -53,7 +53,6 @@ router.post('/follow', checkAuthenticated, (req, res) => {
       User.findOne({ username: usernameA })
         .then((user) => {
           const followeesA = user.followees;
-
           if (followeesA.includes(usernameB)) {
           // Update User A's followees.
             User.findOneAndUpdate(

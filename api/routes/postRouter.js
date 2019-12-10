@@ -164,7 +164,6 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
           res.status(200);
           const array = Array.from(feed);
           array.sort((a, b) => a.time - b.time);
-          console.log(array);
           res.send(array);
         }
       } else {
