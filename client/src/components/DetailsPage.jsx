@@ -106,14 +106,14 @@ export default class DetailsPage extends Component {
                       <span id="followers" className="uk-text-light">
                         followers:
                         {' '}
-                        <a href="/follower">{data.followers.length}</a>
+                        {data.followers.length}
                       </span>
                     </li>
                     <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-float-left">
                       <span id="following" className="uk-text-light">
                         following:
                         {' '}
-                        <a href="/followee">{data.followees.length}</a>
+                        {data.followees.length}
                       </span>
                     </li>
                   </ul>

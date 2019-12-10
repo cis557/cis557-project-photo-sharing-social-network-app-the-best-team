@@ -69,14 +69,14 @@ class Profile extends Component {
                     <span id="followers" className="uk-text-light">
                       followers:
                       {' '}
-                      <a href='/follower'>{data.followers.length}</a>
+                      <a href="/follower">{data.followers.length}</a>
                     </span>
                   </li>
                   <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-float-left">
                     <span id="following" className="uk-text-light">
                       following:
                       {' '}
-                      <a href='/followee'>{data.followees.length}</a>
+                      <a href="/followee">{data.followees.length}</a>
                     </span>
                   </li>
                 </ul>
