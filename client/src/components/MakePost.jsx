@@ -18,6 +18,7 @@ class MakePost extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleFileChange = this.handleFileChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handlePrivacyChange = this.handlePrivacyChange.bind(this);
   }
 
   handleChange(event) {

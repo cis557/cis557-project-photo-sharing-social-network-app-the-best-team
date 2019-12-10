@@ -147,7 +147,9 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
             User.findOne({ username: followeeUsername })
               .then((followee) => {
                 followee.posts.forEach((post) => {
+                  if(post.privacy === 'public'){
                   feed.add({ id: post.id.toString('hex'), time: post.time });
+                  }
                 });
               })
               .then(() => {
