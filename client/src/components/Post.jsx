@@ -28,18 +28,12 @@ class Post extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.refresh = this.refresh.bind(this);
-    this.handleViewProfile = this.handleViewProfile.bind(this);
   }
 
   componentDidMount() {
     this.refresh();
   }
 
-  handleViewProfile(event) {
-    event.preventDefault();
-
-    this.setState({ checkingProfile: true });
-  }
 
   refresh() {
     const { postId } = this.state;
@@ -153,7 +147,8 @@ class Post extends Component {
         </a>,
       );
     });
-
+    
+    console.log(likes)
     const renderComments = [];
 
     comments.forEach((comment) => {
@@ -188,7 +183,7 @@ class Post extends Component {
             </h3>
             <p id="">{description}</p>
             <p id="">{tagLinks}</p>
-            <Heart isLiked={isLiked} postId={postId} />
+            <Heart isLiked={isLiked} postId={postId} likes={likes} />
           </div>
           <form onSubmit={this.handleSubmit}>
             <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
@@ -220,7 +215,7 @@ class Post extends Component {
           </h3>
           <p id="">{description}</p>
           <p id="">{tagLinks}</p>
-          <Heart isLiked={isLiked} postId={postId} />
+          <Heart isLiked={isLiked} postId={postId} likes={likes}/>
         </div>
         {message}
         <form onSubmit={this.handleSubmit}>
