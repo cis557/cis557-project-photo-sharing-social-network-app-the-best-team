@@ -143,6 +143,7 @@ class Post extends Component {
         username={comment.username}
         datetime={comment.datetime}
         text={comment.text}
+        currentUser={currentUser}
       />);
     });
 

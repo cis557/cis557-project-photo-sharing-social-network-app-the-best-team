@@ -30,7 +30,8 @@ router.post('/register', checkNotAuthenticated,
     const { file } = req;
 
     if (file && !checkFileSize(file)) {
-      res.status(413).send(`[!] Profile picture is too large (max = ${maxFileMb}MB)`);
+      res.status(413);
+      res.json(`[!] Profile picture is too large (max = ${maxFileMb}MB)`);
       return;
     }
 
@@ -42,13 +43,13 @@ router.post('/register', checkNotAuthenticated,
         .then((userFoundByEmail) => {
           if (userFoundByEmail) {
             res.status(409);
-            res.send(`[!] Email address is already in use: ${email}`);
+            res.json(`[!] Email address is already in use: ${email}`);
           } else {
             User.findOne({ username })
               .then((userFoundByUsername) => {
                 if (userFoundByUsername) {
                   res.status(409);
-                  res.send(`[!] Username is already in use: ${username}`);
+                  res.json(`[!] Username is already in use: ${username}`);
                 } else {
                   if (file) {
                     let bytes;
@@ -59,7 +60,7 @@ router.post('/register', checkNotAuthenticated,
                       fs.unlinkSync(file.path);
                     } catch (err) {
                       res.status(551);
-                      res.send(`[!] Could not read profile picture: ${err}`);
+                      res.json(`[!] Could not read profile picture: ${err}`);
                       return;
                     }
 
@@ -86,7 +87,7 @@ router.post('/register', checkNotAuthenticated,
                     .then(() => res.sendStatus(201))
                     .catch((err) => {
                       res.status(550);
-                      res.send(`[!] Could not register user: ${err}`);
+                      res.json(`[!] Could not register user: ${err}`);
                     });
                 }
               });
@@ -94,7 +95,7 @@ router.post('/register', checkNotAuthenticated,
         });
     } catch (err) {
       res.status(559);
-      res.send(`[!] Could not register user: ${err}`);
+      res.json(`[!] Could not register user: ${err}`);
     }
   });
 
@@ -105,7 +106,8 @@ router.post('/login',
     res.sendStatus(200);
   },
   (req, res) => {
-    res.sendStatus(401);
+    res.status(401);
+    res.json('[!] Invalid credentials');
   });
 
 router.post('/logout', checkAuthenticated, (req, res) => {
