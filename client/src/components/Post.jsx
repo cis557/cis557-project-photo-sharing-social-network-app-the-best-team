@@ -51,7 +51,7 @@ class Post extends Component {
             this.setState({ isLoading: false, data: post });
           })
           .catch((err) => {
-            console.log(err);
+            console.log([err]);
           });
       })
       .catch((err) => {
@@ -85,7 +85,7 @@ class Post extends Component {
         }
       })
       .catch((err) => {
-        this.setState({ message: err });
+        this.setState({ message: '[!]' });
       });
   }
 
