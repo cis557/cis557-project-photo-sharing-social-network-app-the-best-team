@@ -16,6 +16,8 @@ const RouteProtector = (Component) => class App extends Component {
 
   componentDidMount() {
     checkAuth().then((res) => {
+      console.log(res);
+
       this.setState({ isAuthenticated: res.status === 200, isLoading: false });
     }).catch(() => {
       this.setState({ isLoading: false });

@@ -2,7 +2,7 @@
 import React from 'react';
 import Loader from 'react-loader-spinner';
 import { Redirect } from 'react-router-dom';
-import { checkAuth } from '../javascripts/authRequests';
+import { checkAuth, logout } from '../javascripts/authRequests';
 
 const RouteVerifier = (Component) => class App extends Component {
   constructor(props) {
@@ -50,7 +50,7 @@ const RouteVerifier = (Component) => class App extends Component {
     }
 
     if (!isNotAuthenticated) {
-      return <Redirect to="/" />;
+      logout();
     }
 
     return <Component {...this.props} />;
