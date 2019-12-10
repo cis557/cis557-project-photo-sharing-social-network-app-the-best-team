@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as clearHeart } from '@fortawesome/free-regular-svg-icons';
 import { addLike, deleteLike } from '../javascripts/likeRequests';
+import { getPost } from '../javascripts/postRequests';
 import '../stylesheets/heart-style.css';
 
 
@@ -15,9 +16,37 @@ class Heart extends Component {
     this.state = {
       postId: props.postId,
       liked: props.isLiked,
+      likes: props.likes,
     };
 
     this.handleEvent = this.handleEvent.bind(this);
+    this.refresh = this.refresh.bind(this);
+  }
+
+  componentDidMount() {
+    this.refresh();
+  }
+  
+  refreshPage() {
+      window.location.reload(false);
+  }
+
+  refresh() {
+    const { postId } = this.state;
+    
+    getPost(postId)
+      .then((data) => {
+        data.json()
+          .then((post) => {
+            this.setState({ isLoading: false, data: post.likes });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   handleEvent(e) {
@@ -29,6 +58,7 @@ class Heart extends Component {
       deleteLike(postId)
         .then(() => {
           this.setState({ liked: false });
+          window.location.reload(false);
         })
         .catch((err) => {
           console.log(err);
@@ -37,6 +67,7 @@ class Heart extends Component {
       addLike(postId)
         .then(() => {
           this.setState({ liked: true });
+          window.location.reload(false);
         })
         .catch((err) => {
           console.log(err);
@@ -45,16 +76,19 @@ class Heart extends Component {
   }
 
   render() {
-    const { liked } = this.state;
-
+    const { liked, likes } = this.state;
     if (liked) {
       return (
-        <FontAwesomeIcon className="liked" onClick={this.handleEvent} icon={solidHeart} />
-      );
-    }
+        <p>
+        <FontAwesomeIcon className="liked" onClick={this.handleEvent} icon={solidHeart} /> : {likes.length}
+        </p>
 
+        );
+    }
     return (
-      <FontAwesomeIcon className="not-liked" onClick={this.handleEvent} icon={clearHeart} />
+      <p>
+      <FontAwesomeIcon className="not-liked" onClick={this.handleEvent} icon={clearHeart} /> : {likes.length}
+      </p>
     );
   }
 }
@@ -62,6 +96,7 @@ class Heart extends Component {
 Heart.propTypes = {
   postId: PropTypes.string.isRequired,
   isLiked: PropTypes.bool.isRequired,
+  likes: PropTypes.array.isRequired,
 };
 
 export default Heart;
