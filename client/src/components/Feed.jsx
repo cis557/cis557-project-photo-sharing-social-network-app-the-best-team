@@ -20,7 +20,7 @@ class Feed extends Component {
       .then((res) => {
         res.json()
           .then((usr) => {
-            this.setState({ currentUser: usr.username} );
+            this.setState({ currentUser: usr.username });
             getFeed()
               .then((feed) => {
                 feed.json()
@@ -41,8 +41,8 @@ class Feed extends Component {
   render() {
     const { isLoading, posts, currentUser } = this.state;
     const renderPosts = [];
-    posts.forEach((id) => {
-      renderPosts.push(<Post key={id} postId={id} currentUser={currentUser} />);
+    posts.forEach((post) => {
+      renderPosts.push(<Post key={post.id} postId={post.id} currentUser={currentUser} />);
     });
 
     if (isLoading) {
