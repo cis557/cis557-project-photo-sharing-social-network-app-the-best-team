@@ -45,7 +45,7 @@ class Follower extends Component {
     const followers = data.followers.map((follower) => (
       <div className="uk-card uk-card-default uk-card-hover uk-align-center" uk-scrollspy="cls: uk-animation-slide-left; repeat: true">
         <div className="uk-card uk-card-primary uk-card-body uk-card-hover uk-margin-top">
-          <h3 className="uk-card-title"><a href="">{follower}</a></h3>
+          <h3 className="uk-card-title"><a href={`/profile/${follower}`}>{follower}</a></h3>
           <span>
             <p>
               You are currently followed by

@@ -40,7 +40,7 @@ router.post('/addPost',
 
     try {
       if (file && !checkFileSize(file)) {
-        res.status(413).send(`[!] Image is too large (max = ${maxFileMb}MB)`);
+        res.status(413).json(`[!] Image is too large (max = ${maxFileMb}MB)`);
         return;
       }
 

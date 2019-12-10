@@ -63,7 +63,7 @@ class Followee extends Component {
     const recommends = data.followees.map((followee) => (
       <div className="uk-card uk-card-default uk-card-hover uk-align-center" uk-scrollspy="class: uk-animation-slide-left; repeat: true">
         <div className="uk-card uk-card-primary uk-card-body uk-card-hover uk-margin-top">
-          <h3 className="uk-card-title"><a href="">{followee}</a></h3>
+          <h3 className="uk-card-title"><a href={`/profile/${followee}`}>{followee}</a></h3>
           <span>
             <p>
               You are currently following
