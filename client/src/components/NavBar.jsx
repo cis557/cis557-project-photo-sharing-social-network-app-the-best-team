@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 class NavBar extends Component {
   constructor(props) {
     super(props);
-    const { currentUser } = this.props;
-
+    const { currentUser } = props;
+    console.log(props);
     this.state = {
       user: currentUser,
     };
@@ -27,7 +27,7 @@ class NavBar extends Component {
                   <a href="/like" data-uk-icon="icon:heart"> </a>
                 </li>
                 <li>
-                  <a href={`/profile/${currentUser}`} data-uk-icon="icon:user"> </a>
+                  <a href="/profile" data-uk-icon="icon:user"> </a>
                 </li>
                 <li>
                   <a href="/makePost" data-uk-icon="icon:image"> </a>
