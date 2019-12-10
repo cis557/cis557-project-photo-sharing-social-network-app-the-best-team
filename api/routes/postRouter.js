@@ -32,6 +32,8 @@ router.post('/addPost',
     const { username } = req.user;
     const { title } = req.body;
     const { description } = req.body;
+    const { privacy } = req.body;
+    const { tags } = req.body;
     const { file } = req;
 
     const contentType = file.mimetype;
@@ -60,8 +62,9 @@ router.post('/addPost',
       contentType,
       title,
       description,
+      privacy,
       likes: [],
-      tags: [],
+      tags,
       comments: [],
     });
 
@@ -75,11 +78,13 @@ router.post('/addPost',
             res.sendStatus(201);
           })
           .catch((err) => {
+            console.log(err);
             res.status(550);
             res.send(`[!] Could not create post: ${err}`);
           });
       })
       .catch((err) => {
+        console.log(err);
         res.status(550);
         res.send(`[!] Could not create post: ${err}`);
       });
@@ -141,30 +146,6 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
           res.status(200);
           res.send(Array.from(feed));
         }
-      } else {
-        res.status(404);
-        res.send('[!] User not found');
-      }
-    })
-    .catch((err) => {
-      res.status(550);
-      res.send(`[!] Could not retrieve user: ${err}`);
-    });
-});
-
-
-router.get('/getLikes', checkAuthenticated, (req, res) => {
-  const { username } = req.user;
-  const likes = new Set();
-
-  User.findOne({ username })
-    .then((user) => {
-      if (user) {
-        user.likes.forEach((postId) => {
-          likes.add(postId);
-        });
-        res.status(200);
-        res.send(Array.from(likes));
       } else {
         res.status(404);
         res.send('[!] User not found');

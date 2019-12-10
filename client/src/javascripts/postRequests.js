@@ -2,12 +2,14 @@
 
 import { api } from '../api';
 
-async function addPost(title, description, file) {
+async function addPost(title, description, privacy, image, tags) {
   // eslint-disable-next-line no-undef
   const formData = new FormData();
   formData.append('title', title);
   formData.append('description', description);
-  formData.append('image', file);
+  formData.append('privacy', privacy);
+  formData.append('image', image);
+  formData.append('image', tags);
 
   return fetch(`${api.url}/addPost`,
     {

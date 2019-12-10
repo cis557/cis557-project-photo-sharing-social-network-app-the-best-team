@@ -44,6 +44,10 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  privacy: {
+    type: String,
+    required: true,
+  },
   likes: {
     type: Array,
     required: false,
@@ -53,10 +57,6 @@ const PostSchema = new mongoose.Schema({
     required: false,
   },
   comments: [CommentSchema],
-  privacy: {
-    type: Boolean,
-    required: true,
-  }
 });
 
 const Post = mongoose.model('Post', PostSchema);

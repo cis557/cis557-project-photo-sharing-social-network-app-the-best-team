@@ -9,8 +9,9 @@ class MakePost extends Component {
     this.state = {
       title: '',
       description: '',
-      mentions: '',
+      privacy: 'public',
       image: null,
+      tags: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -26,11 +27,22 @@ class MakePost extends Component {
     this.setState({ image: event.target.files[0] });
   }
 
+  handlePrivacyChange(event) {
+    this.setState({ privacy: event.target.value });
+  }
+
   handleSubmit(event) {
     event.preventDefault();
-    const { title, description, image } = this.state;
 
-    addPost(title, description, image)
+    const {
+      title,
+      description,
+      privacy,
+      image,
+      tags,
+    } = this.state;
+
+    addPost(title, description, privacy, image, tags)
       .then((res) => {
         if (res.ok) {
           this.props.history.push('/');
@@ -58,16 +70,16 @@ class MakePost extends Component {
                 <textarea onChange={this.handleChange} className="uk-textarea" id="description" rows="5" placeholder="Description" />
               </div>
               <div className="uk-margin">
-                <textarea onChange={this.handleChange} className="uk-textarea" id="mentions" rows="1" placeholder="Mentions (Separated with Commas)" />
+                <textarea onChange={this.handleChange} className="uk-textarea" id="tags" rows="1" placeholder="Tags (separated by commas)" />
               </div>
               <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
                 <label htmlFor="radio1">
-                  Private
-                  <input className="uk-radio" type="radio" name="radio1" checked />
+                  <input className="uk-radio" type="radio" name="radio" value="public" checked="true" />
+                  Public
                 </label>
                 <label htmlFor="radio2">
-                  Public
-                  <input className="uk-radio" type="radio" name="radio2" />
+                  <input className="uk-radio" type="radio" name="radio" value="private" />
+                  Private
                 </label>
               </div>
               <div className="uk-margin">
@@ -76,11 +88,11 @@ class MakePost extends Component {
                   <input onChange={this.handleFileChange} id="image" className="uk-input uk-form-width-xxlarge" type="file" name="image" accept="image/*" />
                 </label>
               </div>
-              <input type="submit" className="uk-button-primary uk-button-large uk-text-large" value="Upload"/>
+              <input type="submit" className="uk-button-primary uk-button-large uk-text-large" value="Upload" />
               <a className="uk-margin-top uk-margin-left uk-button-danger uk-button-large uk-text-large" href="/" value="Upload">Cancel</a>
             </fieldset>
           </form>
-        </div> 
+        </div>
       </div>
     );
   }
