@@ -49,7 +49,7 @@ class Feed extends Component {
     if (isLoading) {
       return (
         <div>
-          <NavBar />
+          <NavBar currentUser={currentUser} />
           <div className="uk-container uk-container-small">
             <div id="cards" className="uk-child-width-1-2@m uk-align-center uk-background-default">
               LOADING
@@ -61,7 +61,7 @@ class Feed extends Component {
 
     return (
       <div>
-        <NavBar />
+        <NavBar currentUser={currentUser} />
         <div className="uk-container uk-container-small">
           <div id="cards" className="uk-child-width-1-2@m uk-align-center uk-background-default">
             {renderPosts}

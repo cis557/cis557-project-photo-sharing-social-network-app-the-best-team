@@ -1,25 +1,15 @@
 /* globals fetch */
-
 import React, { Component } from 'react';
-import { api } from '../api';
+import PropTypes from 'prop-types';
 
 class NavBar extends Component {
   constructor(props) {
     super(props);
+    const { currentUser } = this.props;
 
-    this.state = { apiResponse: '' };
-
-    this.callAPI = this.callAPI.bind(this);
-  }
-
-  componentDidMount() {
-    this.callAPI();
-  }
-
-  callAPI() {
-    fetch(`${api.url}/testAPI`)
-      .then((res) => this.setState({ apiResponse: res }))
-      .catch((err) => err);
+    this.state = {
+      user: currentUser,
+    };
   }
 
   render() {
@@ -54,6 +44,10 @@ class NavBar extends Component {
       </header>
     );
   }
+}
+
+NavBar.propTypes = {
+  currentUser: PropTypes.string.isRequired,
 }
 
 export default NavBar;
