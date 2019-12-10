@@ -198,13 +198,18 @@ router.get('/getPost/:postId', checkAuthenticated, (req, res) => {
   });
 });
 
-router.delete('/deletePost', checkAuthenticated, (req, res) => {
+router.post('/deletePost', checkAuthenticated, (req, res) => {
   const { username } = req.user;
   const { postId } = req.body;
 
   Post.deleteOne({ _id: ObjectId(postId), username })
     .then(() => {
-      res.sendStatus(200);
+      User.findOneAndUpdate(
+        { username },
+        { $pull: { posts: { id: postId } } },
+      ).then(() => {
+        res.sendStatus(200);
+      });
     })
     .catch((err) => {
       res.status(550);

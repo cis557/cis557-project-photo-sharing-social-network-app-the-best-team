@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Heart from './Heart';
-import { getPost } from '../javascripts/postRequests';
+import { getPost, deletePost } from '../javascripts/postRequests';
 import loading from '../images/loading-post.svg';
 import Comment from './Comment';
 import EditPost from './EditPost';
@@ -23,11 +23,13 @@ class Post extends Component {
       text: '',
       checkingProfile: false,
       message: '',
+      isDeleted: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.refresh = this.refresh.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentDidMount() {
@@ -83,12 +85,25 @@ class Post extends Component {
       });
   }
 
+  handleDelete() {
+    const { postId } = this.state;
+
+    deletePost(postId)
+      .then(() => {
+        this.setState({ isDeleted: true });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   render() {
     const {
       data,
       isLoading,
       currentUser,
       checkingProfile,
+      isDeleted
     } = this.state;
 
     let { message } = this.state;
@@ -103,6 +118,10 @@ class Post extends Component {
       );
     } else {
       message = '';
+    }
+
+    if (isDeleted) {
+      return (<div />);
     }
 
     if (isLoading) {
@@ -199,7 +218,11 @@ class Post extends Component {
         <div className="uk-card-header uk-clearfix">
           <button aria-label="edit" type="button" className="uk-margin-small-top uk-float-right" uk-icon="icon: more-vertical" />
           <div className="uk-text-center uk-padding-small" uk-dropdown="mode: click">
-            <button uk-toggle="target: #edit-component" aria-label="edit" type="button" className="uk-button uk-button-text"> Edit Post </button>
+            <ul className="uk-nav uk-dropdown-nav">
+              <li><button uk-toggle="target: #edit-component" aria-label="edit" type="button" className="uk-button uk-button-text"> Edit Post </button></li>
+              <li className="uk-nav-divider" />
+              <li><button onClick={this.handleDelete} aria-label="delete" type="button" className="uk-button uk-button-text" style={{ color: 'red' }}> Delete Post </button></li>
+            </ul>
           </div>
           <h3 className="uk-card-title uk-float-left" style={{ marginTop: '2px' }}>
             {data.title}

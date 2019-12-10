@@ -80,7 +80,7 @@ async function getLikes() {
 async function deletePost(postId) {
   return fetch(`${api.url}/deletePost`,
     {
-      method: 'DELETE',
+      method: 'POST',
       body: JSON.stringify({
         postId,
       }),
