@@ -16,12 +16,9 @@ async function getUser() {
 }
 
 async function getOtherUser(username) {
-  return fetch(`${api.url}/getOtherUser`,
+  return fetch(`${api.url}/getOtherUser/${username}`,
     {
       method: 'GET',
-      body: JSON.stringify({
-        username,
-      }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
         Accept: 'application/json; charset=UTF-8',

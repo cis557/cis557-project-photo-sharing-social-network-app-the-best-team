@@ -46,8 +46,10 @@ router.get('/getUser', checkAuthenticated, (req, res) => {
 });
 
 
-router.get('/getOtherUser', checkAuthenticated, (req, res) => {
-  const { username } = req.body;
+router.get('/getOtherUser/:username', checkAuthenticated, (req, res) => {
+  const { username } = req.params;
+
+  console.log(username);
 
   User.findOne({ username })
     .then((userInDatabase) => {

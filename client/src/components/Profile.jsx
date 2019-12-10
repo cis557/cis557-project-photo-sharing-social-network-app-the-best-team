@@ -16,8 +16,8 @@ class Profile extends Component {
   }
 
   componentDidMount() {
-    const {currentUser} = this.state;
-    console.log(currentUser)
+    const { currentUser } = this.state;
+
     getOtherUser(currentUser)
       .then((data) => {
         data.json()
@@ -67,14 +67,14 @@ class Profile extends Component {
                   </li>
                   <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-margin-right uk-float-left">
                     <span id="followers" className="uk-text-light">
-                     followers:
+                      followers:
                       {' '}
                       <a href="/follower">{data.followers.length}</a>
                     </span>
                   </li>
                   <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-float-left">
                     <span id="following" className="uk-text-light">
-                     following:
+                      following:
                       {' '}
                       <a href="/followee">{data.followees.length}</a>
                     </span>

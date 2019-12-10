@@ -33,7 +33,7 @@ class App extends PureComponent {
           <Route exact path="/followee" component={RouteProtector(Followee)} />
           <Route exact path="/follower" component={RouteProtector(Follower)} />
           <Route exact path="/like" component={RouteProtector(Like)} />
-          <Route path="/profile/:id" component={DetailsPage}/>
+          <Route path="/profile/:id" component={DetailsPage} />
         </div>
       </Router>
     );
