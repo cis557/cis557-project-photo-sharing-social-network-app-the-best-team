@@ -157,7 +157,7 @@ class Post extends Component {
     }
 
     tags.forEach((tag) => {
-      const url = `//localhost:3000/profile/${tag}`;
+      const url = `/profile/${tag}`;
 
       tagLinks.push(
         <a href={url}>
@@ -166,8 +166,7 @@ class Post extends Component {
         </a>,
       );
     });
-    
-    console.log(likes)
+
     const renderComments = [];
 
     comments.forEach((comment) => {
