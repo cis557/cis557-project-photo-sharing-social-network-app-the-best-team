@@ -33,7 +33,7 @@ router.post('/addPost',
     const { title } = req.body;
     const { description } = req.body;
     const { privacy } = req.body;
-    const { tags } = req.body;
+    let { tags } = req.body;
     const { file } = req;
 
     const contentType = file.mimetype;
@@ -55,38 +55,56 @@ router.post('/addPost',
     image = Buffer.from(image, 'base64');
     const datetime = Date.now().toString();
 
-    const newPost = new Post({
-      username,
-      datetime,
-      image,
-      contentType,
-      title,
-      description,
-      privacy,
-      likes: [],
-      tags,
-      comments: [],
-    });
+    tags = tags.split(/[, ]+/);
+    const validatedTags = new Set();
 
-    newPost.save()
-      .then((post) => {
-        User.findOneAndUpdate(
-          { username },
-          { $push: { posts: post._id } },
-        )
-          .then(() => {
-            res.sendStatus(201);
+    console.log(tags);
+
+    User.find()
+      .then((userArray) => {
+        const userSet = new Set();
+
+        userArray.forEach((user) => {
+          userSet.add(user.username);
+        });
+
+        tags.forEach((tag) => {
+          if (userSet.has(tag)) {
+            validatedTags.add(tag);
+          }
+        });
+
+        const newPost = new Post({
+          username,
+          datetime,
+          image,
+          contentType,
+          title,
+          description,
+          privacy,
+          likes: [],
+          tags: Array.from(validatedTags),
+          comments: [],
+        });
+
+        newPost.save()
+          .then((post) => {
+            User.findOneAndUpdate(
+              { username },
+              { $push: { posts: post._id } },
+            )
+              .then(() => {
+                res.sendStatus(201);
+              })
+              .catch((err) => {
+                res.status(550);
+                res.send(`[!] Could not create post: ${err}`);
+              });
           })
           .catch((err) => {
-            console.log(err);
             res.status(550);
             res.send(`[!] Could not create post: ${err}`);
           });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(550);
-        res.send(`[!] Could not create post: ${err}`);
       });
   });
 

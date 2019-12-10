@@ -39,11 +39,8 @@ class MakePost extends Component {
       description,
       privacy,
       image,
+      tags,
     } = this.state;
-
-    let { tags } = this.state;
-
-    tags = tags.split(/[, ]+/);
 
     addPost(title, description, privacy, image, tags)
       .then((res) => {
@@ -77,11 +74,11 @@ class MakePost extends Component {
               </div>
               <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
                 <label htmlFor="radio1">
-                  <input className="uk-radio" type="radio" name="radio" value="public" checked="true" />
+                  <input onChange={this.handlePrivacyChange} className="uk-radio" type="radio" name="radio" value="public" checked />
                   Public
                 </label>
                 <label htmlFor="radio2">
-                  <input className="uk-radio" type="radio" name="radio" value="private" />
+                  <input onChange={this.handlePrivacyChange} className="uk-radio" type="radio" name="radio" value="private" />
                   Private
                 </label>
               </div>
