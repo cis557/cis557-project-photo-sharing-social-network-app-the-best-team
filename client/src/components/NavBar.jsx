@@ -13,7 +13,8 @@ class NavBar extends Component {
   }
 
   render() {
-    const { currentUser } = this.state;
+    const { user } = this.state;
+
     return (
       <header className="uk-margin-medium-bottom" style={{ backgroundColor: '#fff', borderBottom: '1px solid #dbdbdb' }} data-uk-sticky={{ 'show-on-up': 'true', animation: 'uk-animation-fade' }}>
         <div className="uk-container uk-container-small">
