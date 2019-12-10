@@ -15,13 +15,10 @@ async function getUser() {
     });
 }
 
-async function deleteUser(username) {
-  return fetch(`${api.url}/deleteUser`,
+async function getOtherUser(username) {
+  return fetch(`${api.url}/getOtherUser/${username}`,
     {
-      method: 'DELETE',
-      body: JSON.stringify({
-        username,
-      }),
+      method: 'GET',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
         Accept: 'application/json; charset=UTF-8',
@@ -31,10 +28,13 @@ async function deleteUser(username) {
     });
 }
 
-async function getAllUsers() {
-  return fetch(`${api.url}/getAllUsers`,
+async function deleteUser(username) {
+  return fetch(`${api.url}/deleteUser`,
     {
-      method: 'GET',
+      method: 'DELETE',
+      body: JSON.stringify({
+        username,
+      }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
         Accept: 'application/json; charset=UTF-8',
@@ -59,7 +59,7 @@ async function getSuggestedUsers() {
 
 export {
   getUser,
+  getOtherUser,
   deleteUser,
-  getAllUsers,
   getSuggestedUsers,
 };
