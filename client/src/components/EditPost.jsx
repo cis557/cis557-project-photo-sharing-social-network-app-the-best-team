@@ -1,3 +1,5 @@
+/* globals location */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { editPost } from '../javascripts/postRequests';
@@ -21,12 +23,12 @@ class EditPost extends Component {
     this.setState({ [e.target.id]: e.target.value });
   }
 
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
-
     const { postId, newTitle, newDesc } = this.state;
-
-    editPost(postId, newTitle, newDesc);
+    await editPost(postId, newTitle, newDesc);
+    // eslint-disable-next-line no-restricted-globals
+    location.reload();
   }
 
   render() {
