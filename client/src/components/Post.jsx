@@ -22,6 +22,7 @@ class Post extends Component {
       data: {},
       text: '',
       checkingProfile: false,
+      message: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -44,7 +45,7 @@ class Post extends Component {
             this.setState({ isLoading: false, data: post });
           })
           .catch((err) => {
-            console.log(err);
+            console.log([err]);
           });
       })
       .catch((err) => {
@@ -61,19 +62,25 @@ class Post extends Component {
 
     const { text } = this.state;
     const { postId } = this.state;
+    const { target } = event;
 
     addComment(
       postId,
       text,
     )
-      .then(() => {
-        this.refresh();
+      .then((res) => {
+        if (res.ok) {
+          this.refresh();
+          target.text.value = '';
+        } else {
+          res.json().then((json) => {
+            this.setState({ message: json });
+          });
+        }
       })
       .catch((err) => {
-        console.log(err);
+        this.setState({ message: '[!]' });
       });
-
-    event.target.text.value = '';
   }
 
   render() {
@@ -83,6 +90,20 @@ class Post extends Component {
       currentUser,
       checkingProfile,
     } = this.state;
+
+    let { message } = this.state;
+
+    if (message !== '') {
+      message = (
+        <div style={{ textAlign: 'center' }}>
+          {message}
+          <br />
+          <br />
+        </div>
+      );
+    } else {
+      message = '';
+    }
 
     if (isLoading) {
       return (
@@ -158,7 +179,7 @@ class Post extends Component {
           <div className="uk-card-body">
             <h3 className="uk-card-title uk-text-small">
               Posted by
-            <a href={`/profile/${data.username}`} id = {data.username} >{` ${data.username}`}</a>
+              <a href={`/profile/${data.username}`} id={data.username}>{` ${data.username}`}</a>
             </h3>
             <p id="">{description}</p>
             <p id="">{tagLinks}</p>
@@ -196,6 +217,7 @@ class Post extends Component {
           <p id="">{tagLinks}</p>
           <Heart isLiked={isLiked} postId={postId} likes={likes}/>
         </div>
+        {message}
         <form onSubmit={this.handleSubmit}>
           <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
           <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>

@@ -40,7 +40,7 @@ class Login extends Component {
         }
       })
       .catch((err) => {
-        this.setState({ message: err });
+        this.setState({ message: '[!]' });
       });
   }
 

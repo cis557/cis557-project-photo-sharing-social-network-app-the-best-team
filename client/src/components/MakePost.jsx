@@ -12,6 +12,7 @@ class MakePost extends Component {
       privacy: 'public',
       image: null,
       tags: '',
+      message: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -47,15 +48,31 @@ class MakePost extends Component {
         if (res.ok) {
           this.props.history.push('/');
         } else {
-          console.log(res);
+          res.json().then((json) => {
+            this.setState({ message: json });
+          });
         }
       })
       .catch((err) => {
-        console.log(err);
+        this.setState({ message: '[!]' });
       });
   }
 
   render() {
+    let { message } = this.state;
+
+    if (message !== '') {
+      message = (
+        <div style={{ textAlign: 'center' }}>
+          {message}
+          <br />
+          <br />
+        </div>
+      );
+    } else {
+      message = '';
+    }
+
     return (
       <div>
         <NavBar />
@@ -88,6 +105,7 @@ class MakePost extends Component {
                   <input onChange={this.handleFileChange} id="image" className="uk-input uk-form-width-xxlarge" type="file" name="image" accept="image/*" />
                 </label>
               </div>
+              {message}
               <input type="submit" className="uk-button-primary uk-button-large uk-text-large" value="Upload" />
               <a className="uk-margin-top uk-margin-left uk-button-danger uk-button-large uk-text-large" href="/" value="Upload">Cancel</a>
             </fieldset>
