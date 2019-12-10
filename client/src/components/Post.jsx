@@ -5,6 +5,7 @@ import Heart from './Heart';
 import { getPost } from '../javascripts/postRequests';
 import loading from '../images/loading-post.svg';
 import Comment from './Comment';
+import EditPost from './EditPost';
 import { addComment } from '../javascripts/commentRequests';
 
 class Post extends Component {
@@ -127,8 +128,8 @@ class Post extends Component {
             <Heart isLiked={isLiked} postId={postId} />
           </div>
           <form onSubmit={this.handleSubmit}>
-          <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
-          <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
+            <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
+            <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
           </form>
           {renderComments}
         </div>
@@ -137,8 +138,14 @@ class Post extends Component {
 
     return (
       <div className="uk-card uk-card-default uk-card-hover uk-align-center" uk-scrollspy="cls: uk-animation-slide-left; repeat: true">
-        <div className="uk-card-header">
-          <h3 className="uk-card-title uk-margin-small-top">{data.title}</h3>
+        <div className="uk-card-header uk-clearfix">
+          <button aria-label="edit" type="button" className="uk-margin-small-top uk-float-right" uk-icon="icon: more-vertical" />
+          <div className="uk-text-center uk-padding-small" uk-dropdown="mode: click">
+            <button uk-toggle="target: #edit-component" aria-label="edit" type="button" className="uk-button uk-button-text"> Edit Post </button>
+          </div>
+          <h3 className="uk-card-title uk-float-left" style={{ marginTop: '2px' }}>
+            {data.title}
+          </h3>
         </div>
         <div className="uk-card-media-top">
           <img src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
@@ -156,6 +163,9 @@ class Post extends Component {
           <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
         </form>
         {renderComments}
+        <div id="edit-component" uk-modal="true">
+          <EditPost id={postId} />
+        </div>
       </div>
     );
   }
