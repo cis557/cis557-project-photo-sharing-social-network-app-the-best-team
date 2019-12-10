@@ -5,14 +5,15 @@ import PropTypes from 'prop-types';
 class NavBar extends Component {
   constructor(props) {
     super(props);
-    const { currentUser } = this.props;
-
+    const { currentUser } = props;
+    console.log(props);
     this.state = {
       user: currentUser,
     };
   }
 
   render() {
+    const { currentUser } = this.state;
     return (
       <header className="uk-margin-medium-bottom" style={{ backgroundColor: '#fff', borderBottom: '1px solid #dbdbdb' }} data-uk-sticky={{ 'show-on-up': 'true', animation: 'uk-animation-fade' }}>
         <div className="uk-container uk-container-small">

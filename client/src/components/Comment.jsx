@@ -14,6 +14,7 @@ class Comment extends Component {
       username: props.username,
       datetime: props.datetime,
       text: props.text,
+      currentUser: props.currentUser,
       deleted: false,
       editing: false,
     };
@@ -89,26 +90,45 @@ class Comment extends Component {
       text,
       deleted,
       editing,
+      currentUser,
     } = this.state;
 
     if (!deleted && !editing) {
+      if(currentUser === username){
       return (
         <article className="uk-comment-primary uk-visible-toggle uk-box-shadow-hover-small" tabIndex="-1">
           <header className="uk-comment-header uk-position-relative">
+          <div className="uk-margin-top uk-position-bottom-right uk-position-small uk-hidden-hover"><a className="uk-link-muted" uk-icon="icon: close" onClick={this.handleDelete} /></div>
             <div className="uk-grid-medium uk-flex-middle" uk-grid="true">
               <div className="uk-width-expand">
-                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href="#">{username}</a></h5>
+                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href={`/profile/${username}`}>{username}</a></h5>
               </div>
             </div>
             <div className="uk-position-top-right uk-position-small uk-hidden-hover"><a className="uk-link-muted" uk-icon="icon: pencil" onClick={this.handleEditText}>Edit</a></div>
           </header>
-          <div className="uk-margin-top uk-position-bottom-right uk-position-small uk-hidden-hover"><a className="uk-link-muted" uk-icon="icon: close" onClick={this.handleDelete} /></div>
           <div className="uk-comment-body">
             <p className="uk-text-large">{text}</p>
           </div>
         </article>
       );
     }
+    else {
+      return (
+        <article className="uk-comment-primary uk-visible-toggle uk-box-shadow-hover-small" tabIndex="-1">
+          <header className="uk-comment-header uk-position-relative">
+            <div className="uk-grid-medium uk-flex-middle" uk-grid="true">
+              <div className="uk-width-expand">
+                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href={`/profile/${username}`}>{username}</a></h5>
+              </div>
+            </div>
+          </header>
+          <div className="uk-comment-body">
+            <p className="uk-text-large">{text}</p>
+          </div>
+        </article>
+      );
+    }
+  }
 
     if (editing) {
       return (
@@ -116,7 +136,7 @@ class Comment extends Component {
           <header className="uk-comment-header uk-position-relative">
             <div className="uk-grid-medium uk-flex-middle" uk-grid="true">
               <div className="uk-width-expand">
-                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href="#">{username}</a></h5>
+                <h5 className="uk-comment-title uk-margin-remove"><a className="uk-link" href={`/profile/${username}`}>{username}</a></h5>
               </div>
             </div>
           </header>

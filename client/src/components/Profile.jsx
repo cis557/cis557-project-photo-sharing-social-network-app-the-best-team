@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import NavBar from './NavBar';
-import { getOtherUser } from '../javascripts/userRequests';
+import { getOtherUser, getUser } from '../javascripts/userRequests';
 
 class Profile extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class Profile extends Component {
   componentDidMount() {
     const { currentUser } = this.state;
 
-    getOtherUser(currentUser)
+    getUser()
       .then((data) => {
         data.json()
           .then((userInfo) => {
@@ -69,14 +69,14 @@ class Profile extends Component {
                     <span id="followers" className="uk-text-light">
                       followers:
                       {' '}
-                      <a href="/follower">{data.followers.length}</a>
+                      <a>{data.followers.length}</a>
                     </span>
                   </li>
                   <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-float-left">
                     <span id="following" className="uk-text-light">
                       following:
                       {' '}
-                      <a href="/followee">{data.followees.length}</a>
+                      <a>{data.followees.length}</a>
                     </span>
                   </li>
                 </ul>
