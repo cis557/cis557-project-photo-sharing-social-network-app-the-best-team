@@ -254,6 +254,7 @@ function checkFileSize(file) {
  */
 const expressApp = express();
 
+expressApp.enable('trust proxy');
 expressApp.use(bodyParser.json());
 expressApp.use(bodyParser.urlencoded({ extended: true }));
 expressApp.use(express.urlencoded({ extended: false }));
@@ -262,10 +263,12 @@ expressApp.use(flash());
 expressApp.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  /*
   cookie: {
     sameSite: 'none',
-    secure: false,
+    secure: true,
   },
+  */
   resave: false,
   saveUninitialized: false,
 }));
