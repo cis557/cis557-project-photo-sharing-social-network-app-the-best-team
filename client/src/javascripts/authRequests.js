@@ -40,7 +40,7 @@ async function login(email, password) {
 async function logout() {
   return fetch(`${api.url}/logout`,
     {
-      method: 'DELETE',
+      method: 'POST',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
         Accept: 'application/json; charset=UTF-8',

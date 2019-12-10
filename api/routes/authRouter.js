@@ -108,8 +108,8 @@ router.post('/login',
     res.sendStatus(401);
   });
 
-router.delete('/logout', checkAuthenticated, (req, res) => {
-  req.logOut();
+router.post('/logout', checkAuthenticated, (req, res) => {
+  req.logout();
   res.sendStatus(200);
 });
 
