@@ -1,14 +1,14 @@
 /* globals fetch */
-
 import React, { Component } from 'react';
-import { api } from '../api';
+import PropTypes from 'prop-types';
 
 class NavBar extends Component {
   constructor(props) {
     super(props);
+    const { currentUser } = this.props;
 
     this.state = {
-      currentUser: props.currentUser,
+      user: currentUser,
     };
   }
 
@@ -45,6 +45,10 @@ class NavBar extends Component {
       </header>
     );
   }
+}
+
+NavBar.propTypes = {
+  currentUser: PropTypes.string.isRequired,
 }
 
 export default NavBar;
