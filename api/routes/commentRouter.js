@@ -35,7 +35,7 @@ router.post('/Comment',
         })
         .catch((err) => {
           res.status(550);
-          res.send(`[!] Could not add comment: ${err}`);
+          res.json(`[!] Could not add comment: ${err}`);
         });
     }
     if (req.body.method === 'delete') {
@@ -52,7 +52,7 @@ router.post('/Comment',
         })
         .catch((err) => {
           res.status(550);
-          res.send(`[!] Could not delete comment: ${err}`);
+          res.json(`[!] Could not delete comment: ${err}`);
         });
     }
     if (req.body.method === 'edit') {
@@ -70,7 +70,7 @@ router.post('/Comment',
         })
         .catch((err) => {
           res.status(550);
-          res.send(`[!] Could not edit comment: ${err}`);
+          res.json(`[!] Could not edit comment: ${err}`);
         });
     }
   });
@@ -94,26 +94,8 @@ router.post('/editComment',
       })
       .catch((err) => {
         res.status(550);
-        res.send(`[!] Could not edit comment: ${err}`);
+        res.json(`[!] Could not edit comment: ${err}`);
       });
   });
-
-// router.delete('/deleteComment', checkAuthenticated, (req, res) => {
-//   const { username } = req.user;
-//   const { postId } = req.body;
-//   const { commentId } = req.body;
-
-//   Post.findOneAndUpdate(
-//     { _id: ObjectId(postId) },
-//     { $pull: { comments: { username, _id: ObjectId(commentId) } } },
-//   )
-//     .then(() => {
-//       res.sendStatus(200);
-//     })
-//     .catch((err) => {
-//       res.status(550);
-//       res.send(`[!] Could not delete comment: ${err}`);
-//     });
-// });
 
 module.exports = router;

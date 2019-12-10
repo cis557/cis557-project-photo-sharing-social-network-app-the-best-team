@@ -58,8 +58,6 @@ router.post('/addPost',
     tags = tags.split(/[, ]+/);
     const validatedTags = new Set();
 
-    console.log(tags);
-
     User.find()
       .then((userArray) => {
         const userSet = new Set();
@@ -98,12 +96,12 @@ router.post('/addPost',
               })
               .catch((err) => {
                 res.status(550);
-                res.send(`[!] Could not create post: ${err}`);
+                res.json(`[!] Could not create post: ${err}`);
               });
           })
           .catch((err) => {
             res.status(550);
-            res.send(`[!] Could not create post: ${err}`);
+            res.json(`[!] Could not create post: ${err}`);
           });
       });
   });
@@ -127,7 +125,7 @@ router.post('/editPost',
       })
       .catch((err) => {
         res.status(550);
-        res.send(`[!] Could not edit post: ${err}`);
+        res.json(`[!] Could not edit post: ${err}`);
       });
   });
 
@@ -166,12 +164,12 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
         }
       } else {
         res.status(404);
-        res.send('[!] User not found');
+        res.json('[!] User not found');
       }
     })
     .catch((err) => {
       res.status(550);
-      res.send(`[!] Could not retrieve user: ${err}`);
+      res.json(`[!] Could not retrieve user: ${err}`);
     });
 });
 
@@ -181,10 +179,10 @@ router.get('/getPost/:postId', checkAuthenticated, (req, res) => {
   Post.findOne({ _id: ObjectId(postId) }, (err, postInDatabase) => {
     if (!postInDatabase) {
       res.status(404);
-      res.send(`[!] Could not find post: ${postId}`);
+      res.json(`[!] Could not find post: ${postId}`);
     } else if (err) {
       res.status(550);
-      res.send(`[!] Could not retrieve post: ${err}`);
+      res.json(`[!] Could not retrieve post: ${err}`);
     } else {
       // Send the image as a Buffer.
       // There is no Buffer class in the browser, so it is better to do this step in the back end.
@@ -208,7 +206,7 @@ router.delete('/deletePost', checkAuthenticated, (req, res) => {
     })
     .catch((err) => {
       res.status(550);
-      res.send(`[!] Could not delete post: ${err}`);
+      res.json(`[!] Could not delete post: ${err}`);
     });
 });
 

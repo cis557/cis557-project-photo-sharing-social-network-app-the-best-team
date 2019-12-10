@@ -231,12 +231,8 @@ function handleInputCheck(req, res, next) {
     return next();
   }
 
-  const extractedErrors = [];
-  errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
-
-  return res.status(422).json({
-    errors: extractedErrors,
-  });
+  const err = errors.array()[0];
+  return res.status(422).json(`[!] ${err.param}: ${err.msg}`);
 }
 
 const maxFileMb = 2;

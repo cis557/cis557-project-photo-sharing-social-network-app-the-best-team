@@ -36,12 +36,12 @@ router.get('/getUser', checkAuthenticated, (req, res) => {
         res.send(userToSend);
       } else {
         res.status(404);
-        res.send(`[!] User not found: ${username}`);
+        res.json(`[!] User not found: ${username}`);
       }
     })
     .catch((err) => {
       res.status(550);
-      res.send(`[!] Could not retrieve user: ${err}`);
+      res.json(`[!] Could not retrieve user: ${err}`);
     });
 });
 
@@ -75,12 +75,12 @@ router.get('/getOtherUser/:username', checkAuthenticated, (req, res) => {
         res.send(userToSend);
       } else {
         res.status(404);
-        res.send(`[!] User not found: ${username}`);
+        res.json(`[!] User not found: ${username}`);
       }
     })
     .catch((err) => {
       res.status(550);
-      res.send(`[!] Could not retrieve user: ${err}`);
+      res.json(`[!] Could not retrieve user: ${err}`);
     });
 });
 
@@ -90,19 +90,19 @@ router.delete('/deleteUser', checkAuthenticated, (req, res) => {
 
   if (usernameToDelete !== usernameLoggedIn) {
     res.status(401);
-    res.send(`[!] Cannot delete another user: ${usernameToDelete}`);
+    res.json(`[!] Cannot delete another user: ${usernameToDelete}`);
   }
 
   Post.deleteMany({ username: usernameToDelete })
     .catch((err) => {
       res.status(550);
-      res.send(`[!] Could not delete user: ${err}`);
+      res.json(`[!] Could not delete user: ${err}`);
     });
 
   User.deleteOne({ username: usernameToDelete })
     .catch((err) => {
       res.status(550);
-      res.send(`[!] Could not delete user: ${err}`);
+      res.json(`[!] Could not delete user: ${err}`);
     })
     .then(() => {
       res.sendStatus(550);
@@ -120,7 +120,7 @@ router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
 
   if (!user) {
     res.status(550);
-    res.send(`[!] Could not find user: ${username}`);
+    res.json(`[!] Could not find user: ${username}`);
   }
 
   // Keep track of who the user already follows,
@@ -133,7 +133,7 @@ router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
     const followee = await User.findOne({ username: followeeUsername })
       .catch((err) => {
         res.status(550);
-        res.send(`[!] Could not retrieve users: ${err}`);
+        res.json(`[!] Could not retrieve users: ${err}`);
       });
     const followeesOfFollowee = followee.followees;
 
@@ -158,7 +158,7 @@ router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
     const allUsers = await User.find()
       .catch((err) => {
         res.status(550);
-        res.send(`[!] Could not retrieve users: ${err}`);
+        res.json(`[!] Could not retrieve users: ${err}`);
       });
 
     for (let j = 0; j < allUsers.length; j += 1) {
