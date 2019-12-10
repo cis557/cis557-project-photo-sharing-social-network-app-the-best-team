@@ -4,43 +4,29 @@ import React, { Component } from 'react';
 import NavBar from './NavBar';
 import { getOtherUser } from '../javascripts/userRequests';
 
-class Profile extends Component {
+export default class DetailsPage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: null,
-      currentUser: 'yiwent',
-      isLoading: true,
+      data: {},
     };
   }
 
-  componentDidMount() {
-    const { currentUser } = this.state;
+  async componentDidMount() {
+    const currentUser = this.props.match.params.id;
 
-    getOtherUser(currentUser)
-      .then((data) => {
-        data.json()
-          .then((userInfo) => {
-            this.setState({ data: userInfo, isLoading: false });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const res = await getOtherUser(currentUser);
+    const json = await res.json();
+
+    this.setState({ data: json });
   }
 
   render() {
-    const { data, isLoading } = this.state;
-    if (isLoading) {
-      return (
-        <div className="uk-cover-container uk-flex uk-flex-center uk-flex-middle">
-          <h1>Wait a Sec...</h1>
-        </div>
-      );
+    const { data } = this.state;
+
+    if (!data || !data.image) {
+      return (<div />);
     }
 
     return (
@@ -95,5 +81,3 @@ class Profile extends Component {
     );
   }
 }
-
-export default Profile;

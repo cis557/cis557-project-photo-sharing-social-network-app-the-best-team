@@ -87,8 +87,12 @@ class Comment extends Component {
 
   render() {
     const {
-      username, text, deleted, editing,
+      username,
+      text,
+      deleted,
+      editing,
     } = this.state;
+
     if (!deleted && !editing) {
       return (
         <article className="uk-comment-primary uk-visible-toggle uk-box-shadow-hover-small" tabIndex="-1">
@@ -107,6 +111,7 @@ class Comment extends Component {
         </article>
       );
     }
+
     if (editing) {
       return (
         <article className="uk-comment-primary uk-visible-toggle uk-box-shadow-hover-small" tabIndex="-1">

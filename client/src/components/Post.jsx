@@ -6,7 +6,9 @@ import Heart from './Heart';
 import { getPost } from '../javascripts/postRequests';
 import loading from '../images/loading-post.svg';
 import Comment from './Comment';
+import EditPost from './EditPost';
 import { addComment } from '../javascripts/commentRequests';
+import Profile from './Profile';
 
 class Post extends Component {
   constructor(props) {
@@ -16,17 +18,26 @@ class Post extends Component {
       postId: props.postId,
       isLoading: true,
       currentUser: props.currentUser,
+      otherUser: props.otherUser,
       data: {},
       text: '',
+      checkingProfile: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.refresh = this.refresh.bind(this);
+    this.handleViewProfile = this.handleViewProfile.bind(this);
   }
 
   componentDidMount() {
     this.refresh();
+  }
+
+  handleViewProfile(event){
+    event.preventDefault();
+
+    this.setState({ checkingProfile: true });
   }
 
   refresh() {
@@ -72,7 +83,7 @@ class Post extends Component {
   }
 
   render() {
-    const { data, isLoading, currentUser } = this.state;
+    const { data, isLoading, currentUser, checkingProfile } = this.state;
 
     if (isLoading) {
       return (
@@ -84,6 +95,12 @@ class Post extends Component {
           <div className="uk-card-body" />
         </div>
       );
+    }
+
+    if(checkingProfile){
+      return (
+        <Profile currentUser={data.username} />
+      )
     }
 
     // eslint-disable-next-line no-underscore-dangle
@@ -135,7 +152,7 @@ class Post extends Component {
           <div className="uk-card-body">
             <h3 className="uk-card-title uk-text-small">
               Posted by
-              <a href="/">{` ${data.username}`}</a>
+              <a onClick={this.handleViewProfile} id = {data.username} >{` ${data.username}`}</a>
             </h3>
             <p id="">{description}</p>
             <p id="">{tagUsernames}</p>
@@ -152,8 +169,14 @@ class Post extends Component {
 
     return (
       <div className="uk-card uk-card-default uk-card-hover uk-align-center" uk-scrollspy="cls: uk-animation-slide-left; repeat: true">
-        <div className="uk-card-header">
-          <h3 className="uk-card-title uk-margin-small-top">{data.title}</h3>
+        <div className="uk-card-header uk-clearfix">
+          <button aria-label="edit" type="button" className="uk-margin-small-top uk-float-right" uk-icon="icon: more-vertical" />
+          <div className="uk-text-center uk-padding-small" uk-dropdown="mode: click">
+            <button uk-toggle="target: #edit-component" aria-label="edit" type="button" className="uk-button uk-button-text"> Edit Post </button>
+          </div>
+          <h3 className="uk-card-title uk-float-left" style={{ marginTop: '2px' }}>
+            {data.title}
+          </h3>
         </div>
         <div className="uk-card-media-top">
           <img src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
@@ -161,7 +184,7 @@ class Post extends Component {
         <div className="uk-card-body">
           <h3 className="uk-card-title uk-text-small">
             Posted by
-            <a href="/">{` ${data.username}`}</a>
+            <a href={`/profile/${data.username}`}>{` ${data.username}`}</a>
           </h3>
           <p id="">{description}</p>
           <p id="">{tagUsernames}</p>
@@ -172,6 +195,9 @@ class Post extends Component {
           <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
         </form>
         {renderComments}
+        <div id="edit-component" uk-modal="true">
+          <EditPost id={postId} />
+        </div>
       </div>
     );
   }
