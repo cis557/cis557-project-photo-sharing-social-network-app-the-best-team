@@ -47,13 +47,17 @@ class Login extends Component {
   render() {
     let { message } = this.state;
 
-    message = (
-      <div>
-        {message}
-        <br />
-        <br />
-      </div>
-    );
+    if (message !== '') {
+      message = (
+        <div>
+          {message}
+          <br />
+          <br />
+        </div>
+      );
+    } else {
+      message = '';
+    }
 
     return (
       <div id="slideshow" className="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
