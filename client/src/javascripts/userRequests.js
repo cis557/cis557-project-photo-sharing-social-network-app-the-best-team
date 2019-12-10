@@ -31,8 +31,21 @@ async function deleteUser(username) {
     });
 }
 
-async function getUsers() {
-  return fetch(`${api.url}/getUsers`,
+async function getAllUsers() {
+  return fetch(`${api.url}/getAllUsers`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json; charset=UTF-8',
+      },
+      credentials: 'include',
+      mode: 'cors',
+    });
+}
+
+async function getSuggestedUsers() {
+  return fetch(`${api.url}/getSuggestedUsers`,
     {
       method: 'GET',
       headers: {
@@ -47,5 +60,6 @@ async function getUsers() {
 export {
   getUser,
   deleteUser,
-  getUsers,
+  getAllUsers,
+  getSuggestedUsers,
 };

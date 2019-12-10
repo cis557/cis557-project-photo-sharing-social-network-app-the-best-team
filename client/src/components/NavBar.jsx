@@ -33,16 +33,16 @@ class NavBar extends Component {
             <div className="uk-navbar-right">
               <ul className="uk-navbar-nav">
                 <li>
-                  <a href={`/like`} data-uk-icon="icon:heart"> </a>
+                  <a href="/like" data-uk-icon="icon:heart"> </a>
                 </li>
                 <li>
-                  <a href={'/profile'} data-uk-icon="icon:user"> </a>
+                  <a href="/profile" data-uk-icon="icon:user"> </a>
                 </li>
                 <li>
-                  <a href={'/makePost'} data-uk-icon="icon:image"> </a>
+                  <a href="/makePost" data-uk-icon="icon:image"> </a>
                 </li>
                 <li>
-                  <a href={'/follow'} data-uk-icon="icon:users"></a>
+                  <a href="/follow" data-uk-icon="icon:users" />
                 </li>
                 <li>
                   <a href={`${api.url}/testAPI`} data-uk-icon="icon:sign-out" uk-toggle="true"> </a>

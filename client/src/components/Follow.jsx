@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import NavBar from './NavBar';
-import { getUsers, getUser } from '../javascripts/userRequests';
+import { getSuggestedUsers, getUser } from '../javascripts/userRequests';
 import { follow } from '../javascripts/followRequests';
 
 class Follow extends Component {
@@ -34,7 +34,7 @@ class Follow extends Component {
         console.log(err);
       })
       .then(() => {
-        getUsers()
+        getSuggestedUsers()
           .then((data) => {
             data.json()
               .then((usersInfo) => {

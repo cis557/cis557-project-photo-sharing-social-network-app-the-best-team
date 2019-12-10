@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -66,7 +67,8 @@ class Post extends Component {
       .catch((err) => {
         console.log(err);
       });
-    event.target.text.value ="";
+
+    event.target.text.value = '';
   }
 
   render() {
@@ -87,10 +89,23 @@ class Post extends Component {
     // eslint-disable-next-line no-underscore-dangle
     const postId = data._id;
     let isLiked = false;
+    const { description } = data;
+    const { tags } = data;
     const { comments } = data;
     const { likes } = data;
 
-    // New: Come back
+    let tagUsernames = '';
+
+    if (tags.length > 0) {
+      tagUsernames += '\n\nTagged: ';
+    }
+
+    tags.forEach((tag) => {
+      tagUsernames += `${tag} `;
+    });
+
+    console.log(description);
+
     const renderComments = [];
 
     comments.forEach((comment) => {
@@ -103,7 +118,6 @@ class Post extends Component {
         text={comment.text}
       />);
     });
-    // END
 
     if (likes.indexOf(currentUser) !== -1) {
       isLiked = true;
@@ -123,12 +137,13 @@ class Post extends Component {
               Posted by
               <a href="/">{` ${data.username}`}</a>
             </h3>
-            <p id="">{data.description}</p>
+            <p id="">{description}</p>
+            <p id="">{tagUsernames}</p>
             <Heart isLiked={isLiked} postId={postId} />
           </div>
           <form onSubmit={this.handleSubmit}>
-          <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
-          <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
+            <textarea id="text" onChange={this.handleChange} className="uk-textarea" rows="4" placeholder="Reply" />
+            <button type="submit" className="uk-button uk-button-primary uk-border uk-width-1-1" id="submit">Submit</button>
           </form>
           {renderComments}
         </div>
@@ -148,7 +163,8 @@ class Post extends Component {
             Posted by
             <a href="/">{` ${data.username}`}</a>
           </h3>
-          <p id="">{data.description}</p>
+          <p id="">{description}</p>
+          <p id="">{tagUsernames}</p>
           <Heart isLiked={isLiked} postId={postId} />
         </div>
         <form onSubmit={this.handleSubmit}>
