@@ -263,9 +263,8 @@ expressApp.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   cookie: {
-    httpOnly: true,
-    sameSite: 'strict',
-    secure: true,
+    sameSite: 'none',
+    secure: false,
   },
   resave: false,
   saveUninitialized: false,
@@ -276,7 +275,8 @@ expressApp.use(passport.initialize());
 expressApp.use(passport.session());
 expressApp.use(methodOverride('_method'));
 expressApp.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://photogram-front.herokuapp.com');
+  // res.header('Access-Control-Allow-Origin', 'https://photogram-front.herokuapp.com');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
