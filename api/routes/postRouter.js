@@ -206,7 +206,7 @@ router.post('/deletePost', checkAuthenticated, (req, res) => {
     .then(() => {
       User.findOneAndUpdate(
         { username },
-        { $pull: { posts: { id: postId } } },
+        { $pull: { posts: { id: ObjectId(postId) } } },
       ).then(() => {
         res.sendStatus(200);
       });

@@ -6,15 +6,9 @@ class NavBar extends Component {
   constructor(props) {
     super(props);
     const { currentUser } = props;
-
-    this.state = {
-      user: currentUser,
-    };
   }
 
   render() {
-    const { user } = this.state;
-
     return (
       <header className="uk-margin-medium-bottom" style={{ backgroundColor: '#fff', borderBottom: '1px solid #dbdbdb' }} data-uk-sticky={{ 'show-on-up': 'true', animation: 'uk-animation-fade' }}>
         <div className="uk-container uk-container-small">
@@ -50,6 +44,6 @@ class NavBar extends Component {
 
 NavBar.propTypes = {
   currentUser: PropTypes.string.isRequired,
-}
+};
 
 export default NavBar;

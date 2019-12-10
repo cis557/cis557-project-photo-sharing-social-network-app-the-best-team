@@ -103,7 +103,7 @@ class Post extends Component {
       isLoading,
       currentUser,
       checkingProfile,
-      isDeleted
+      isDeleted,
     } = this.state;
 
     let { message } = this.state;
@@ -152,20 +152,20 @@ class Post extends Component {
 
     const tagLinks = [];
 
-    if (tags.length > 0) {
+    if (tags && tags.length > 0) {
       tagLinks.push('Tagged: ');
+
+      tags.forEach((tag) => {
+        const url = `/profile/${tag}`;
+
+        tagLinks.push(
+          <a href={url}>
+            {tag}
+            {' '}
+          </a>,
+        );
+      });
     }
-
-    tags.forEach((tag) => {
-      const url = `/profile/${tag}`;
-
-      tagLinks.push(
-        <a href={url}>
-          {tag}
-          {' '}
-        </a>,
-      );
-    });
 
     const renderComments = [];
 
@@ -237,7 +237,7 @@ class Post extends Component {
           </h3>
           <p id="">{description}</p>
           <p id="">{tagLinks}</p>
-          <Heart isLiked={isLiked} postId={postId} likes={likes}/>
+          <Heart isLiked={isLiked} postId={postId} likes={likes} />
         </div>
         {message}
         <form onSubmit={this.handleSubmit}>

@@ -21,7 +21,9 @@ class EditPost extends Component {
     this.setState({ [e.target.id]: e.target.value });
   }
 
-  handleSubmit() {
+  handleSubmit(e) {
+    e.preventDefault();
+
     const { postId, newTitle, newDesc } = this.state;
 
     editPost(postId, newTitle, newDesc);
@@ -41,7 +43,7 @@ class EditPost extends Component {
               <textarea onChange={this.handleChange} id="newDesc" className="uk-textarea" rows="3" placeholder="New Description" />
             </div>
             <div className="uk-margin-bottom">
-              <button type="submit" className="uk-button uk-button-primary uk-border-pill" id="submit">Submit</button>
+              <button id="submit" type="submit" className="uk-button uk-button-primary uk-border-pill">Submit</button>
             </div>
           </fieldset>
         </form>
