@@ -3,6 +3,9 @@
 import React, { Component } from 'react';
 import { rgba } from 'polished';
 import { login } from '../javascripts/authRequests';
+import image from '../images/slide-5.jpg';
+import '../stylesheets/auth-pages.css';
+import logo from '../images/photogram.png';
 
 class Login extends Component {
   constructor(props) {
@@ -60,10 +63,15 @@ class Login extends Component {
     }
 
     return (
-      <div id="slideshow" className="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
-        <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{ backgroundColor: rgba(253, 253, 253, 0.253) }}>
+      <div
+        id="slideshow"
+        className="uk-cover-container uk-background-secondary uk-flex uk-light uk-flex-center uk-flex-middle uk-height-viewport uk-background-cover"
+        data-uk-height-viewport="true"
+        style={{ backgroundImage: `url(${image})` }}
+      >
+        <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{ backgroundColor: rgba(0, 0, 0, 0.4) }}>
           <div className="uk-text-center uk-margin">
-            <img src={require('../images/photogram.png')} alt="Logo" />
+            <img src={logo} alt="Logo" />
           </div>
           <h4 className="uk-heading-line uk-text-center" style={{ color: rgba(255, 255, 255, 0.8) }}><span>Log In</span></h4>
           <form onSubmit={this.handleSubmit} className="toggle-class">
@@ -85,7 +93,7 @@ class Login extends Component {
                 <button type="submit" className="uk-button uk-button-primary uk-border-pill uk-width-1-1" id="submit">Login</button>
                 <p>
                   Don&apos;t have an account?
-                  {' '}
+                  &nbsp;
                   <a href="/register" id="register" className="uk-position-relative">Register.</a>
                 </p>
               </div>

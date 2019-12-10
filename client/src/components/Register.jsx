@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { rgba } from 'polished';
 import { register } from '../javascripts/authRequests';
+import image from '../images/slide-1.jpg';
 import logo from '../images/photogram.png';
 
 class Register extends Component {
@@ -80,10 +81,15 @@ class Register extends Component {
     }
 
     return (
-      <div className="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
-        <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{ backgroundColor: rgba(253, 253, 253, 0.253) }}>
+      <div
+        id="slideshow"
+        className="uk-cover-container uk-background-secondary uk-flex uk-light uk-flex-center uk-flex-middle uk-height-viewport uk-background-cover"
+        data-uk-height-viewport="true"
+        style={{ backgroundImage: `url(${image})` }}
+      >
+        <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{ backgroundColor: rgba(0, 0, 0, 0.4) }}>
           <div className="uk-text-center uk-margin">
-            {' '}
+            &nbsp;
             <img src={logo} alt="Logo" />
           </div>
           <h4 className="uk-heading-line uk-text-center" style={{ color: rgba(255, 255, 255, 0.8) }}><span> Registration </span></h4>
@@ -132,8 +138,8 @@ class Register extends Component {
                 </button>
                 <p>
                   Already have an account?
-                  {' '}
-                  <a href="/login" id="login" className="uk-position-relative">Login</a>
+                  &nbsp;
+                  <a href="/login" id="login" className="uk-position-relative">Login.</a>
                 </p>
               </div>
             </fieldset>
