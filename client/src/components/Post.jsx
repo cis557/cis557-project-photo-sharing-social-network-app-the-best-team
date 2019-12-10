@@ -6,6 +6,7 @@ import { getPost } from '../javascripts/postRequests';
 import loading from '../images/loading-post.svg';
 import Comment from './Comment';
 import { addComment } from '../javascripts/commentRequests';
+import Profile from './Profile';
 
 class Post extends Component {
   constructor(props) {
@@ -15,17 +16,26 @@ class Post extends Component {
       postId: props.postId,
       isLoading: true,
       currentUser: props.currentUser,
+      otherUser: props.otherUser,
       data: {},
       text: '',
+      checkingProfile: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.refresh = this.refresh.bind(this);
+    this.handleViewProfile = this.handleViewProfile.bind(this);
   }
 
   componentDidMount() {
     this.refresh();
+  }
+
+  handleViewProfile(event){
+    event.preventDefault();
+
+    this.setState({ checkingProfile: true });
   }
 
   refresh() {
@@ -70,7 +80,7 @@ class Post extends Component {
   }
 
   render() {
-    const { data, isLoading, currentUser } = this.state;
+    const { data, isLoading, currentUser, checkingProfile } = this.state;
 
     if (isLoading) {
       return (
@@ -82,6 +92,12 @@ class Post extends Component {
           <div className="uk-card-body" />
         </div>
       );
+    }
+
+    if(checkingProfile){
+      return (
+        <Profile currentUser={data.username} />
+      )
     }
 
     // eslint-disable-next-line no-underscore-dangle
@@ -121,7 +137,7 @@ class Post extends Component {
           <div className="uk-card-body">
             <h3 className="uk-card-title uk-text-small">
               Posted by
-              <a href="/">{` ${data.username}`}</a>
+              <a onClick={this.handleViewProfile} id = {data.username} >{` ${data.username}`}</a>
             </h3>
             <p id="">{data.description}</p>
             <Heart isLiked={isLiked} postId={postId} />
@@ -146,7 +162,7 @@ class Post extends Component {
         <div className="uk-card-body">
           <h3 className="uk-card-title uk-text-small">
             Posted by
-            <a href="/">{` ${data.username}`}</a>
+            <a href={`/profile/${data.username}`}>{` ${data.username}`}</a>
           </h3>
           <p id="">{data.description}</p>
           <Heart isLiked={isLiked} postId={postId} />

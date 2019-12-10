@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import NavBar from './NavBar';
-import { getUser } from '../javascripts/userRequests';
+import { getOtherUser } from '../javascripts/userRequests';
 
 class Profile extends Component {
   constructor(props) {
@@ -10,13 +10,15 @@ class Profile extends Component {
 
     this.state = {
       data: null,
-      currentUser: props.currentUser,
+      currentUser: 'yiwent',
       isLoading: true,
     };
   }
 
   componentDidMount() {
-    getUser()
+    const {currentUser} = this.state;
+    console.log(currentUser)
+    getOtherUser(currentUser)
       .then((data) => {
         data.json()
           .then((userInfo) => {

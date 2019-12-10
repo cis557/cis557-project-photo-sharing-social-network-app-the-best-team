@@ -15,6 +15,22 @@ async function getUser() {
     });
 }
 
+async function getOtherUser(username) {
+  return fetch(`${api.url}/getOtherUser`,
+    {
+      method: 'GET',
+      body: JSON.stringify({
+        username,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Accept: 'application/json; charset=UTF-8',
+      },
+      credentials: 'include',
+      mode: 'cors',
+    });
+}
+
 async function deleteUser(username) {
   return fetch(`${api.url}/deleteUser`,
     {
@@ -48,4 +64,5 @@ export {
   getUser,
   deleteUser,
   getUsers,
+  getOtherUser,
 };
