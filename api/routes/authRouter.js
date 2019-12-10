@@ -106,7 +106,8 @@ router.post('/login',
     res.sendStatus(200);
   },
   (req, res) => {
-    res.sendStatus(401);
+    res.status(401);
+    res.json('[!] Invalid credentials');
   });
 
 router.post('/logout', checkAuthenticated, (req, res) => {

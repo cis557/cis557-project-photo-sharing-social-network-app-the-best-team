@@ -157,12 +157,12 @@ function checkAuthenticated(req, res, next) {
     return next();
   }
 
-  return res.sendStatus(401);
+  return res.status(401).json('[!] Not authorized');
 }
 
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.sendStatus(200);
+    return res.status(200);
   }
 
   return next();
