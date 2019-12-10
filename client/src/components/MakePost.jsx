@@ -11,7 +11,7 @@ class MakePost extends Component {
       description: '',
       privacy: 'public',
       image: null,
-      tags: [],
+      tags: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -39,8 +39,11 @@ class MakePost extends Component {
       description,
       privacy,
       image,
-      tags,
     } = this.state;
+
+    let { tags } = this.state;
+
+    tags = tags.split(/[, ]+/);
 
     addPost(title, description, privacy, image, tags)
       .then((res) => {
