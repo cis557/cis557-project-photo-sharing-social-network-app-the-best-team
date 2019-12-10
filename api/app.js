@@ -262,6 +262,11 @@ expressApp.use(flash());
 expressApp.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  cookie: {
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: true,
+  },
   resave: false,
   saveUninitialized: false,
 }));
