@@ -11,6 +11,7 @@ class Login extends Component {
     this.state = {
       email: '',
       password: '',
+      message: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -33,14 +34,31 @@ class Login extends Component {
       .then((res) => {
         if (res.ok) {
           history.push('/');
+        } else {
+          // TODO: Don't hardcode this message.
+          this.setState({ message: '[!] Invalid credentials' });
         }
       })
       .catch((err) => {
-        console.log(err);
+        this.setState({ message: err });
       });
   }
 
   render() {
+    let { message } = this.state;
+
+    if (message !== '') {
+      message = (
+        <div>
+          {message}
+          <br />
+          <br />
+        </div>
+      );
+    } else {
+      message = '';
+    }
+
     return (
       <div id="slideshow" className="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
         <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{ backgroundColor: rgba(253, 253, 253, 0.253) }}>
@@ -63,6 +81,7 @@ class Login extends Component {
                 </div>
               </div>
               <div className="uk-margin-bottom" style={{ textAlign: 'center' }}>
+                {message}
                 <button type="submit" className="uk-button uk-button-primary uk-border-pill uk-width-1-1" id="submit">Login</button>
                 <p>
                   Don&apos;t have an account?

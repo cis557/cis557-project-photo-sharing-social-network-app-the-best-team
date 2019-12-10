@@ -33,18 +33,18 @@ router.post('/follow', checkAuthenticated, (req, res) => {
                   })
                   .catch((err) => {
                     res.status(550);
-                    res.send(`[!] Could not follow user: ${err}`);
+                    res.json(`[!] Could not follow user: ${err}`);
                   });
               })
               .catch((err) => {
                 res.status(550);
-                res.send(`[!] Could not follow user: ${err}`);
+                res.json(`[!] Could not follow user: ${err}`);
               });
           }
         });
     } catch (err) {
       res.status(550);
-      res.send(`[!] Could not follow user: ${err}`);
+      res.json(`[!] Could not follow user: ${err}`);
     }
   } else if (req.body.method === 'unfollow') {
     try {
@@ -53,7 +53,6 @@ router.post('/follow', checkAuthenticated, (req, res) => {
       User.findOne({ username: usernameA })
         .then((user) => {
           const followeesA = user.followees;
-
           if (followeesA.includes(usernameB)) {
           // Update User A's followees.
             User.findOneAndUpdate(
@@ -71,21 +70,21 @@ router.post('/follow', checkAuthenticated, (req, res) => {
                   })
                   .catch((err) => {
                     res.status(550);
-                    res.send(`[!] Could not unfollow user: ${err}`);
+                    res.json(`[!] Could not unfollow user: ${err}`);
                   });
               })
               .catch((err) => {
                 res.status(550);
-                res.send(`[!] Could not unfollow user: ${err}`);
+                res.json(`[!] Could not unfollow user: ${err}`);
               });
           }
         });
     } catch (err) {
       res.status(550);
-      res.send(`[!] Could not follow user: ${err}`);
+      res.json(`[!] Could not follow user: ${err}`);
     }
   } else {
-    res.status(400).send('[!] Not proper method');
+    res.status(400).json('[!] Not proper method');
   }
 });
 

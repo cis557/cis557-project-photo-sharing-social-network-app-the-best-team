@@ -157,12 +157,12 @@ function checkAuthenticated(req, res, next) {
     return next();
   }
 
-  return res.sendStatus(401);
+  return res.status(401).json('[!] Not authorized');
 }
 
 function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.sendStatus(200);
+    return res.status(200);
   }
 
   return next();
@@ -231,12 +231,8 @@ function handleInputCheck(req, res, next) {
     return next();
   }
 
-  const extractedErrors = [];
-  errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
-
-  return res.status(422).json({
-    errors: extractedErrors,
-  });
+  const err = errors.array()[0];
+  return res.status(422).json(`[!] ${err.param}: ${err.msg}`);
 }
 
 const maxFileMb = 2;

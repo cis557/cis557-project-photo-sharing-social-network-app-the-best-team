@@ -14,6 +14,7 @@ class Register extends Component {
       email: '',
       password: '',
       image: null,
+      message: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -53,15 +54,31 @@ class Register extends Component {
         if (res.ok) {
           history.push('/');
         } else {
-          console.log(res);
+          res.json().then((json) => {
+            this.setState({ message: json });
+          });
         }
       })
       .catch((err) => {
-        console.log(err);
+        this.setState({ message: err });
       });
   }
 
   render() {
+    let { message } = this.state;
+
+    if (message !== '') {
+      message = (
+        <div>
+          {message}
+          <br />
+          <br />
+        </div>
+      );
+    } else {
+      message = '';
+    }
+
     return (
       <div className="uk-cover-container uk-background-secondary uk-flex uk-flex-center uk-flex-middle uk-height-viewport uk-overflow-hidden uk-light" data-uk-height-viewport>
         <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{ backgroundColor: rgba(253, 253, 253, 0.253) }}>
@@ -109,6 +126,7 @@ class Register extends Component {
                 </div>
               </div>
               <div className="uk-margin-bottom" style={{ textAlign: 'center' }}>
+                {message}
                 <button type="submit" className="uk-button uk-button-primary uk-border-pill uk-width-1-1" id="submit">
                   Register
                 </button>

@@ -26,12 +26,12 @@ router.post('/like', checkAuthenticated, (req, res) => {
           })
           .catch((err) => {
             res.status(550);
-            res.send(`[!] Could not like post: ${err}`);
+            res.json(`[!] Could not like post: ${err}`);
           });
       })
       .catch((err) => {
         res.status(550);
-        res.send(`[!] Could not like post: ${err}`);
+        res.json(`[!] Could not like post: ${err}`);
       });
   } else if (method === 'remove') {
     Post.findOneAndUpdate(
@@ -48,15 +48,15 @@ router.post('/like', checkAuthenticated, (req, res) => {
           })
           .catch((err) => {
             res.status(550);
-            res.send(`[!] Could not unlike post: ${err}`);
+            res.json(`[!] Could not unlike post: ${err}`);
           });
       })
       .catch((err) => {
         res.status(550);
-        res.send(`[!] Could not unlike post: ${err}`);
+        res.json(`[!] Could not unlike post: ${err}`);
       });
   } else {
-    res.status(400).send('[!] Not proper method');
+    res.status(400).json('[!] Not proper method');
   }
 });
 
@@ -74,12 +74,12 @@ router.get('/getLikes', checkAuthenticated, (req, res) => {
         res.send(Array.from(likes));
       } else {
         res.status(404);
-        res.send('[!] User not found');
+        res.json('[!] User not found');
       }
     })
     .catch((err) => {
       res.status(550);
-      res.send(`[!] Could not retrieve user: ${err}`);
+      res.json(`[!] Could not retrieve user: ${err}`);
     });
 });
 
