@@ -91,7 +91,7 @@ router.post('/addPost',
           .then((post) => {
             User.findOneAndUpdate(
               { username },
-              { $push: { posts: post._id } },
+              { $push: { posts: { id: post._id, time: post.datetime } } },
             )
               .then(() => {
                 res.sendStatus(201);
@@ -138,8 +138,8 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
   User.findOne({ username })
     .then((user) => {
       if (user) {
-        user.posts.forEach((postId) => {
-          feed.add(postId);
+        user.posts.forEach((post) => {
+          feed.add({ id: post.id.toString('hex'), time: post.time });
         });
 
         const numFollowees = user.followees.length;
@@ -148,8 +148,8 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
           user.followees.forEach((followeeUsername) => {
             User.findOne({ username: followeeUsername })
               .then((followee) => {
-                followee.posts.forEach((postId) => {
-                  feed.add(postId);
+                followee.posts.forEach((post) => {
+                  feed.add({ id: post.id.toString('hex'), time: post.time });
                 });
               })
               .then(() => {
@@ -162,7 +162,10 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
           });
         } else {
           res.status(200);
-          res.send(Array.from(feed));
+          const array = Array.from(feed);
+          array.sort((a, b) => a.time - b.time);
+          console.log(array);
+          res.send(array);
         }
       } else {
         res.status(404);
