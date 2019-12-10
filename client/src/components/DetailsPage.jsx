@@ -106,14 +106,14 @@ export default class DetailsPage extends Component {
                       <span id="followers" className="uk-text-light">
                         followers:
                         {' '}
-                        {data.followers.length}
+                        <a href="">{data.followers.length}</a>
                       </span>
                     </li>
                     <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-float-left">
                       <span id="following" className="uk-text-light">
                         following:
                         {' '}
-                        {data.followees.length}
+                        <a href="">{data.followees.length}</a>
                       </span>
                     </li>
                   </ul>
@@ -161,14 +161,14 @@ export default class DetailsPage extends Component {
                       <span id="followers" className="uk-text-light">
                         followers:
                         {' '}
-                        <a href="/follower">{data.followers.length}</a>
+                        <a href="">{data.followers.length}</a>
                       </span>
                     </li>
                     <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-float-left">
                       <span id="following" className="uk-text-light">
                         following:
                         {' '}
-                        <a href="/followee">{data.followees.length}</a>
+                        <a href="">{data.followees.length}</a>
                       </span>
                     </li>
                   </ul>
@@ -215,14 +215,14 @@ export default class DetailsPage extends Component {
                     <span id="followers" className="uk-text-light">
                       followers:
                       {' '}
-                      <a href="/follower">{data.followers.length}</a>
+                      <a href="">{data.followers.length}</a>
                     </span>
                   </li>
                   <li className="uk-text-bold uk-margin-bottom uk-margin-left uk-float-left">
                     <span id="following" className="uk-text-light">
                       following:
                       {' '}
-                      <a href="/followee">{data.followees.length}</a>
+                      <a href="">{data.followees.length}</a>
                     </span>
                   </li>
                 </ul>
