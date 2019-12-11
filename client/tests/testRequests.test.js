@@ -1,4 +1,4 @@
-/* global */
+/* global test */
 
 describe('Baseline tests', () => {
   test('Runs the testing suite', () => {

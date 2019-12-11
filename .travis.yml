@@ -1,6 +1,7 @@
 language: node_js
-before_install:
-  - cd api
+ env:
+  - TEST_DIR=api
+  - TEST_DIR=client
 install:
   - nvm i node
   - node -v
@@ -10,6 +11,7 @@ install:
   - npm i chromedriver
   - npm i geckodriver
   - npm i supertest
-  - npm i bcrypt
+  - npm i bcryptjs
 script:
   - npm test --coverage
+  
