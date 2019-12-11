@@ -1,11 +1,13 @@
-/* global afterAll beforeAll beforeEach describe expect test */
+/* global afterAll beforeAll describe expect test */
 
 const request = require('supertest');
 const assert = require('assert');
 const http = require('http');
+const async = require('async');
 const app = require('../app');
 const User = require('../models/User');
 const Post = require('../models/Post');
+
 
 const testFirstName = 'testFirstName';
 const testLastName = 'testLastName';
@@ -25,21 +27,6 @@ beforeAll((done) => {
   agent = request.agent(server);
   server.listen(done);
 });
-
-/*
-afterAll((done) => {
-  agent
-    .delete('/deleteUser')
-    .send({
-      email: testEmail1,
-    })
-    .expect(200)
-    .end(() => {
-      app.mongoose.connection.close()
-        .then(server.close(done));
-    });
-});
-*/
 
 afterAll((done) => {
   app.mongoose.connection.close()
@@ -203,6 +190,45 @@ describe('When a user is not logged in', () => {
     agent
       .get('/getSuggestedUsers')
       .expect(401)
+      .end(done);
+  });
+});
+
+describe('When a user is logged in ()', () => {
+  // Register and log in before all tests.
+  beforeAll((done) => {
+    async.series([
+      (requestDone) => agent
+        .post('/register')
+        .send({
+          firstName: testFirstName,
+          lastName: testLastName,
+          email: testEmail1,
+          password: testPasswordCorrect,
+          username: testUsername1,
+          image: testImage,
+        })
+        .end(requestDone),
+      (requestDone) => agent
+        .post('/login')
+        .send({
+          email: testEmail1,
+          password: testPasswordCorrect,
+        })
+        .end(requestDone),
+    ], done);
+  });
+
+  // Delete the user after all tests.
+  afterAll((done) => {
+    User.deleteOne({ email: testEmail1 })
+      .then(done);
+  });
+
+  test('The API is active', (done) => {
+    agent
+      .get('/testAPI')
+      .expect(200)
       .end(done);
   });
 });

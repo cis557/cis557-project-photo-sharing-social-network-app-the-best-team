@@ -91,17 +91,18 @@ router.delete('/deleteUser', checkAuthenticated, (req, res) => {
   if (usernameToDelete !== usernameLoggedIn) {
     res.status(401);
     res.json(`[!] Cannot delete another user: ${usernameToDelete}`);
+    return;
   }
 
   Post.deleteMany({ username: usernameToDelete })
-    .catch((err) => {
-      res.status(550);
-      res.json(`[!] Could not delete user: ${err}`);
-    });
-
-  User.deleteOne({ username: usernameToDelete })
     .then(() => {
-      res.sendStatus(200);
+      User.deleteOne({ username: usernameToDelete })
+        .then(() => {
+          res.sendStatus(200);
+        })
+        .catch((err) => {
+          res.status(550).json(`[!] Could not delete user: ${err}`);
+        });
     })
     .catch((err) => {
       res.status(550);
