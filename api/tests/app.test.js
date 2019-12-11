@@ -107,4 +107,102 @@ describe('When a user is not logged in', () => {
       .expect(200)
       .end(done);
   });
+
+  test('They are rejected from accessing the /Comment route', (done) => {
+    agent
+      .post('/Comment')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /editComment route', (done) => {
+    agent
+      .post('/editComment')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /follow route', (done) => {
+    agent
+      .post('/follow')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /like route', (done) => {
+    agent
+      .post('/like')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /getLikes route', (done) => {
+    agent
+      .get('/getLikes')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /addPost route', (done) => {
+    agent
+      .post('/addPost')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /editPost route', (done) => {
+    agent
+      .post('/editPost')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /getFeed route', (done) => {
+    agent
+      .get('/getFeed')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /getPost/:postId route', (done) => {
+    agent
+      .get('/getPost/0')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /deletePost route', (done) => {
+    agent
+      .post('/deletePost')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /getUser route', (done) => {
+    agent
+      .get('/getUser')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /getOtherUser/:username route', (done) => {
+    agent
+      .get(`/getOtherUser/${testUsername1}`)
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /deleteUser route', (done) => {
+    agent
+      .delete('/deleteUser')
+      .expect(401)
+      .end(done);
+  });
+
+  test('They are rejected from accessing the /getSuggestedUsers route', (done) => {
+    agent
+      .get('/getSuggestedUsers')
+      .expect(401)
+      .end(done);
+  });
 });
