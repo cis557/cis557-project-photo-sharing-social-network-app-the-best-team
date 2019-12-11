@@ -294,6 +294,7 @@ module.exports = {
   maxFileMb,
   checkFileSize,
   expressApp,
+  mongoose,
   passport,
   parser,
 };

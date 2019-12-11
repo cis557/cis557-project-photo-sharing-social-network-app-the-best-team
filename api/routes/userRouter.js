@@ -100,12 +100,12 @@ router.delete('/deleteUser', checkAuthenticated, (req, res) => {
     });
 
   User.deleteOne({ username: usernameToDelete })
+    .then(() => {
+      res.sendStatus(200);
+    })
     .catch((err) => {
       res.status(550);
       res.json(`[!] Could not delete user: ${err}`);
-    })
-    .then(() => {
-      res.sendStatus(550);
     });
 });
 
