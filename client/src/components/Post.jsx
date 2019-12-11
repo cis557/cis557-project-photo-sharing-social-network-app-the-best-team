@@ -192,7 +192,7 @@ class Post extends Component {
             <h3 className="uk-card-title uk-margin-small-top">{data.title}</h3>
           </div>
           <div className="uk-card-media-top">
-            <img src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} onError={'this.src=""'} alt="" />
+            <img src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} onError="this.onerror=null; this.src='';" alt="" />
           </div>
           <div className="uk-card-body">
             <h3 className="uk-card-title uk-text-small">

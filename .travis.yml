@@ -1,0 +1,15 @@
+language: node_js
+before_install:
+  - cd api
+install:
+  - nvm i node
+  - node -v
+  - npm i jest
+  - npm i jest-environment-webdriver
+  - npm i selenium-webdriver
+  - npm i chromedriver
+  - npm i geckodriver
+  - npm i supertest
+  - npm i bcrypt
+script:
+  - npm test --coverage
