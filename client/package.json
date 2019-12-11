@@ -21,7 +21,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest --coverage --detectOpenHandles --testTimeout=10000",
     "eject": "react-scripts eject",
 	"heroku-postbuild": "npm install && npm run build"
   },
