@@ -3,5 +3,5 @@ env:
   - TEST_DIR=api
   - TEST_DIR=client
 script:
-  - cd $TEST_DIR && nvm i node && node -v && npm install && npm test
+  - cd $TEST_DIR && npm install && npm test
  
