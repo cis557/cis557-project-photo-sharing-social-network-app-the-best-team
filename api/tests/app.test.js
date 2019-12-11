@@ -21,7 +21,7 @@ let server;
 let agent;
 
 beforeAll((done) => {
-  server = http.createServer(app.app);
+  server = http.createServer(app.expressApp);
   agent = request.agent(server);
   server.listen(done);
 });
@@ -46,7 +46,7 @@ afterAll((done) => {
     .then(server.close(done));
 });
 
-describe('Mock authentication tests', () => {
+describe('Tests of core app.js functionality', () => {
   test('Permits authenticated user to visit restricted page', () => {
     const req = { isAuthenticated: () => true };
     const res = {
@@ -97,5 +97,14 @@ describe('Mock authentication tests', () => {
     const authentication = app.checkNotAuthenticated(req, res, next);
 
     expect(authentication).toEqual('next');
+  });
+});
+
+describe('When a user is not logged in', () => {
+  test('The API is active', (done) => {
+    agent
+      .get('/testAPI')
+      .expect(200)
+      .end(done);
   });
 });
