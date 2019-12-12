@@ -8,6 +8,7 @@ const { passport } = require('../app');
 const { parser } = require('../app');
 const { checkAuthenticated } = require('../app');
 const { checkNotAuthenticated } = require('../app');
+const { sendDatabaseErrorResponse } = require('../app');
 const {
   checkAndSanitizeInput,
   handleInputCheck,
@@ -85,17 +86,13 @@ router.post('/register', checkNotAuthenticated,
 
                   newUser.save()
                     .then(() => res.sendStatus(201))
-                    .catch((err) => {
-                      res.status(550);
-                      res.json(`[!] Could not register user: ${err}`);
-                    });
+                    .catch((err) => sendDatabaseErrorResponse(err, res));
                 }
               });
           }
         });
     } catch (err) {
-      res.status(559);
-      res.json(`[!] Could not register user: ${err}`);
+      res.status(559).json(`[!] Could not register user: ${err}`);
     }
   });
 

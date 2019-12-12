@@ -2,6 +2,7 @@ const express = require('express');
 const { ObjectId } = require('mongoose').Types;
 const Post = require('../models/Post');
 const { checkAuthenticated } = require('../app');
+const { sendDatabaseErrorResponse } = require('../app');
 const {
   checkAndSanitizeInput,
   handleInputCheck,
@@ -33,10 +34,7 @@ router.post('/comment',
         .then(() => {
           res.sendStatus(201);
         })
-        .catch((err) => {
-          res.status(550);
-          res.json(`[!] Could not add comment: ${err}`);
-        });
+        .catch((err) => sendDatabaseErrorResponse(err, res));
     } else if (req.body.method === 'delete') {
       const { username } = req.user;
       const { postId } = req.body;
@@ -49,10 +47,7 @@ router.post('/comment',
         .then(() => {
           res.sendStatus(200);
         })
-        .catch((err) => {
-          res.status(550);
-          res.json(`[!] Could not delete comment: ${err}`);
-        });
+        .catch((err) => sendDatabaseErrorResponse(err, res));
     } else if (req.body.method === 'edit') {
       const { username } = req.user;
       const { postId } = req.body;
@@ -66,10 +61,7 @@ router.post('/comment',
         .then(() => {
           res.sendStatus(200);
         })
-        .catch((err) => {
-          res.status(550);
-          res.json(`[!] Could not edit comment: ${err}`);
-        });
+        .catch((err) => sendDatabaseErrorResponse(err, res));
     } else {
       res.status(400).json('[!] Not proper method');
     }
