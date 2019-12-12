@@ -43,6 +43,7 @@
     "jest": "^24.9.0",
     "jest-environment-webdriver": "^0.2.0",
     "mock-mongoose": "^7.4.0-r2",
+    "mongodb-memory-server": "^6.0.2",
     "nodemon": "^1.19.4",
     "superagent": "^5.1.0",
     "supertest": "^4.0.2"

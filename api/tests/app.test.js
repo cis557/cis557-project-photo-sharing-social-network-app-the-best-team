@@ -5,7 +5,6 @@ const request = require('supertest');
 const assert = require('assert');
 const http = require('http');
 const async = require('async');
-const { Mockgoose } = require('mock-mongoose');
 const { ObjectId } = require('mongoose').Types;
 const app = require('../app');
 const User = require('../models/User');
@@ -30,18 +29,16 @@ const testTags = 'getinthedamnbox';
 
 let server;
 let agent;
-const mockgoose = new Mockgoose(mongoose);
 
 beforeAll((done) => {
-  mockgoose.prepareStorage().then(() => {
-    server = http.createServer(app.expressApp);
-    agent = request.agent(server);
-    server.listen(done);
-  });
+  server = http.createServer(app.expressApp);
+  agent = request.agent(server);
+  server.listen(done);
 });
 
 afterAll((done) => {
-  server.close(done);
+  app.mongoose.connection.close()
+    .then(server.close(done));
 });
 
 describe('Tests of core app.js functionality', () => {
