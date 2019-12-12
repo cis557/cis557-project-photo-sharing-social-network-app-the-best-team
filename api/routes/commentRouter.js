@@ -9,7 +9,7 @@ const {
 
 const router = express.Router();
 
-router.post('/Comment',
+router.post('/comment',
   checkAuthenticated,
   checkAndSanitizeInput(),
   handleInputCheck,
@@ -37,8 +37,7 @@ router.post('/Comment',
           res.status(550);
           res.json(`[!] Could not add comment: ${err}`);
         });
-    }
-    if (req.body.method === 'delete') {
+    } else if (req.body.method === 'delete') {
       const { username } = req.user;
       const { postId } = req.body;
       const { commentId } = req.body;
@@ -54,8 +53,7 @@ router.post('/Comment',
           res.status(550);
           res.json(`[!] Could not delete comment: ${err}`);
         });
-    }
-    if (req.body.method === 'edit') {
+    } else if (req.body.method === 'edit') {
       const { username } = req.user;
       const { postId } = req.body;
       const { commentId } = req.body;
@@ -72,30 +70,9 @@ router.post('/Comment',
           res.status(550);
           res.json(`[!] Could not edit comment: ${err}`);
         });
+    } else {
+      res.status(400).json('[!] Not proper method');
     }
-  });
-
-router.post('/editComment',
-  checkAuthenticated,
-  checkAndSanitizeInput(),
-  handleInputCheck,
-  (req, res) => {
-    const { username } = req.user;
-    const { postId } = req.body;
-    const { commentId } = req.body;
-    const { text } = req.body;
-
-    Post.findOneAndUpdate(
-      { _id: ObjectId(postId), comments: { $elemMatch: { _id: ObjectId(commentId), username } } },
-      { $set: { 'comments.$.text': text } },
-    )
-      .then(() => {
-        res.sendStatus(200);
-      })
-      .catch((err) => {
-        res.status(550);
-        res.json(`[!] Could not edit comment: ${err}`);
-      });
   });
 
 module.exports = router;

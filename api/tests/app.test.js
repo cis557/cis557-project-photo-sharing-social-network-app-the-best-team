@@ -1,13 +1,16 @@
+/* eslint-disable no-underscore-dangle */
 /* global afterAll beforeAll describe expect test */
 
 const request = require('supertest');
 const assert = require('assert');
 const http = require('http');
 const async = require('async');
+const { Mockgoose } = require('mock-mongoose');
+const { ObjectId } = require('mongoose').Types;
 const app = require('../app');
 const User = require('../models/User');
 const Post = require('../models/Post');
-
+const { mongoose } = require('../app');
 
 const testFirstName = 'testFirstName';
 const testLastName = 'testLastName';
@@ -17,15 +20,24 @@ const testEmail1 = 'testEmail1@test.com';
 const testEmail2 = 'testEmail2@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
+
+let testPostId;
+const testTitle = 'Dummy title';
+const testDescription = 'Dummy description';
+const testPrivacy = 'public';
 const testImage = './tests/test.png';
+const testTags = 'getinthedamnbox';
 
 let server;
 let agent;
+const mockgoose = new Mockgoose(mongoose);
 
 beforeAll((done) => {
-  server = http.createServer(app.expressApp);
-  agent = request.agent(server);
-  server.listen(done);
+  mockgoose.prepareStorage().then(() => {
+    server = http.createServer(app.expressApp);
+    agent = request.agent(server);
+    server.listen(done);
+  });
 });
 
 afterAll((done) => {
@@ -95,16 +107,9 @@ describe('When a user is not logged in', () => {
       .end(done);
   });
 
-  test('They are rejected from accessing the /Comment route', (done) => {
+  test('They are rejected from accessing the /comment route', (done) => {
     agent
-      .post('/Comment')
-      .expect(401)
-      .end(done);
-  });
-
-  test('They are rejected from accessing the /editComment route', (done) => {
-    agent
-      .post('/editComment')
+      .post('/comment')
       .expect(401)
       .end(done);
   });
@@ -216,19 +221,38 @@ describe('When a user is logged in ()', () => {
           password: testPasswordCorrect,
         })
         .end(requestDone),
+      (requestDone) => agent
+        .post('/addPost')
+        .field('title', testTitle)
+        .field('description', testDescription)
+        .field('privacy', testPrivacy)
+        .field('tags', testTitle)
+        .attach('image', testImage)
+        .expect(201)
+        .end(requestDone),
+      (requestDone) => Post
+        .findOne({ username: testUsername1 })
+        .then((post) => { testPostId = post._id; })
+        .then(requestDone),
     ], done);
-  });
-
-  // Delete the user after all tests.
-  afterAll((done) => {
-    User.deleteOne({ email: testEmail1 })
-      .then(done);
   });
 
   test('The API is active', (done) => {
     agent
       .get('/testAPI')
       .expect(200)
+      .end(done);
+  });
+
+  test('The user can comment on a post', (done) => {
+    agent
+      .post('/Comment')
+      .send({
+        method: 'add',
+        postId: testPostId,
+        text: 'Dummy comment text',
+      })
+      .expect(201)
       .end(done);
   });
 });
