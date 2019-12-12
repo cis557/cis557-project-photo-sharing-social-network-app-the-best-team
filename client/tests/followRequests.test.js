@@ -19,7 +19,8 @@ describe('Baseline tests', () => {
     follow('tkharel')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('unfollows correctly', () => {
@@ -28,6 +29,7 @@ describe('Baseline tests', () => {
     unfollow('tkharel')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 });

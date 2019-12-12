@@ -23,7 +23,8 @@ describe('Baseline tests', () => {
     addComment(12341234, 'this is really cool')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('edits comment correctly', () => {
@@ -32,7 +33,8 @@ describe('Baseline tests', () => {
     editComment(123324, 234545, 'editing works!')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('deletes comment correctly', () => {
@@ -41,6 +43,7 @@ describe('Baseline tests', () => {
     deleteComment(123453, 98745)
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 });

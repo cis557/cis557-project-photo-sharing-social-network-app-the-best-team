@@ -24,7 +24,8 @@ describe('Baseline tests', () => {
     register('Tirtha', 'Kharel', 'tkharel@test.com', 'password', 'tkharel')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('logs user correctly', () => {
@@ -33,7 +34,8 @@ describe('Baseline tests', () => {
     login('tkharel@test.com', 'password')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('password invalid', () => {
@@ -42,7 +44,8 @@ describe('Baseline tests', () => {
     login('tkharel@test.com', 'wrongpassword')
       .then((res) => {
         expect(res.status).toEqual(400);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('user email does not exist', () => {
@@ -51,7 +54,8 @@ describe('Baseline tests', () => {
     register('nonexistent@test.com', 'wrongpassword')
       .then((res) => {
         expect(res.status).toEqual(400);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('logout', () => {
@@ -60,7 +64,8 @@ describe('Baseline tests', () => {
     logout()
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('user is logged in', () => {
@@ -69,7 +74,8 @@ describe('Baseline tests', () => {
     checkAuth()
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('user is not logged in', () => {
@@ -78,6 +84,7 @@ describe('Baseline tests', () => {
     checkAuth()
       .then((res) => {
         expect(res.status).toEqual(400);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 });

@@ -20,7 +20,8 @@ describe('Baseline tests', () => {
     getSuggestedUsers()
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('gets user correctly', () => {
@@ -29,7 +30,8 @@ describe('Baseline tests', () => {
     getUser()
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('gets other user correctly', () => {
@@ -38,6 +40,7 @@ describe('Baseline tests', () => {
     getOtherUser('tkharel')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 });

@@ -17,7 +17,8 @@ describe('Baseline tests', () => {
     addLike(12341234)
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('deletes like correctly', () => {
@@ -26,6 +27,7 @@ describe('Baseline tests', () => {
     deleteLike(123324)
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 });

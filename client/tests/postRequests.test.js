@@ -23,7 +23,8 @@ describe('Baseline tests', () => {
     addPost('test title', 'test description', false, 'imageurl', ['some', 'tags', 'here'])
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('edits post correctly', () => {
@@ -32,7 +33,8 @@ describe('Baseline tests', () => {
     editPost(198273, 'new title', 'new description')
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('gets post correctly', () => {
@@ -41,7 +43,8 @@ describe('Baseline tests', () => {
     getPost(1098423)
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('gets feed correctly', () => {
@@ -50,7 +53,8 @@ describe('Baseline tests', () => {
     getFeed()
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('gets likes of post correctly', () => {
@@ -59,7 +63,8 @@ describe('Baseline tests', () => {
     getLikes()
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 
   test('deletes post correctly', () => {
@@ -68,6 +73,7 @@ describe('Baseline tests', () => {
     deletePost(1098423)
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 });

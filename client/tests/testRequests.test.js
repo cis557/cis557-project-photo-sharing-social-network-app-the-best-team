@@ -18,6 +18,7 @@ describe('Baseline tests', () => {
     testAPI()
       .then((res) => {
         expect(res.status).toEqual(200);
-      });
+      })
+      .catch((err) => { console.log(err); });
   });
 });
