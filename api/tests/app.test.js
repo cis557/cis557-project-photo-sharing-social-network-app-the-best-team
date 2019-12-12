@@ -1,15 +1,12 @@
 /* eslint-disable no-underscore-dangle */
-/* global afterAll beforeAll describe expect test */
 
 const request = require('supertest');
-const assert = require('assert');
 const http = require('http');
 const async = require('async');
 const { ObjectId } = require('mongoose').Types;
 const app = require('../app');
 const User = require('../models/User');
 const Post = require('../models/Post');
-const { mongoose } = require('../app');
 
 const testFirstName = 'testFirstName';
 const testLastName = 'testLastName';
@@ -18,17 +15,25 @@ const testUsername2 = 'testUsername2';
 const testUsername3 = 'testUsername3';
 const testUsername4 = 'testUsername4';
 const testUsername5 = 'testUsername5';
+const testUsername6 = 'testUsername6';
+const testUsername7 = 'testUsername7';
+const testUsername8 = 'testUsername8';
+const testUsernameIncorrect = 'testUsernameIncorrect';
 const testEmail1 = 'testEmail1@test.com';
 const testEmail2 = 'testEmail2@test.com';
 const testEmail3 = 'testEmail3@test.com';
 const testEmail4 = 'testEmail4@test.com';
 const testEmail5 = 'testEmail5@test.com';
+const testEmail6 = 'testEmail6@test.com';
+const testEmail7 = 'testEmail7@test.com';
+const testEmail8 = 'testEmail8@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
 
 let testPostId1;
 let testPostId2;
 let testPostId3;
+const testPostIdIncorrect = 0;
 let testCommentId;
 const testTitle1 = 'Test title 1';
 const testTitle2 = 'Test title 2';
@@ -36,9 +41,25 @@ const testTitle3 = 'Test title 3';
 const testTitle4 = 'Test title 4';
 const testDescription = 'Test description';
 const testPrivacy = 'public';
-const testImage = './tests/test.png';
+const testImageValid = './tests/testValid.png';
+const testImageInvalid = './tests/testInvalid.jpg';
 const testTags = 'getinthedamnbox';
-const testCommentText = 'Test text';
+const testCommentText = 'Test comment text';
+const testLongText = `
+Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Et netus et malesuada fames. Amet luctus venenatis lectus magna fringilla urna
+porttitor rhoncus. Cursus vitae congue mauris rhoncus aenean.
+Platea dictumst quisque sagittis purus sit amet volutpat consequat mauris.
+Fringilla est ullamcorper eget nulla facilisi etiam dignissim.
+Aliquam malesuada bibendum arcu vitae elementum curabitur vitae.
+Bibendum ut tristique et egestas quis ipsum. Dolor sit amet consectetur adipiscing.
+Egestas pretium aenean pharetra magna. Suspendisse sed nisi lacus sed viverra.
+Risus nec feugiat in fermentum posuere urna nec tincidunt praesent.
+Auctor eu augue ut lectus arcu bibendum at. Vel turpis nunc eget lorem dolor.
+Duis at consectetur lorem donec massa. Sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus.
+Leo urna molestie at elementum eu facilisis sed. Euismod nisi porta lorem mollis aliquam ut porttitor leo a.
+Sagittis vitae et leo duis ut. Egestas egestas fringilla phasellus faucibus scelerisque.`;
 
 let server;
 let agent;
@@ -55,6 +76,23 @@ afterAll((done) => {
 });
 
 describe('Tests of core app.js functionality', () => {
+  // Register before running tests.
+  beforeAll((done) => {
+    async.series([
+      (requestDone) => agent
+        .post('/register')
+        .send({
+          firstName: testFirstName,
+          lastName: testLastName,
+          email: testEmail6,
+          password: testPasswordCorrect,
+          username: testUsername6,
+          image: testImageValid,
+        })
+        .then(() => { requestDone(); }),
+    ], done);
+  });
+
   test('Permits authenticated user to visit restricted page', () => {
     const req = { isAuthenticated: () => true };
     const res = {
@@ -106,6 +144,10 @@ describe('Tests of core app.js functionality', () => {
 
     expect(authentication).toEqual('next');
   });
+
+  test('Has Multer storage', () => {
+    expect(app.storage).not.toEqual(null);
+  });
 });
 
 describe('When a user is not logged in', () => {
@@ -113,101 +155,131 @@ describe('When a user is not logged in', () => {
     agent
       .get('/testAPI')
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
+  });
+
+  test('They are not authorized', (done) => {
+    agent
+      .get('/checkAuth')
+      .expect(401)
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /comment route', (done) => {
     agent
       .post('/comment')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /follow route', (done) => {
     agent
       .post('/follow')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /like route', (done) => {
     agent
       .post('/like')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /getLikes route', (done) => {
     agent
       .get('/getLikes')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /addPost route', (done) => {
     agent
       .post('/addPost')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /editPost route', (done) => {
     agent
       .post('/editPost')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /getFeed route', (done) => {
     agent
       .get('/getFeed')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /getPost/:postId route', (done) => {
     agent
-      .get('/getPost/0')
+      .get(`/getPost/${testPostIdIncorrect}`)
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /deletePost route', (done) => {
     agent
       .post('/deletePost')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /getUser route', (done) => {
     agent
       .get('/getUser')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /getOtherUser/:username route', (done) => {
     agent
       .get(`/getOtherUser/${testUsername1}`)
       .expect(401)
-      .end(done);
-  });
-
-  test('They are rejected from accessing the /deleteUser route', (done) => {
-    agent
-      .delete('/deleteUser')
-      .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They are rejected from accessing the /getSuggestedUsers route', (done) => {
     agent
       .get('/getSuggestedUsers')
       .expect(401)
-      .end(done);
+      .then(() => { done(); });
   });
 
-  test('They can register an account', (done) => {
+  test('They can register an account with an image', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstName: testFirstName,
+        lastName: testLastName,
+        email: testEmail7,
+        password: testPasswordCorrect,
+        username: testUsername7,
+        image: testImageValid,
+      })
+      .expect(201)
+      .then(() => { done(); });
+  });
+
+  test('They can register an account without an image', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstName: testFirstName,
+        lastName: testLastName,
+        email: testEmail8,
+        password: testPasswordCorrect,
+        username: testUsername8,
+      })
+      .expect(201)
+      .then(() => { done(); });
+  });
+
+  /*
+  test('They cannot register an account with an overly large image', (done) => {
     agent
       .post('/register')
       .send({
@@ -216,9 +288,52 @@ describe('When a user is not logged in', () => {
         email: testEmail1,
         password: testPasswordCorrect,
         username: testUsername1,
-        image: testImage,
+        image: testImageInvalid,
       })
-      .end(done);
+      .expect(409)
+      .then(() => { done(); });
+  });
+  */
+
+  test('They cannot register an account with a duplicate email address', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstName: testFirstName,
+        lastName: testLastName,
+        email: testEmail1,
+        password: testPasswordCorrect,
+        username: testUsername6,
+        image: testImageValid,
+      })
+      .expect(409)
+      .then(() => { done(); });
+  });
+
+  test('They cannot register an account with a duplicate username', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstName: testFirstName,
+        lastName: testLastName,
+        email: testEmail6,
+        password: testPasswordCorrect,
+        username: testUsername1,
+        image: testImageValid,
+      })
+      .expect(409)
+      .then(() => { done(); });
+  });
+
+  test('They cannot log in with an invalid password', (done) => {
+    agent
+      .post('/login')
+      .send({
+        email: testEmail6,
+        password: testPasswordIncorrect,
+      })
+      .expect(401)
+      .then(() => { done(); });
   });
 });
 
@@ -234,7 +349,7 @@ describe('When a user is logged in ()', () => {
           email: testEmail1,
           password: testPasswordCorrect,
           username: testUsername1,
-          image: testImage,
+          image: testImageValid,
         })
         .then(() => { requestDone(); }),
       (requestDone) => agent
@@ -245,7 +360,7 @@ describe('When a user is logged in ()', () => {
           email: testEmail2,
           password: testPasswordCorrect,
           username: testUsername2,
-          image: testImage,
+          image: testImageValid,
         })
         .then(() => { requestDone(); }),
       (requestDone) => agent
@@ -256,7 +371,7 @@ describe('When a user is logged in ()', () => {
           email: testEmail3,
           password: testPasswordCorrect,
           username: testUsername3,
-          image: testImage,
+          image: testImageValid,
         })
         .then(() => { requestDone(); }),
       (requestDone) => agent
@@ -267,7 +382,7 @@ describe('When a user is logged in ()', () => {
           email: testEmail4,
           password: testPasswordCorrect,
           username: testUsername4,
-          image: testImage,
+          image: testImageValid,
         })
         .then(() => { requestDone(); }),
       (requestDone) => agent
@@ -278,7 +393,7 @@ describe('When a user is logged in ()', () => {
           email: testEmail5,
           password: testPasswordCorrect,
           username: testUsername5,
-          image: testImage,
+          image: testImageValid,
         })
         .then(() => { requestDone(); }),
       (requestDone) => agent
@@ -294,7 +409,7 @@ describe('When a user is logged in ()', () => {
         .field('description', testDescription)
         .field('privacy', testPrivacy)
         .field('tags', testTags)
-        .attach('image', testImage)
+        .attach('image', testImageValid)
         .expect(201)
         .then(() => { requestDone(); }),
       (requestDone) => agent
@@ -303,7 +418,7 @@ describe('When a user is logged in ()', () => {
         .field('description', testDescription)
         .field('privacy', testPrivacy)
         .field('tags', testTags)
-        .attach('image', testImage)
+        .attach('image', testImageValid)
         .expect(201)
         .then(() => { requestDone(); }),
       (requestDone) => agent
@@ -312,7 +427,7 @@ describe('When a user is logged in ()', () => {
         .field('description', testDescription)
         .field('privacy', testPrivacy)
         .field('tags', testTags)
-        .attach('image', testImage)
+        .attach('image', testImageValid)
         .expect(201)
         .then(() => { requestDone(); }),
       (requestDone) => Post
@@ -367,17 +482,44 @@ describe('When a user is logged in ()', () => {
             { username: testUsername1 },
             { username: testUsername2 },
             { username: testUsername3 },
+            { username: testUsername4 },
+            { username: testUsername5 },
+            { username: testUsername6 },
+            { username: testUsername7 },
+            { username: testUsername8 },
           ],
         },
       )
-      .then(() => { Post.deleteMany({ username: testUsername1 }).then(done); });
+      .then(() => {
+        Post.deleteMany(
+          {
+            $or: [
+              { username: testUsername1 },
+              { username: testUsername2 },
+              { username: testUsername3 },
+              { username: testUsername4 },
+              { username: testUsername5 },
+              { username: testUsername6 },
+              { username: testUsername7 },
+              { username: testUsername8 },
+            ],
+          },
+        ).then(done);
+      });
   });
 
   test('The API is active', (done) => {
     agent
       .get('/testAPI')
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
+  });
+
+  test('They are authorized', (done) => {
+    agent
+      .get('/checkAuth')
+      .expect(200)
+      .then(() => { done(); });
   });
 
   test('They can comment on a post', (done) => {
@@ -389,7 +531,19 @@ describe('When a user is logged in ()', () => {
         method: 'add',
       })
       .expect(201)
-      .end(done);
+      .then(() => { done(); });
+  });
+
+  test('They cannot add a comment with overly long text', (done) => {
+    agent
+      .post('/comment')
+      .send({
+        postId: testPostId1,
+        text: testLongText,
+        method: 'add',
+      })
+      .expect(422)
+      .then(() => { done(); });
   });
 
   test('They can edit a comment', (done) => {
@@ -402,7 +556,7 @@ describe('When a user is logged in ()', () => {
         method: 'edit',
       })
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can delete a comment', (done) => {
@@ -414,7 +568,7 @@ describe('When a user is logged in ()', () => {
         method: 'delete',
       })
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They cannot make a malformed comment request', (done) => {
@@ -426,7 +580,7 @@ describe('When a user is logged in ()', () => {
         method: 'malformed',
       })
       .expect(400)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can follow another user', (done) => {
@@ -437,7 +591,7 @@ describe('When a user is logged in ()', () => {
         method: 'follow',
       })
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They cannot follow a user they already follow', (done) => {
@@ -448,7 +602,7 @@ describe('When a user is logged in ()', () => {
         method: 'follow',
       })
       .expect(400)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can unfollow another user', (done) => {
@@ -459,7 +613,7 @@ describe('When a user is logged in ()', () => {
         method: 'unfollow',
       })
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They cannot unfollow a user they do not follow', (done) => {
@@ -470,7 +624,7 @@ describe('When a user is logged in ()', () => {
         method: 'unfollow',
       })
       .expect(400)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They cannot make a malformed follow request', (done) => {
@@ -481,7 +635,7 @@ describe('When a user is logged in ()', () => {
         method: 'malformed',
       })
       .expect(400)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can like a post', (done) => {
@@ -492,7 +646,7 @@ describe('When a user is logged in ()', () => {
         method: 'add',
       })
       .expect(201)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can unlike a post', (done) => {
@@ -503,7 +657,7 @@ describe('When a user is logged in ()', () => {
         method: 'remove',
       })
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They cannot make a malformed like request', (done) => {
@@ -514,14 +668,14 @@ describe('When a user is logged in ()', () => {
         method: 'malformed',
       })
       .expect(400)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can get their liked posts', (done) => {
     agent
       .get('/getLikes')
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can add a post', (done) => {
@@ -531,9 +685,45 @@ describe('When a user is logged in ()', () => {
       .field('description', testDescription)
       .field('privacy', testPrivacy)
       .field('tags', testTags)
-      .attach('image', testImage)
+      .attach('image', testImageValid)
       .expect(201)
-      .end(done);
+      .then(() => { done(); });
+  });
+
+  test('They cannot add a post with an overly long title', (done) => {
+    agent
+      .post('/addPost')
+      .field('title', testLongText)
+      .field('description', testDescription)
+      .field('privacy', testPrivacy)
+      .field('tags', testTags)
+      .attach('image', testImageValid)
+      .expect(422)
+      .then(() => { done(); });
+  });
+
+  test('They cannot add a post with an overly long description', (done) => {
+    agent
+      .post('/addPost')
+      .field('title', testTitle4)
+      .field('description', testLongText)
+      .field('privacy', testPrivacy)
+      .field('tags', testTags)
+      .attach('image', testImageValid)
+      .expect(422)
+      .then(() => { done(); });
+  });
+
+  test('They cannot add a post with an overly image', (done) => {
+    agent
+      .post('/addPost')
+      .field('title', testTitle4)
+      .field('description', testDescription)
+      .field('privacy', testPrivacy)
+      .field('tags', testTags)
+      .attach('image', testImageInvalid)
+      .expect(413)
+      .then(() => { done(); });
   });
 
   test('They can edit a post', (done) => {
@@ -545,21 +735,21 @@ describe('When a user is logged in ()', () => {
         description: testDescription,
       })
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can get their feed', (done) => {
     agent
       .get('/getFeed')
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can get a post', (done) => {
     agent
       .get(`/getPost/${testPostId2}`)
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can delete a post', (done) => {
@@ -569,20 +759,34 @@ describe('When a user is logged in ()', () => {
         postId: testPostId3,
       })
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can get their own profile data', (done) => {
     agent
       .get('/getUser')
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
   });
 
   test('They can get the profile data of another user', (done) => {
     agent
       .get(`/getOtherUser/${testUsername2}`)
       .expect(200)
-      .end(done);
+      .then(() => { done(); });
+  });
+
+  test('They cannot get the profile data of a nonexistent user', (done) => {
+    agent
+      .get(`/getOtherUser/${testUsernameIncorrect}`)
+      .expect(404)
+      .then(() => { done(); });
+  });
+
+  test('They can get a list of suggested users', (done) => {
+    agent
+      .get('/getSuggestedUsers')
+      .expect(200)
+      .then(() => { done(); });
   });
 });

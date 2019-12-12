@@ -296,6 +296,7 @@ module.exports = {
   mongoose,
   passport,
   parser,
+  storage,
 };
 
 expressApp.use(require('./routes/authRouter'));
