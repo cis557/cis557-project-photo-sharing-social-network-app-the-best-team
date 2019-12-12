@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const Post = require('../models/Post');
 const User = require('../models/User');
 const { checkAuthenticated } = require('../app');
 
@@ -81,32 +80,6 @@ router.get('/getOtherUser/:username', checkAuthenticated, (req, res) => {
     .catch((err) => {
       res.status(550);
       res.json(`[!] Could not retrieve user: ${err}`);
-    });
-});
-
-router.delete('/deleteUser', checkAuthenticated, (req, res) => {
-  const usernameLoggedIn = req.user.username;
-  const usernameToDelete = req.body.username;
-
-  if (usernameToDelete !== usernameLoggedIn) {
-    res.status(401);
-    res.json(`[!] Cannot delete another user: ${usernameToDelete}`);
-    return;
-  }
-
-  Post.deleteMany({ username: usernameToDelete })
-    .then(() => {
-      User.deleteOne({ username: usernameToDelete })
-        .then(() => {
-          res.sendStatus(200);
-        })
-        .catch((err) => {
-          res.status(550).json(`[!] Could not delete user: ${err}`);
-        });
-    })
-    .catch((err) => {
-      res.status(550);
-      res.json(`[!] Could not delete user: ${err}`);
     });
 });
 

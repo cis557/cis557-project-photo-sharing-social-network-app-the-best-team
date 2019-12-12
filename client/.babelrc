@@ -3,7 +3,7 @@
       "@babel/preset-env",
       "@babel/preset-react"
   ],
-  "env":{
+  "env": {
     "test": {
       "plugins": ["@babel/plugin-transform-runtime"]
     }
