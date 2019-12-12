@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const User = require('../models/User');
 const { checkAuthenticated } = require('../app');
+const { sendDatabaseErrorResponse } = require('../app');
 
 const router = express.Router();
 
@@ -38,10 +39,7 @@ router.get('/getUser', checkAuthenticated, (req, res) => {
         res.json(`[!] User not found: ${username}`);
       }
     })
-    .catch((err) => {
-      res.status(550);
-      res.json(`[!] Could not retrieve user: ${err}`);
-    });
+    .catch((err) => sendDatabaseErrorResponse(err, res));
 });
 
 
@@ -77,10 +75,7 @@ router.get('/getOtherUser/:username', checkAuthenticated, (req, res) => {
         res.json(`[!] User not found: ${username}`);
       }
     })
-    .catch((err) => {
-      res.status(550);
-      res.json(`[!] Could not retrieve user: ${err}`);
-    });
+    .catch((err) => sendDatabaseErrorResponse(err, res));
 });
 
 router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
@@ -93,8 +88,7 @@ router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
   const user = await User.findOne({ username });
 
   if (!user) {
-    res.status(550);
-    res.json(`[!] Could not find user: ${username}`);
+    res.status(550).json(`[!] Could not find user: ${username}`);
   }
 
   // Keep track of who the user already follows,
@@ -105,10 +99,7 @@ router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
 
   user.followees.forEach(async (followeeUsername) => {
     const followee = await User.findOne({ username: followeeUsername })
-      .catch((err) => {
-        res.status(550);
-        res.json(`[!] Could not retrieve users: ${err}`);
-      });
+      .catch((err) => sendDatabaseErrorResponse(err, res));
     const followeesOfFollowee = followee.followees;
 
     // Iterate over the followees of the followee.
@@ -130,10 +121,7 @@ router.get('/getSuggestedUsers', checkAuthenticated, async (req, res) => {
     // At this point, all of the user's followees have been visited,
     // but not enough suggestions have been generated.
     const allUsers = await User.find()
-      .catch((err) => {
-        res.status(550);
-        res.json(`[!] Could not retrieve users: ${err}`);
-      });
+      .catch((err) => sendDatabaseErrorResponse(err, res));
 
     for (let j = 0; j < allUsers.length; j += 1) {
       // Add random users to fill out the list of suggestions.

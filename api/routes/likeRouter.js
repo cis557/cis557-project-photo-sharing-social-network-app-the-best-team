@@ -3,6 +3,7 @@ const { ObjectId } = require('mongoose').Types;
 const Post = require('../models/Post');
 const User = require('../models/User');
 const { checkAuthenticated } = require('../app');
+const { sendDatabaseErrorResponse } = require('../app');
 
 const router = express.Router();
 
@@ -24,15 +25,9 @@ router.post('/like', checkAuthenticated, (req, res) => {
           .then(() => {
             res.sendStatus(201);
           })
-          .catch((err) => {
-            res.status(550);
-            res.json(`[!] Could not like post: ${err}`);
-          });
+          .catch((err) => sendDatabaseErrorResponse(err, res));
       })
-      .catch((err) => {
-        res.status(550);
-        res.json(`[!] Could not like post: ${err}`);
-      });
+      .catch((err) => sendDatabaseErrorResponse(err, res));
   } else if (method === 'remove') {
     Post.findOneAndUpdate(
       { _id: ObjectId(postId) },
@@ -46,15 +41,9 @@ router.post('/like', checkAuthenticated, (req, res) => {
           .then(() => {
             res.sendStatus(200);
           })
-          .catch((err) => {
-            res.status(550);
-            res.json(`[!] Could not unlike post: ${err}`);
-          });
+          .catch((err) => sendDatabaseErrorResponse(err, res));
       })
-      .catch((err) => {
-        res.status(550);
-        res.json(`[!] Could not unlike post: ${err}`);
-      });
+      .catch((err) => sendDatabaseErrorResponse(err, res));
   } else {
     res.status(400).json('[!] Not proper method');
   }
@@ -77,10 +66,7 @@ router.get('/getLikes', checkAuthenticated, (req, res) => {
         res.json('[!] User not found');
       }
     })
-    .catch((err) => {
-      res.status(550);
-      res.json(`[!] Could not retrieve user: ${err}`);
-    });
+    .catch((err) => sendDatabaseErrorResponse(err, res));
 });
 
 module.exports = router;
