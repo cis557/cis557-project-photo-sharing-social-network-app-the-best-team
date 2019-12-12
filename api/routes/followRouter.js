@@ -40,6 +40,8 @@ router.post('/follow', checkAuthenticated, (req, res) => {
                 res.status(550);
                 res.json(`[!] Could not follow user: ${err}`);
               });
+          } else {
+            res.status(400).json(`[!] Already following user: ${usernameB}`);
           }
         });
     } catch (err) {
@@ -50,9 +52,11 @@ router.post('/follow', checkAuthenticated, (req, res) => {
     try {
       const usernameA = req.user.username;
       const usernameB = req.body.username;
+
       User.findOne({ username: usernameA })
         .then((user) => {
           const followeesA = user.followees;
+
           if (followeesA.includes(usernameB)) {
           // Update User A's followees.
             User.findOneAndUpdate(
@@ -77,6 +81,8 @@ router.post('/follow', checkAuthenticated, (req, res) => {
                 res.status(550);
                 res.json(`[!] Could not unfollow user: ${err}`);
               });
+          } else {
+            res.status(400).json(`[!] Not following user: ${usernameB}`);
           }
         });
     } catch (err) {

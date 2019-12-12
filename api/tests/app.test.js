@@ -15,12 +15,15 @@ const testFirstName = 'testFirstName';
 const testLastName = 'testLastName';
 const testUsername1 = 'testUsername1';
 const testUsername2 = 'testUsername2';
+const testUsername3 = 'testUsername3';
 const testEmail1 = 'testEmail1@test.com';
 const testEmail2 = 'testEmail2@test.com';
+const testEmail3 = 'testEmail3@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
 
 let testPostId;
+let testCommentId;
 const testTitle = 'Dummy title';
 const testDescription = 'Dummy description';
 const testPrivacy = 'public';
@@ -196,7 +199,7 @@ describe('When a user is not logged in', () => {
 });
 
 describe('When a user is logged in ()', () => {
-  // Register and log in before all tests.
+  // Register, log in, and prepare dummy data before running tests.
   beforeAll((done) => {
     async.series([
       (requestDone) => agent
@@ -209,14 +212,36 @@ describe('When a user is logged in ()', () => {
           username: testUsername1,
           image: testImage,
         })
-        .end(requestDone),
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/register')
+        .send({
+          firstName: testFirstName,
+          lastName: testLastName,
+          email: testEmail2,
+          password: testPasswordCorrect,
+          username: testUsername2,
+          image: testImage,
+        })
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/register')
+        .send({
+          firstName: testFirstName,
+          lastName: testLastName,
+          email: testEmail3,
+          password: testPasswordCorrect,
+          username: testUsername3,
+          image: testImage,
+        })
+        .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/login')
         .send({
           email: testEmail1,
           password: testPasswordCorrect,
         })
-        .end(requestDone),
+        .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/addPost')
         .field('title', testTitle)
@@ -225,12 +250,47 @@ describe('When a user is logged in ()', () => {
         .field('tags', testTitle)
         .attach('image', testImage)
         .expect(201)
-        .end(requestDone),
+        .then(() => { requestDone(); }),
       (requestDone) => Post
         .findOne({ username: testUsername1 })
         .then((post) => { testPostId = post._id; })
-        .then(requestDone),
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/comment')
+        .send({
+          postId: testPostId,
+          text: 'Dummy comment text',
+          method: 'add',
+        })
+        .expect(201)
+        .then(() => { requestDone(); }),
+      (requestDone) => Post
+        .findOne({ _id: ObjectId(testPostId) })
+        .then((post) => { testCommentId = post.comments[0]._id; })
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/follow')
+        .send({
+          username: testUsername3,
+          method: 'follow',
+        })
+        .expect(200)
+        .then(() => { requestDone(); }),
     ], done);
+  });
+
+  afterAll((done) => {
+    User
+      .deleteMany(
+        {
+          $or: [
+            { username: testUsername1 },
+            { username: testUsername2 },
+            { username: testUsername3 },
+          ],
+        },
+      )
+      .then(() => { Post.deleteMany({ username: testUsername1 }).then(done); });
   });
 
   test('The API is active', (done) => {
@@ -244,11 +304,58 @@ describe('When a user is logged in ()', () => {
     agent
       .post('/comment')
       .send({
-        method: 'add',
         postId: testPostId,
         text: 'Dummy comment text',
+        method: 'add',
       })
       .expect(201)
+      .end(done);
+  });
+
+  test('The user can edit a comment', (done) => {
+    agent
+      .post('/comment')
+      .send({
+        postId: testPostId,
+        commentId: testCommentId,
+        text: 'Dummy comment text',
+        method: 'edit',
+      })
+      .expect(200)
+      .end(done);
+  });
+
+  test('The user can delete a comment', (done) => {
+    agent
+      .post('/comment')
+      .send({
+        postId: testPostId,
+        commentId: testCommentId,
+        method: 'delete',
+      })
+      .expect(200)
+      .end(done);
+  });
+
+  test('The user can follow another user', (done) => {
+    agent
+      .post('/follow')
+      .send({
+        username: testUsername2,
+        method: 'follow',
+      })
+      .expect(200)
+      .end(done);
+  });
+
+  test('The user can unfollow another user', (done) => {
+    agent
+      .post('/follow')
+      .send({
+        username: testUsername3,
+        method: 'unfollow',
+      })
+      .expect(200)
       .end(done);
   });
 });
