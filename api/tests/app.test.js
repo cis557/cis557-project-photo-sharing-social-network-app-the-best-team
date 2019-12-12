@@ -33,6 +33,7 @@ let testCommentId;
 const testTitle1 = 'Test title 1';
 const testTitle2 = 'Test title 2';
 const testTitle3 = 'Test title 3';
+const testTitle4 = 'Test title 4';
 const testDescription = 'Test description';
 const testPrivacy = 'public';
 const testImage = './tests/test.png';
@@ -379,7 +380,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can comment on a post', (done) => {
+  test('They can comment on a post', (done) => {
     agent
       .post('/comment')
       .send({
@@ -391,7 +392,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can edit a comment', (done) => {
+  test('They can edit a comment', (done) => {
     agent
       .post('/comment')
       .send({
@@ -404,7 +405,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can delete a comment', (done) => {
+  test('They can delete a comment', (done) => {
     agent
       .post('/comment')
       .send({
@@ -416,7 +417,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user cannot make a malformed comment request', (done) => {
+  test('They cannot make a malformed comment request', (done) => {
     agent
       .post('/comment')
       .send({
@@ -428,7 +429,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can follow another user', (done) => {
+  test('They can follow another user', (done) => {
     agent
       .post('/follow')
       .send({
@@ -439,7 +440,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user cannot follow a user they already follow', (done) => {
+  test('They cannot follow a user they already follow', (done) => {
     agent
       .post('/follow')
       .send({
@@ -450,7 +451,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can unfollow another user', (done) => {
+  test('They can unfollow another user', (done) => {
     agent
       .post('/follow')
       .send({
@@ -461,7 +462,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user cannot unfollow a user they do not follow', (done) => {
+  test('They cannot unfollow a user they do not follow', (done) => {
     agent
       .post('/follow')
       .send({
@@ -472,7 +473,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user cannot make a malformed follow request', (done) => {
+  test('They cannot make a malformed follow request', (done) => {
     agent
       .post('/follow')
       .send({
@@ -483,7 +484,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can like a post', (done) => {
+  test('They can like a post', (done) => {
     agent
       .post('/like')
       .send({
@@ -494,7 +495,7 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can unlike a post', (done) => {
+  test('They can unlike a post', (done) => {
     agent
       .post('/like')
       .send({
@@ -505,9 +506,68 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
-  test('The user can get their liked posts', (done) => {
+  test('They cannot make a malformed like request', (done) => {
+    agent
+      .post('/like')
+      .send({
+        postId: testPostId1,
+        method: 'malformed',
+      })
+      .expect(400)
+      .end(done);
+  });
+
+  test('They can get their liked posts', (done) => {
     agent
       .get('/getLikes')
+      .expect(200)
+      .end(done);
+  });
+
+  test('They can add a post', (done) => {
+    agent
+      .post('/addPost')
+      .field('title', testTitle4)
+      .field('description', testDescription)
+      .field('privacy', testPrivacy)
+      .field('tags', testTags)
+      .attach('image', testImage)
+      .expect(201)
+      .end(done);
+  });
+
+  test('They can edit a post', (done) => {
+    agent
+      .post('/editPost')
+      .send({
+        postId: testPostId2,
+        title: testTitle2,
+        description: testDescription,
+      })
+      .expect(200)
+      .end(done);
+  });
+
+  test('They can get their feed', (done) => {
+    agent
+      .get('/getFeed')
+      .expect(200)
+      .end(done);
+  });
+
+  test('They can get a post', (done) => {
+    agent
+      .get(`/getPost/${testPostId2}`)
+      .expect(200)
+      .end(done);
+  });
+
+  test('They can delete a post', (done) => {
+    agent
+      .post('/deletePost')
+      .send({
+        postId: testPostId3,
+      })
       .expect(200)
       .end(done);
   });
