@@ -963,4 +963,16 @@ describe('When the database is down', () => {
         ).then(done);
       });
   });
+
+  test('They cannot comment on a post (database error)', (done) => {
+    agent
+      .post('/comment')
+      .send({
+        postId: testPostId1,
+        text: testCommentText,
+        method: 'add',
+      })
+      .expect(550)
+      .then(() => { done(); });
+  });
 });
