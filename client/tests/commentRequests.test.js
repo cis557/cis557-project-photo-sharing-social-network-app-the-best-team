@@ -1,7 +1,7 @@
-/* global test */
+// testig all comments
 
 describe('Baseline tests', () => {
   test('Runs the testing suite', () => {
-	  expect(1).toEqual(1);
+    expect(1).toEqual(1);
   });
 });
