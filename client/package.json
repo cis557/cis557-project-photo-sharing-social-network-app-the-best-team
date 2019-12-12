@@ -18,7 +18,9 @@
     "babel-plugin-transform-export-extensions": "^6.22.0",
     "babel-plugin-transform-react-pure-class-to-function": "^1.0.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-react": "^6.24.1",
+    "chai": "^4.2.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
     "jest": "^24.9.0",
@@ -37,13 +39,15 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest",
+    "test": "jest --coverage",
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm install && npm run build"
   },
   "eslintConfig": {
     "extends": "react-app",
-    "env": ["jest"]
+    "env": [
+      "jest"
+    ]
   },
   "browserslist": {
     "production": [
