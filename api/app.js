@@ -234,14 +234,14 @@ function handleInputCheck(req, res, next) {
   return res.status(422).json(`[!] ${err.param}: ${err.msg}`);
 }
 
-const maxFileMb = 2;
+const maxFileKb = 100;
 
 function checkFileSize(file) {
   const fileStats = fs.statSync(file.path);
   const fileSizeInBytes = fileStats.size;
-  const fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+  const fileSizeInKilobytes = fileSizeInBytes / 1000.0;
 
-  if (fileSizeInMegabytes > maxFileMb) {
+  if (fileSizeInKilobytes > maxFileKb) {
     return false;
   }
 
@@ -294,7 +294,7 @@ module.exports = {
   checkNotAuthenticated,
   checkAndSanitizeInput,
   handleInputCheck,
-  maxFileMb,
+  maxFileKb,
   checkFileSize,
   expressApp,
   mongoose,

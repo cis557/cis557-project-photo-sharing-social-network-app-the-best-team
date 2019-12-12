@@ -11,7 +11,7 @@ const {
   checkAndSanitizeInput,
   handleInputCheck,
   checkFileSize,
-  maxFileMb,
+  maxFileKb,
 } = require('../app');
 
 const router = express.Router();
@@ -54,7 +54,7 @@ router.post('/addPost',
     try {
       if (file && !checkFileSize(file)) {
         res.status(413);
-        res.json(`[!] Image is too large (max = ${maxFileMb}MB)`);
+        res.json(`[!] Image is too large (max = ${maxFileKb}KB)`);
         return;
       }
 

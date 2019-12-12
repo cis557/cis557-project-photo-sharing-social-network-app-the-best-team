@@ -47,7 +47,7 @@ const testDescription = 'Test description';
 const testPrivacy = 'public';
 const testImageValid = './tests/testValid.png';
 const testImageInvalid = './tests/testInvalid.jpg';
-const testPdfInvalid = './tests/testInvalid.pdf';
+const testFileInvalid = './tests/testInvalid.txt';
 const testTags = 'getinthedamnbox';
 const testCommentText = 'Test comment text';
 const testLongText = `
@@ -298,7 +298,7 @@ describe('When a user is not logged in', () => {
       .field('email', testEmail9)
       .field('password', testPasswordCorrect)
       .field('username', testUsername9)
-      .attach('image', testPdfInvalid)
+      .attach('image', testFileInvalid)
       .expect(422)
       .then(() => { done(); });
   });
@@ -772,7 +772,7 @@ describe('When a user is logged in', () => {
       .field('description', testDescription)
       .field('privacy', testPrivacy)
       .field('tags', testTags)
-      .attach('image', testPdfInvalid)
+      .attach('image', testFileInvalid)
       .expect(422)
       .then(() => { done(); });
   });

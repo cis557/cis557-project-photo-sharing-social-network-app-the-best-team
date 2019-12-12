@@ -13,7 +13,7 @@ const {
   checkAndSanitizeInput,
   handleInputCheck,
   checkFileSize,
-  maxFileMb,
+  maxFileKb,
 } = require('../app');
 
 const router = express.Router();
@@ -32,7 +32,7 @@ router.post('/register', checkNotAuthenticated,
 
     if (file && !checkFileSize(file)) {
       res.status(413);
-      res.json(`[!] Profile picture is too large (max = ${maxFileMb}MB)`);
+      res.json(`[!] Profile picture is too large (max = ${maxFileKb}KB)`);
       return;
     }
 
