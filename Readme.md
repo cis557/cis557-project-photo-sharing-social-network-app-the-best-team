@@ -1,7 +1,8 @@
 # Links
 
 Heroku deployment: https://photogram-front.herokuapp.com/
-Swagger API: https://app.swaggerhub.com/apis/TheBestTeam8/FinalProject557/1.0
+
+Swagger API: https://app.swaggerhub.com/apis/TheBestTeam8/FinalProject557/1.0.0
 
 # Instructions
 
