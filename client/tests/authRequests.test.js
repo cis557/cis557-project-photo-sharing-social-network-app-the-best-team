@@ -19,11 +19,11 @@ describe('authRequests tests', () => {
   });
 
   test('Registers user correctly', () => {
-    fetch.mockResponseOnce(JSON.stringify({ status: 200 }));
+    fetch.mockResponseOnce(JSON.stringify({ status: 201 }));
 
     register('Tirtha', 'Kharel', 'tkharel@test.com', 'password', 'tkharel')
       .then((res) => {
-        expect(res.status).toEqual(200);
+        expect(res.status).toEqual(201);
         expect(fetch.mock.calls.length).toEqual(1);
       })
       .catch(() => {});
