@@ -571,4 +571,18 @@ describe('When a user is logged in ()', () => {
       .expect(200)
       .end(done);
   });
+
+  test('They can get their own profile data', (done) => {
+    agent
+      .get('/getUser')
+      .expect(200)
+      .end(done);
+  });
+
+  test('They can get the profile data of another user', (done) => {
+    agent
+      .get(`/getOtherUser/${testUsername2}`)
+      .expect(200)
+      .end(done);
+  });
 });
