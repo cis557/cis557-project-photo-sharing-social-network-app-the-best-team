@@ -1,8 +1,8 @@
 # Links
 
-**Heroku deployment: https://photogram-front.herokuapp.com/
+**Heroku deployment**: https://photogram-front.herokuapp.com/
 
-**Swagger API Documentation : https://app.swaggerhub.com/apis-docs/TheBestTeam8/FinalProject557/1.0.0
+**Swagger API Documentation** : https://app.swaggerhub.com/apis-docs/TheBestTeam8/FinalProject557/1.0.0
 
 Swagger API Editor: https://app.swaggerhub.com/apis/TheBestTeam8/FinalProject557/1.0.0
 
