@@ -16,19 +16,28 @@ const testLastName = 'testLastName';
 const testUsername1 = 'testUsername1';
 const testUsername2 = 'testUsername2';
 const testUsername3 = 'testUsername3';
+const testUsername4 = 'testUsername4';
+const testUsername5 = 'testUsername5';
 const testEmail1 = 'testEmail1@test.com';
 const testEmail2 = 'testEmail2@test.com';
 const testEmail3 = 'testEmail3@test.com';
+const testEmail4 = 'testEmail4@test.com';
+const testEmail5 = 'testEmail5@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
 
-let testPostId;
+let testPostId1;
+let testPostId2;
+let testPostId3;
 let testCommentId;
-const testTitle = 'Dummy title';
-const testDescription = 'Dummy description';
+const testTitle1 = 'Test title 1';
+const testTitle2 = 'Test title 2';
+const testTitle3 = 'Test title 3';
+const testDescription = 'Test description';
 const testPrivacy = 'public';
 const testImage = './tests/test.png';
 const testTags = 'getinthedamnbox';
+const testCommentText = 'Test text';
 
 let server;
 let agent;
@@ -196,6 +205,20 @@ describe('When a user is not logged in', () => {
       .expect(401)
       .end(done);
   });
+
+  test('They can register an account', (done) => {
+    agent
+      .post('/register')
+      .send({
+        firstName: testFirstName,
+        lastName: testLastName,
+        email: testEmail1,
+        password: testPasswordCorrect,
+        username: testUsername1,
+        image: testImage,
+      })
+      .end(done);
+  });
 });
 
 describe('When a user is logged in ()', () => {
@@ -236,6 +259,28 @@ describe('When a user is logged in ()', () => {
         })
         .then(() => { requestDone(); }),
       (requestDone) => agent
+        .post('/register')
+        .send({
+          firstName: testFirstName,
+          lastName: testLastName,
+          email: testEmail4,
+          password: testPasswordCorrect,
+          username: testUsername4,
+          image: testImage,
+        })
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/register')
+        .send({
+          firstName: testFirstName,
+          lastName: testLastName,
+          email: testEmail5,
+          password: testPasswordCorrect,
+          username: testUsername5,
+          image: testImage,
+        })
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
         .post('/login')
         .send({
           email: testEmail1,
@@ -244,34 +289,68 @@ describe('When a user is logged in ()', () => {
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/addPost')
-        .field('title', testTitle)
+        .field('title', testTitle1)
         .field('description', testDescription)
         .field('privacy', testPrivacy)
-        .field('tags', testTitle)
+        .field('tags', testTags)
+        .attach('image', testImage)
+        .expect(201)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/addPost')
+        .field('title', testTitle2)
+        .field('description', testDescription)
+        .field('privacy', testPrivacy)
+        .field('tags', testTags)
+        .attach('image', testImage)
+        .expect(201)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/addPost')
+        .field('title', testTitle3)
+        .field('description', testDescription)
+        .field('privacy', testPrivacy)
+        .field('tags', testTags)
         .attach('image', testImage)
         .expect(201)
         .then(() => { requestDone(); }),
       (requestDone) => Post
-        .findOne({ username: testUsername1 })
-        .then((post) => { testPostId = post._id; })
+        .findOne({ title: testTitle1 })
+        .then((post) => { testPostId1 = post._id; })
+        .then(() => { requestDone(); }),
+      (requestDone) => Post
+        .findOne({ title: testTitle2 })
+        .then((post) => { testPostId2 = post._id; })
+        .then(() => { requestDone(); }),
+      (requestDone) => Post
+        .findOne({ title: testTitle3 })
+        .then((post) => { testPostId3 = post._id; })
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/comment')
         .send({
-          postId: testPostId,
+          postId: testPostId1,
           text: 'Dummy comment text',
           method: 'add',
         })
         .expect(201)
         .then(() => { requestDone(); }),
       (requestDone) => Post
-        .findOne({ _id: ObjectId(testPostId) })
+        .findOne({ _id: ObjectId(testPostId1) })
         .then((post) => { testCommentId = post.comments[0]._id; })
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/follow')
         .send({
           username: testUsername3,
+          method: 'follow',
+        })
+        .expect(200)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/follow')
+        .send({
+          username: testUsername4,
           method: 'follow',
         })
         .expect(200)
@@ -304,8 +383,8 @@ describe('When a user is logged in ()', () => {
     agent
       .post('/comment')
       .send({
-        postId: testPostId,
-        text: 'Dummy comment text',
+        postId: testPostId1,
+        text: testCommentText,
         method: 'add',
       })
       .expect(201)
@@ -316,9 +395,9 @@ describe('When a user is logged in ()', () => {
     agent
       .post('/comment')
       .send({
-        postId: testPostId,
+        postId: testPostId1,
         commentId: testCommentId,
-        text: 'Dummy comment text',
+        text: testCommentText,
         method: 'edit',
       })
       .expect(200)
@@ -329,11 +408,23 @@ describe('When a user is logged in ()', () => {
     agent
       .post('/comment')
       .send({
-        postId: testPostId,
+        postId: testPostId1,
         commentId: testCommentId,
         method: 'delete',
       })
       .expect(200)
+      .end(done);
+  });
+
+  test('The user cannot make a malformed comment request', (done) => {
+    agent
+      .post('/comment')
+      .send({
+        postId: testPostId1,
+        commentId: testCommentId,
+        method: 'malformed',
+      })
+      .expect(400)
       .end(done);
   });
 
@@ -348,6 +439,17 @@ describe('When a user is logged in ()', () => {
       .end(done);
   });
 
+  test('The user cannot follow a user they already follow', (done) => {
+    agent
+      .post('/follow')
+      .send({
+        username: testUsername4,
+        method: 'follow',
+      })
+      .expect(400)
+      .end(done);
+  });
+
   test('The user can unfollow another user', (done) => {
     agent
       .post('/follow')
@@ -355,6 +457,57 @@ describe('When a user is logged in ()', () => {
         username: testUsername3,
         method: 'unfollow',
       })
+      .expect(200)
+      .end(done);
+  });
+
+  test('The user cannot unfollow a user they do not follow', (done) => {
+    agent
+      .post('/follow')
+      .send({
+        username: testUsername5,
+        method: 'unfollow',
+      })
+      .expect(400)
+      .end(done);
+  });
+
+  test('The user cannot make a malformed follow request', (done) => {
+    agent
+      .post('/follow')
+      .send({
+        username: testUsername5,
+        method: 'malformed',
+      })
+      .expect(400)
+      .end(done);
+  });
+
+  test('The user can like a post', (done) => {
+    agent
+      .post('/like')
+      .send({
+        postId: testPostId1,
+        method: 'add',
+      })
+      .expect(201)
+      .end(done);
+  });
+
+  test('The user can unlike a post', (done) => {
+    agent
+      .post('/like')
+      .send({
+        postId: testPostId2,
+        method: 'remove',
+      })
+      .expect(200)
+      .end(done);
+  });
+
+  test('The user can get their liked posts', (done) => {
+    agent
+      .get('/getLikes')
       .expect(200)
       .end(done);
   });
