@@ -18,6 +18,8 @@ const testUsername5 = 'testUsername5';
 const testUsername6 = 'testUsername6';
 const testUsername7 = 'testUsername7';
 const testUsername8 = 'testUsername8';
+const testUsername9 = 'testUsername9';
+const testUsername10 = 'testUsername10';
 const testUsernameIncorrect = 'testUsernameIncorrect';
 const testEmail1 = 'testEmail1@test.com';
 const testEmail2 = 'testEmail2@test.com';
@@ -27,6 +29,8 @@ const testEmail5 = 'testEmail5@test.com';
 const testEmail6 = 'testEmail6@test.com';
 const testEmail7 = 'testEmail7@test.com';
 const testEmail8 = 'testEmail8@test.com';
+const testEmail9 = 'testEmail9@test.com';
+const testEmail10 = 'testEmail10@test.com';
 const testPasswordCorrect = 'correctPassword';
 const testPasswordIncorrect = 'incorrectPassword';
 
@@ -71,28 +75,10 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  app.mongoose.connection.close()
-    .then(server.close(done));
+  server.close(done);
 });
 
 describe('Tests of core app.js functionality', () => {
-  // Register before running tests.
-  beforeAll((done) => {
-    async.series([
-      (requestDone) => agent
-        .post('/register')
-        .send({
-          firstName: testFirstName,
-          lastName: testLastName,
-          email: testEmail6,
-          password: testPasswordCorrect,
-          username: testUsername6,
-          image: testImageValid,
-        })
-        .then(() => { requestDone(); }),
-    ], done);
-  });
-
   test('Permits authenticated user to visit restricted page', () => {
     const req = { isAuthenticated: () => true };
     const res = {
@@ -151,6 +137,21 @@ describe('Tests of core app.js functionality', () => {
 });
 
 describe('When a user is not logged in', () => {
+  // Register before running tests.
+  beforeAll((done) => {
+    async.series([
+      (requestDone) => agent
+        .post('/register')
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail6)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername6)
+        .attach('image', testImageValid)
+        .then(() => { requestDone(); }),
+    ], done);
+  });
+
   test('The API is active', (done) => {
     agent
       .get('/testAPI')
@@ -252,14 +253,12 @@ describe('When a user is not logged in', () => {
   test('They can register an account with an image', (done) => {
     agent
       .post('/register')
-      .send({
-        firstName: testFirstName,
-        lastName: testLastName,
-        email: testEmail7,
-        password: testPasswordCorrect,
-        username: testUsername7,
-        image: testImageValid,
-      })
+      .field('firstName', testFirstName)
+      .field('lastName', testLastName)
+      .field('email', testEmail7)
+      .field('password', testPasswordCorrect)
+      .field('username', testUsername7)
+      .attach('image', testImageValid)
       .expect(201)
       .then(() => { done(); });
   });
@@ -267,45 +266,37 @@ describe('When a user is not logged in', () => {
   test('They can register an account without an image', (done) => {
     agent
       .post('/register')
-      .send({
-        firstName: testFirstName,
-        lastName: testLastName,
-        email: testEmail8,
-        password: testPasswordCorrect,
-        username: testUsername8,
-      })
+      .field('firstName', testFirstName)
+      .field('lastName', testLastName)
+      .field('email', testEmail8)
+      .field('password', testPasswordCorrect)
+      .field('username', testUsername8)
       .expect(201)
       .then(() => { done(); });
   });
 
-  /*
   test('They cannot register an account with an overly large image', (done) => {
     agent
       .post('/register')
-      .send({
-        firstName: testFirstName,
-        lastName: testLastName,
-        email: testEmail1,
-        password: testPasswordCorrect,
-        username: testUsername1,
-        image: testImageInvalid,
-      })
-      .expect(409)
+      .field('firstName', testFirstName)
+      .field('lastName', testLastName)
+      .field('email', testEmail9)
+      .field('password', testPasswordCorrect)
+      .field('username', testUsername9)
+      .attach('image', testImageInvalid)
+      .expect(413)
       .then(() => { done(); });
   });
-  */
 
   test('They cannot register an account with a duplicate email address', (done) => {
     agent
       .post('/register')
-      .send({
-        firstName: testFirstName,
-        lastName: testLastName,
-        email: testEmail1,
-        password: testPasswordCorrect,
-        username: testUsername6,
-        image: testImageValid,
-      })
+      .field('firstName', testFirstName)
+      .field('lastName', testLastName)
+      .field('email', testEmail1)
+      .field('password', testPasswordCorrect)
+      .field('username', testUsername6)
+      .attach('image', testImageValid)
       .expect(409)
       .then(() => { done(); });
   });
@@ -313,14 +304,12 @@ describe('When a user is not logged in', () => {
   test('They cannot register an account with a duplicate username', (done) => {
     agent
       .post('/register')
-      .send({
-        firstName: testFirstName,
-        lastName: testLastName,
-        email: testEmail6,
-        password: testPasswordCorrect,
-        username: testUsername1,
-        image: testImageValid,
-      })
+      .field('firstName', testFirstName)
+      .field('lastName', testLastName)
+      .field('email', testEmail6)
+      .field('password', testPasswordCorrect)
+      .field('username', testUsername1)
+      .attach('image', testImageValid)
       .expect(409)
       .then(() => { done(); });
   });
@@ -337,64 +326,54 @@ describe('When a user is not logged in', () => {
   });
 });
 
-describe('When a user is logged in ()', () => {
+describe('When a user is logged in', () => {
   // Register, log in, and prepare dummy data before running tests.
   beforeAll((done) => {
     async.series([
       (requestDone) => agent
         .post('/register')
-        .send({
-          firstName: testFirstName,
-          lastName: testLastName,
-          email: testEmail1,
-          password: testPasswordCorrect,
-          username: testUsername1,
-          image: testImageValid,
-        })
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail1)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername1)
+        .attach('image', testImageValid)
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/register')
-        .send({
-          firstName: testFirstName,
-          lastName: testLastName,
-          email: testEmail2,
-          password: testPasswordCorrect,
-          username: testUsername2,
-          image: testImageValid,
-        })
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail2)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername2)
+        .attach('image', testImageValid)
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/register')
-        .send({
-          firstName: testFirstName,
-          lastName: testLastName,
-          email: testEmail3,
-          password: testPasswordCorrect,
-          username: testUsername3,
-          image: testImageValid,
-        })
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail3)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername3)
+        .attach('image', testImageValid)
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/register')
-        .send({
-          firstName: testFirstName,
-          lastName: testLastName,
-          email: testEmail4,
-          password: testPasswordCorrect,
-          username: testUsername4,
-          image: testImageValid,
-        })
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail4)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername4)
+        .attach('image', testImageValid)
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/register')
-        .send({
-          firstName: testFirstName,
-          lastName: testLastName,
-          email: testEmail5,
-          password: testPasswordCorrect,
-          username: testUsername5,
-          image: testImageValid,
-        })
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail5)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername5)
+        .attach('image', testImageValid)
         .then(() => { requestDone(); }),
       (requestDone) => agent
         .post('/login')
@@ -487,6 +466,8 @@ describe('When a user is logged in ()', () => {
             { username: testUsername6 },
             { username: testUsername7 },
             { username: testUsername8 },
+            { username: testUsername9 },
+            { username: testUsername10 },
           ],
         },
       )
@@ -502,6 +483,8 @@ describe('When a user is logged in ()', () => {
               { username: testUsername6 },
               { username: testUsername7 },
               { username: testUsername8 },
+              { username: testUsername9 },
+              { username: testUsername10 },
             ],
           },
         ).then(done);
@@ -787,6 +770,209 @@ describe('When a user is logged in ()', () => {
     agent
       .get('/getSuggestedUsers')
       .expect(200)
+      .then(() => { done(); });
+  });
+
+  test('They can log out', (done) => {
+    agent
+      .post('/logout')
+      .expect(200)
+      .then(() => { done(); });
+  });
+});
+
+describe('When a user is not logged in', () => {
+  // Register before running tests.
+  beforeAll((done) => {
+    async.series([
+      (requestDone) => agent
+        .post('/register')
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail1)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername1)
+        .attach('image', testImageValid)
+        .then(() => { requestDone(); }),
+    ], done);
+  });
+
+  test('They can log in', (done) => {
+    agent
+      .post('/login')
+      .send({
+        email: testEmail1,
+        password: testPasswordCorrect,
+      })
+      .expect(200)
+      .then(() => { done(); });
+  });
+
+  test('They can log out', (done) => {
+    agent
+      .post('/logout')
+      .expect(200)
+      .then(() => { done(); });
+  });
+});
+
+describe('When a user fails too many login attempts', () => {
+  // Register, log in, and prepare dummy data before running tests.
+  beforeAll((done) => {
+    async.series([
+      (requestDone) => agent
+        .post('/register')
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail10)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername10)
+        .attach('image', testImageValid)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/login')
+        .send({
+          email: testEmail10,
+          password: testPasswordIncorrect,
+        })
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/login')
+        .send({
+          email: testEmail10,
+          password: testPasswordIncorrect,
+        })
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/login')
+        .send({
+          email: testEmail10,
+          password: testPasswordIncorrect,
+        })
+        .then(() => { requestDone(); }),
+    ], done);
+  });
+
+  afterAll((done) => {
+    User
+      .deleteMany(
+        {
+          $or: [
+            { username: testUsername1 },
+            { username: testUsername2 },
+            { username: testUsername3 },
+            { username: testUsername4 },
+            { username: testUsername5 },
+            { username: testUsername6 },
+            { username: testUsername7 },
+            { username: testUsername8 },
+            { username: testUsername9 },
+            { username: testUsername10 },
+          ],
+        },
+      )
+      .then(() => {
+        Post.deleteMany(
+          {
+            $or: [
+              { username: testUsername1 },
+              { username: testUsername2 },
+              { username: testUsername3 },
+              { username: testUsername4 },
+              { username: testUsername5 },
+              { username: testUsername6 },
+              { username: testUsername7 },
+              { username: testUsername8 },
+              { username: testUsername9 },
+              { username: testUsername10 },
+            ],
+          },
+        ).then(done);
+      });
+  });
+
+  test('They are locked out', (done) => {
+    agent
+      .post('/login')
+      .send({
+        email: testEmail10,
+        password: testPasswordCorrect,
+      })
+      .expect(401)
+      .then(() => { done(); });
+  });
+});
+
+describe('When the database is down', () => {
+  beforeAll((done) => {
+    async.series([
+      (requestDone) => agent
+        .post('/register')
+        .field('firstName', testFirstName)
+        .field('lastName', testLastName)
+        .field('email', testEmail5)
+        .field('password', testPasswordCorrect)
+        .field('username', testUsername5)
+        .attach('image', testImageValid)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/login')
+        .send({
+          email: testEmail5,
+          password: testPasswordCorrect,
+        })
+        .then(() => { requestDone(); }),
+      app.mongoose.connection.close(),
+    ], done);
+  });
+
+  afterAll((done) => {
+    User
+      .deleteMany(
+        {
+          $or: [
+            { username: testUsername1 },
+            { username: testUsername2 },
+            { username: testUsername3 },
+            { username: testUsername4 },
+            { username: testUsername5 },
+            { username: testUsername6 },
+            { username: testUsername7 },
+            { username: testUsername8 },
+            { username: testUsername9 },
+            { username: testUsername10 },
+          ],
+        },
+      )
+      .then(() => {
+        Post.deleteMany(
+          {
+            $or: [
+              { username: testUsername1 },
+              { username: testUsername2 },
+              { username: testUsername3 },
+              { username: testUsername4 },
+              { username: testUsername5 },
+              { username: testUsername6 },
+              { username: testUsername7 },
+              { username: testUsername8 },
+              { username: testUsername9 },
+              { username: testUsername10 },
+            ],
+          },
+        ).then(done);
+      });
+  });
+
+  test('They cannot comment on a post (database error)', (done) => {
+    agent
+      .post('/comment')
+      .send({
+        postId: testPostId1,
+        text: testCommentText,
+        method: 'add',
+      })
+      .expect(550)
       .then(() => { done(); });
   });
 });
