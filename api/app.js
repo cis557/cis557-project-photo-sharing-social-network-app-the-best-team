@@ -186,8 +186,7 @@ function checkAndSanitizeInput() {
     check('email')
       .optional()
       .isEmail()
-      .isLength({ min: 1, max: 32 })
-      .normalizeEmail(),
+      .isLength({ min: 1, max: 32 }),
     check('password')
       .optional()
       .isLength({ min: 1, max: 256 })
@@ -294,6 +293,7 @@ module.exports = {
   maxFileMb,
   checkFileSize,
   expressApp,
+  mongoose,
   passport,
   parser,
 };

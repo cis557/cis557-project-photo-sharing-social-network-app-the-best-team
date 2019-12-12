@@ -28,7 +28,7 @@ async function editComment(postId, commentId, text) {
         postId,
         commentId,
         text,
-        method:'edit',
+        method: 'edit',
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
