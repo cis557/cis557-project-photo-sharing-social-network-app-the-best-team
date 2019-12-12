@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-undef */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -7,7 +8,6 @@ import { faHeart as clearHeart } from '@fortawesome/free-regular-svg-icons';
 import { addLike, deleteLike } from '../javascripts/likeRequests';
 import { getPost } from '../javascripts/postRequests';
 import '../stylesheets/heart-style.css';
-
 
 class Heart extends Component {
   constructor(props) {
@@ -26,14 +26,14 @@ class Heart extends Component {
   componentDidMount() {
     this.refresh();
   }
-  
+
   refreshPage() {
-      window.location.reload(false);
+    window.location.reload(false);
   }
 
   refresh() {
     const { postId } = this.state;
-    
+
     getPost(postId)
       .then((data) => {
         data.json()
@@ -80,14 +80,22 @@ class Heart extends Component {
     if (liked) {
       return (
         <p>
-        <FontAwesomeIcon className="liked" onClick={this.handleEvent} icon={solidHeart} /> : {likes.length}
+          <FontAwesomeIcon className="liked" onClick={this.handleEvent} icon={solidHeart} />
+          {' '}
+          :
+          {' '}
+          {likes.length}
         </p>
 
-        );
+      );
     }
     return (
       <p>
-      <FontAwesomeIcon className="not-liked" onClick={this.handleEvent} icon={clearHeart} /> : {likes.length}
+        <FontAwesomeIcon className="not-liked" onClick={this.handleEvent} icon={clearHeart} />
+        {' '}
+        :
+        {' '}
+        {likes.length}
       </p>
     );
   }

@@ -224,7 +224,10 @@ router.post('/deletePost', checkAuthenticated, (req, res) => {
         { username },
         { $pull: { posts: { id: ObjectId(postId) } } },
       ).then(() => {
-        res.sendStatus(200);
+        User.updateMany({}, { $pull: { likes: postId } })
+          .then(() => {
+            res.sendStatus(200);
+          });
       });
     })
     .catch((err) => sendDatabaseErrorResponse(err, res));

@@ -191,7 +191,7 @@ class Post extends Component {
       });
     }
 
-    if (likes.indexOf(currentUser) !== -1) {
+    if (likes && likes.indexOf(currentUser) !== -1) {
       isLiked = true;
     }
 
