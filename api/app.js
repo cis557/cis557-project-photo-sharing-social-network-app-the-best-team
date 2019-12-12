@@ -248,6 +248,10 @@ function checkFileSize(file) {
   return true;
 }
 
+function sendDatabaseErrorResponse(res, err) {
+  res.status(550).json(`[!] Database error: ${err}`);
+}
+
 /**
  * Express initialization.
  */
@@ -296,6 +300,7 @@ module.exports = {
   mongoose,
   passport,
   parser,
+  sendDatabaseErrorResponse,
   storage,
 };
 

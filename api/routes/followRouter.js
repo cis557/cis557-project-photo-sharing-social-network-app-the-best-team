@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const { checkAuthenticated } = require('../app');
+const { sendDatabaseErrorResponse } = require('../app');
 
 const router = express.Router();
 
@@ -31,22 +32,16 @@ router.post('/follow', checkAuthenticated, (req, res) => {
                   .then(() => {
                     res.sendStatus(200);
                   })
-                  .catch((err) => {
-                    res.status(550);
-                    res.json(`[!] Could not follow user: ${err}`);
-                  });
+                  .catch((err) => sendDatabaseErrorResponse(err, res));
               })
-              .catch((err) => {
-                res.status(550);
-                res.json(`[!] Could not follow user: ${err}`);
-              });
+              .catch((err) => sendDatabaseErrorResponse(err, res));
           } else {
-            res.status(400).json(`[!] Already following user: ${usernameB}`);
+            res.status(400);
+            res.json(`[!] Already following user: ${usernameB}`);
           }
         });
     } catch (err) {
-      res.status(550);
-      res.json(`[!] Could not follow user: ${err}`);
+      res.status(559).json(`[!] Could not follow user: ${err}`);
     }
   } else if (req.body.method === 'unfollow') {
     try {
@@ -72,22 +67,15 @@ router.post('/follow', checkAuthenticated, (req, res) => {
                   .then(() => {
                     res.sendStatus(200);
                   })
-                  .catch((err) => {
-                    res.status(550);
-                    res.json(`[!] Could not unfollow user: ${err}`);
-                  });
+                  .catch((err) => sendDatabaseErrorResponse(err, res));
               })
-              .catch((err) => {
-                res.status(550);
-                res.json(`[!] Could not unfollow user: ${err}`);
-              });
+              .catch((err) => sendDatabaseErrorResponse(err, res));
           } else {
             res.status(400).json(`[!] Not following user: ${usernameB}`);
           }
         });
     } catch (err) {
-      res.status(550);
-      res.json(`[!] Could not follow user: ${err}`);
+      res.status(559).json(`[!] Could not follow user: ${err}`);
     }
   } else {
     res.status(400).json('[!] Not proper method');

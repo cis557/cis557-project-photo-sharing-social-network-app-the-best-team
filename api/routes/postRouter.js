@@ -6,6 +6,7 @@ const Post = require('../models/Post');
 const User = require('../models/User');
 const { parser } = require('../app');
 const { checkAuthenticated } = require('../app');
+const { sendDatabaseErrorResponse } = require('../app');
 const {
   checkAndSanitizeInput,
   handleInputCheck,
@@ -40,15 +41,15 @@ router.post('/addPost',
 
     try {
       if (file && !checkFileSize(file)) {
-        res.status(413).json(`[!] Image is too large (max = ${maxFileMb}MB)`);
+        res.status(413);
+        res.json(`[!] Image is too large (max = ${maxFileMb}MB)`);
         return;
       }
 
       image = fs.readFileSync(file.path).toString('base64');
       fs.unlinkSync(file.path);
     } catch (err) {
-      res.status(551);
-      res.send(`[!] Could not read image: ${err}`);
+      res.status(551).json(`[!] Could not read image: ${err}`);
       return;
     }
 
@@ -94,15 +95,9 @@ router.post('/addPost',
               .then(() => {
                 res.sendStatus(201);
               })
-              .catch((err) => {
-                res.status(550);
-                res.json(`[!] Could not create post: ${err}`);
-              });
+              .catch((err) => sendDatabaseErrorResponse(err, res));
           })
-          .catch((err) => {
-            res.status(550);
-            res.json(`[!] Could not create post: ${err}`);
-          });
+          .catch((err) => sendDatabaseErrorResponse(err, res));
       });
   });
 
@@ -123,10 +118,7 @@ router.post('/editPost',
       .then(() => {
         res.sendStatus(200);
       })
-      .catch((err) => {
-        res.status(550);
-        res.json(`[!] Could not edit post: ${err}`);
-      });
+      .catch((err) => sendDatabaseErrorResponse(err, res));
   });
 
 router.get('/getFeed', checkAuthenticated, (req, res) => {
@@ -169,10 +161,7 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
         res.json('[!] User not found');
       }
     })
-    .catch((err) => {
-      res.status(550);
-      res.json(`[!] Could not retrieve user: ${err}`);
-    });
+    .catch((err) => sendDatabaseErrorResponse(err, res));
 });
 
 router.get('/getPost/:postId', checkAuthenticated, (req, res) => {
@@ -183,8 +172,7 @@ router.get('/getPost/:postId', checkAuthenticated, (req, res) => {
       res.status(404);
       res.json(`[!] Could not find post: ${postId}`);
     } else if (err) {
-      res.status(550);
-      res.json(`[!] Could not retrieve post: ${err}`);
+      sendDatabaseErrorResponse(err, res);
     } else {
       // Send the image as a Buffer.
       // There is no Buffer class in the browser, so it is better to do this step in the back end.
@@ -211,10 +199,7 @@ router.post('/deletePost', checkAuthenticated, (req, res) => {
         res.sendStatus(200);
       });
     })
-    .catch((err) => {
-      res.status(550);
-      res.json(`[!] Could not delete post: ${err}`);
-    });
+    .catch((err) => sendDatabaseErrorResponse(err, res));
 });
 
 module.exports = router;

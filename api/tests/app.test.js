@@ -75,7 +75,8 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  server.close(done);
+  app.mongoose.connection.close()
+    .then(server.close(done));
 });
 
 describe('Tests of core app.js functionality', () => {
@@ -899,80 +900,6 @@ describe('When a user fails too many login attempts', () => {
         password: testPasswordCorrect,
       })
       .expect(401)
-      .then(() => { done(); });
-  });
-});
-
-describe('When the database is down', () => {
-  beforeAll((done) => {
-    async.series([
-      (requestDone) => agent
-        .post('/register')
-        .field('firstName', testFirstName)
-        .field('lastName', testLastName)
-        .field('email', testEmail5)
-        .field('password', testPasswordCorrect)
-        .field('username', testUsername5)
-        .attach('image', testImageValid)
-        .then(() => { requestDone(); }),
-      (requestDone) => agent
-        .post('/login')
-        .send({
-          email: testEmail5,
-          password: testPasswordCorrect,
-        })
-        .then(() => { requestDone(); }),
-      app.mongoose.connection.close(),
-    ], done);
-  });
-
-  afterAll((done) => {
-    User
-      .deleteMany(
-        {
-          $or: [
-            { username: testUsername1 },
-            { username: testUsername2 },
-            { username: testUsername3 },
-            { username: testUsername4 },
-            { username: testUsername5 },
-            { username: testUsername6 },
-            { username: testUsername7 },
-            { username: testUsername8 },
-            { username: testUsername9 },
-            { username: testUsername10 },
-          ],
-        },
-      )
-      .then(() => {
-        Post.deleteMany(
-          {
-            $or: [
-              { username: testUsername1 },
-              { username: testUsername2 },
-              { username: testUsername3 },
-              { username: testUsername4 },
-              { username: testUsername5 },
-              { username: testUsername6 },
-              { username: testUsername7 },
-              { username: testUsername8 },
-              { username: testUsername9 },
-              { username: testUsername10 },
-            ],
-          },
-        ).then(done);
-      });
-  });
-
-  test('They cannot comment on a post (database error)', (done) => {
-    agent
-      .post('/comment')
-      .send({
-        postId: testPostId1,
-        text: testCommentText,
-        method: 'add',
-      })
-      .expect(550)
       .then(() => { done(); });
   });
 });
