@@ -41,8 +41,7 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  app.mongoose.connection.close()
-    .then(server.close(done));
+  server.close(done);
 });
 
 describe('Tests of core app.js functionality', () => {
@@ -246,7 +245,7 @@ describe('When a user is logged in ()', () => {
 
   test('The user can comment on a post', (done) => {
     agent
-      .post('/Comment')
+      .post('/comment')
       .send({
         method: 'add',
         postId: testPostId,
