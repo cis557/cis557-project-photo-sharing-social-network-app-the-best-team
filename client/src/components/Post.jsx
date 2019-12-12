@@ -177,17 +177,19 @@ class Post extends Component {
 
     const renderComments = [];
 
-    comments.forEach((comment) => {
-      renderComments.push(<Comment
-        key={comment._id}
-        postId={postId}
-        commentId={comment._id}
-        username={comment.username}
-        datetime={comment.datetime}
-        text={comment.text}
-        currentUser={currentUser}
-      />);
-    });
+    if (comments) {
+      comments.forEach((comment) => {
+        renderComments.push(<Comment
+          key={comment._id}
+          postId={postId}
+          commentId={comment._id}
+          username={comment.username}
+          datetime={comment.datetime}
+          text={comment.text}
+          currentUser={currentUser}
+        />);
+      });
+    }
 
     if (likes.indexOf(currentUser) !== -1) {
       isLiked = true;
