@@ -16,7 +16,6 @@ class Comment extends Component {
       postId: props.postId,
       commentId: props.commentId,
       username: props.username,
-      datetime: props.datetime,
       text: props.text,
       currentUser: props.currentUser,
       deleted: false,
@@ -24,7 +23,6 @@ class Comment extends Component {
     };
 
     this.handleDelete = this.handleDelete.bind(this);
-    this.refresh = this.refresh.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleEditText = this.handleEditText.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -159,8 +157,8 @@ Comment.propTypes = {
   postId: PropTypes.string.isRequired,
   commentId: PropTypes.string.isRequired,
   username: PropTypes.string.isRequired,
-  datetime: PropTypes.number.isRequired,
   text: PropTypes.string.isRequired,
+  currentUser: PropTypes.string.isRequired,
 };
 
 export default Comment;
