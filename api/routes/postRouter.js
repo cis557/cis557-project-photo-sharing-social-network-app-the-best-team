@@ -37,7 +37,19 @@ router.post('/addPost',
     let { tags } = req.body;
     const { file } = req;
 
+    if (!file) {
+      res.status(422);
+      res.json('[!] Image must be provided when making a post');
+      return;
+    }
+
     const contentType = file.mimetype;
+
+    if (contentType !== 'image/jpeg' && contentType !== 'image/png') {
+      res.status(422);
+      res.json('[!] Invalid file type (only PNG or JPEG allowed)');
+      return;
+    }
 
     try {
       if (file && !checkFileSize(file)) {

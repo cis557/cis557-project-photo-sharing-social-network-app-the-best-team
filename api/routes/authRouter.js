@@ -36,6 +36,12 @@ router.post('/register', checkNotAuthenticated,
       return;
     }
 
+    if (file && file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png') {
+      res.status(422);
+      res.json('[!] Invalid file type (only PNG or JPEG allowed)');
+      return;
+    }
+
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       let image = fs.readFileSync(path.join(__dirname, '../public/images/default-profile.png'));

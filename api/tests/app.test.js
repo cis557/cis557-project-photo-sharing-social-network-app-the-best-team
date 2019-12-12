@@ -37,7 +37,7 @@ const testPasswordIncorrect = 'incorrectPassword';
 let testPostId1;
 let testPostId2;
 let testPostId3;
-const testPostIdIncorrect = 0;
+const testPostIdIncorrect = ObjectId(9999);
 let testCommentId;
 const testTitle1 = 'Test title 1';
 const testTitle2 = 'Test title 2';
@@ -47,6 +47,7 @@ const testDescription = 'Test description';
 const testPrivacy = 'public';
 const testImageValid = './tests/testValid.png';
 const testImageInvalid = './tests/testInvalid.jpg';
+const testPdfInvalid = './tests/testInvalid.pdf';
 const testTags = 'getinthedamnbox';
 const testCommentText = 'Test comment text';
 const testLongText = `
@@ -289,6 +290,19 @@ describe('When a user is not logged in', () => {
       .then(() => { done(); });
   });
 
+  test('They cannot register an account with a non-image file', (done) => {
+    agent
+      .post('/register')
+      .field('firstName', testFirstName)
+      .field('lastName', testLastName)
+      .field('email', testEmail9)
+      .field('password', testPasswordCorrect)
+      .field('username', testUsername9)
+      .attach('image', testPdfInvalid)
+      .expect(422)
+      .then(() => { done(); });
+  });
+
   test('They cannot register an account with a duplicate email address', (done) => {
     agent
       .post('/register')
@@ -450,6 +464,36 @@ describe('When a user is logged in', () => {
           method: 'follow',
         })
         .expect(200)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/logout')
+        .expect(200)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/login')
+        .send({
+          email: testEmail3,
+          password: testPasswordCorrect,
+        })
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/follow')
+        .send({
+          username: testUsername2,
+          method: 'follow',
+        })
+        .expect(200)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/logout')
+        .expect(200)
+        .then(() => { requestDone(); }),
+      (requestDone) => agent
+        .post('/login')
+        .send({
+          email: testEmail1,
+          password: testPasswordCorrect,
+        })
         .then(() => { requestDone(); }),
     ], done);
   });
@@ -698,7 +742,7 @@ describe('When a user is logged in', () => {
       .then(() => { done(); });
   });
 
-  test('They cannot add a post with an overly image', (done) => {
+  test('They cannot add a post with an overly large image', (done) => {
     agent
       .post('/addPost')
       .field('title', testTitle4)
@@ -707,6 +751,29 @@ describe('When a user is logged in', () => {
       .field('tags', testTags)
       .attach('image', testImageInvalid)
       .expect(413)
+      .then(() => { done(); });
+  });
+
+  test('They cannot add a post without an image', (done) => {
+    agent
+      .post('/addPost')
+      .field('title', testTitle4)
+      .field('description', testDescription)
+      .field('privacy', testPrivacy)
+      .field('tags', testTags)
+      .expect(422)
+      .then(() => { done(); });
+  });
+
+  test('They cannot add a post with a non-image file', (done) => {
+    agent
+      .post('/addPost')
+      .field('title', testTitle4)
+      .field('description', testDescription)
+      .field('privacy', testPrivacy)
+      .field('tags', testTags)
+      .attach('image', testPdfInvalid)
+      .expect(422)
       .then(() => { done(); });
   });
 
@@ -733,6 +800,13 @@ describe('When a user is logged in', () => {
     agent
       .get(`/getPost/${testPostId2}`)
       .expect(200)
+      .then(() => { done(); });
+  });
+
+  test('They cannot get a nonexistent post', (done) => {
+    agent
+      .get(`/getPost/${testPostIdIncorrect}`)
+      .expect(404)
       .then(() => { done(); });
   });
 
