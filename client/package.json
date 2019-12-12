@@ -37,6 +37,12 @@
     "react-test-renderer": "^16.12.0",
     "uikit": "^3.2.3"
   },
+  "jest": {
+    "automock": false,
+    "setupFiles": [
+      "./setupJest.js"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

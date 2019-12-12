@@ -9,7 +9,7 @@ import {
 
 const fetch = require('jest-fetch-mock');
 
-describe('Baseline tests', () => {
+describe('authRequests tests', () => {
   beforeEach(() => {
     fetch.resetMocks();
   });
@@ -24,67 +24,74 @@ describe('Baseline tests', () => {
     register('Tirtha', 'Kharel', 'tkharel@test.com', 'password', 'tkharel')
       .then((res) => {
         expect(res.status).toEqual(200);
+        expect(fetch.mock.calls.length).toEqual(1);
       })
-      .catch((err) => { console.log(err); });
+      .catch(() => {});
   });
 
-  test('logs user correctly', () => {
+  test('Logs in user correctly', () => {
     fetch.mockResponseOnce(JSON.stringify({ status: 200 }));
 
     login('tkharel@test.com', 'password')
       .then((res) => {
         expect(res.status).toEqual(200);
+        expect(fetch.mock.calls.length).toEqual(1);
       })
-      .catch((err) => { console.log(err); });
+      .catch(() => {});
   });
 
-  test('password invalid', () => {
+  test('Rejects login with invalid password', () => {
     fetch.mockResponseOnce(JSON.stringify({ status: 400 }));
 
     login('tkharel@test.com', 'wrongpassword')
       .then((res) => {
         expect(res.status).toEqual(400);
+        expect(fetch.mock.calls.length).toEqual(1);
       })
-      .catch((err) => { console.log(err); });
+      .catch(() => {});
   });
 
-  test('user email does not exist', () => {
+  test('Rejects login when user email does not exist', () => {
     fetch.mockResponseOnce(JSON.stringify({ status: 400 }));
 
-    register('nonexistent@test.com', 'wrongpassword')
+    login('nonexistent@test.com', 'wrongpassword')
       .then((res) => {
         expect(res.status).toEqual(400);
+        expect(fetch.mock.calls.length).toEqual(1);
       })
-      .catch((err) => { console.log(err); });
+      .catch(() => {});
   });
 
-  test('logout', () => {
+  test('Logs out user correctly', () => {
     fetch.mockResponseOnce(JSON.stringify({ status: 200 }));
 
     logout()
       .then((res) => {
         expect(res.status).toEqual(200);
+        expect(fetch.mock.calls.length).toEqual(1);
       })
-      .catch((err) => { console.log(err); });
+      .catch(() => {});
   });
 
-  test('user is logged in', () => {
+  test('Confirms that the user is logged in', () => {
     fetch.mockResponseOnce(JSON.stringify({ status: 200 }));
 
     checkAuth()
       .then((res) => {
         expect(res.status).toEqual(200);
+        expect(fetch.mock.calls.length).toEqual(1);
       })
-      .catch((err) => { console.log(err); });
+      .catch(() => {});
   });
 
-  test('user is not logged in', () => {
+  test('Confirms that the user is not logged in', () => {
     fetch.mockResponseOnce(JSON.stringify({ status: 400 }));
 
     checkAuth()
       .then((res) => {
         expect(res.status).toEqual(400);
+        expect(fetch.mock.calls.length).toEqual(1);
       })
-      .catch((err) => { console.log(err); });
+      .catch(() => {});
   });
 });
