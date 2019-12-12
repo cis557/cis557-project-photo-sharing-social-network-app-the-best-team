@@ -125,41 +125,57 @@ router.get('/getFeed', checkAuthenticated, (req, res) => {
   const { username } = req.user;
   const feed = new Set();
 
-  User.findOne({ username })
-    .then((user) => {
-      if (user) {
-        user.posts.forEach((post) => {
-          feed.add({ id: post.id.toString('hex'), time: post.time });
-        });
+  Post.find()
+    .then((allPosts) => {
+      const allPostsMap = new Map();
 
-        const numFollowees = user.followees.length;
-        if (numFollowees > 0) {
-          let numFolloweesVisited = 0;
-          user.followees.forEach((followeeUsername) => {
-            User.findOne({ username: followeeUsername })
-              .then((followee) => {
-                followee.posts.forEach((post) => {
-                  feed.add({ id: post.id.toString('hex'), time: post.time });
-                });
-              })
-              .then(() => {
-                numFolloweesVisited += 1;
-                if (numFolloweesVisited >= numFollowees) {
-                  res.status(200);
-                  res.send(Array.from(feed));
-                }
+      allPosts.forEach((post) => {
+        allPostsMap.set(post._id.toString('hex'), post);
+      });
+
+      User.findOne({ username })
+        .then((user) => {
+          if (user) {
+            user.posts.forEach((post) => {
+              feed.add({ id: post.id.toString('hex'), time: post.time });
+            });
+
+            const numFollowees = user.followees.length;
+            if (numFollowees > 0) {
+              let numFolloweesVisited = 0;
+              user.followees.forEach((followeeUsername) => {
+                User.findOne({ username: followeeUsername })
+                  .then((followee) => {
+                    followee.posts.forEach((post) => {
+                      const mappedPost = allPostsMap.get(post.id.toString('hex'));
+
+                      if (!mappedPost || !mappedPost.privacy || mappedPost.privacy === 'public') {
+                        feed.add({ id: post.id.toString('hex'), time: post.time });
+                      }
+                    });
+                  })
+                  .then(() => {
+                    numFolloweesVisited += 1;
+                    if (numFolloweesVisited >= numFollowees) {
+                      const array = Array.from(feed);
+                      array.sort((a, b) => b.time - a.time);
+                      res.status(200);
+                      res.send(array);
+                    }
+                  });
               });
-          });
-        } else {
-          res.status(200);
-          const array = Array.from(feed);
-          array.sort((a, b) => a.time - b.time);
-          res.send(array);
-        }
-      } else {
-        res.status(404);
-        res.json('[!] User not found');
-      }
+            } else {
+              const array = Array.from(feed);
+              array.sort((a, b) => b.time - a.time);
+              res.status(200);
+              res.send(array);
+            }
+          } else {
+            res.status(404);
+            res.json('[!] User not found');
+          }
+        })
+        .catch((err) => sendDatabaseErrorResponse(err, res));
     })
     .catch((err) => sendDatabaseErrorResponse(err, res));
 });

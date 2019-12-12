@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import Loader from 'react-loader-spinner';
-import { Redirect } from 'react-router-dom';
 import { checkAuth, logout } from '../javascripts/authRequests';
 
 const RouteVerifier = (Component) => class App extends Component {

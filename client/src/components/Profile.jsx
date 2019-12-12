@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import NavBar from './NavBar';
-import { getOtherUser, getUser } from '../javascripts/userRequests';
+import { getUser } from '../javascripts/userRequests';
 
 class Profile extends Component {
   constructor(props) {
@@ -10,14 +10,11 @@ class Profile extends Component {
 
     this.state = {
       data: null,
-      currentUser: 'yiwent',
       isLoading: true,
     };
   }
 
   componentDidMount() {
-    const { currentUser } = this.state;
-
     getUser()
       .then((data) => {
         data.json()
@@ -43,6 +40,14 @@ class Profile extends Component {
       );
     }
 
+    let src = '';
+
+    try {
+      src = `data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`;
+    } catch (err) {
+      src = '';
+    }
+
     return (
       <div>
         <NavBar />
@@ -50,7 +55,7 @@ class Profile extends Component {
           <div className="uk-container uk-container-small">
             <div className="uk-grid uk-margin-medium-bottom" uk-grid="true">
               <div className="uk-width-1-3 uk-flex uk-flex-middle uk-flex-center">
-                <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
+                <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={src} alt="" />
               </div>
               <div className="uk-section uk-section-default uk-padding-small uk-margin-left">
                 <div className="uk-flex uk-margin-small-bottom uk-flex-row uk-flex-middle">

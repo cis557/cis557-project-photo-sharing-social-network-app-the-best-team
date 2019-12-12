@@ -120,6 +120,14 @@ class Post extends Component {
       message = '';
     }
 
+    let src = '';
+
+    try {
+      src = `data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`;
+    } catch (err) {
+      src = '';
+    }
+
     if (isDeleted) {
       return (<div />);
     }
@@ -192,7 +200,7 @@ class Post extends Component {
             <h3 className="uk-card-title uk-margin-small-top">{data.title}</h3>
           </div>
           <div className="uk-card-media-top">
-            <img src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} onError="this.onerror=null; this.src='';" alt="" />
+            <img src={src} alt="" />
           </div>
           <div className="uk-card-body">
             <h3 className="uk-card-title uk-text-small">
@@ -228,7 +236,7 @@ class Post extends Component {
           </h3>
         </div>
         <div className="uk-card-media-top">
-          <img src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
+          <img src={src} alt="" />
         </div>
         <div className="uk-card-body">
           <h3 className="uk-card-title uk-text-small">

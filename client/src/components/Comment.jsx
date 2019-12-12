@@ -1,3 +1,7 @@
+/* eslint-disable jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* globals */
 
 import React, { Component } from 'react';
@@ -26,14 +30,11 @@ class Comment extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  refresh() {
+  componentDidMount() {
   }
 
   handleChange(event) {
     this.setState({ [event.target.id]: event.target.value });
-  }
-
-  componentDidMount() {
   }
 
   handleDelete(event) {

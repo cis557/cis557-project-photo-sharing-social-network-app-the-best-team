@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* globals btoa */
 import React, { Component } from 'react';
 import NavBar from './NavBar';
@@ -76,6 +77,14 @@ export default class DetailsPage extends Component {
   render() {
     const { data, currentUser, isFollowed } = this.state;
 
+    let src = '';
+
+    try {
+      src = `data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`;
+    } catch (err) {
+      src = '';
+    }
+
     if (!data || !data.image) {
       return (<div />);
     }
@@ -87,7 +96,7 @@ export default class DetailsPage extends Component {
             <div className="uk-container uk-container-small">
               <div className="uk-grid uk-margin-medium-bottom" uk-grid="true">
                 <div className="uk-width-1-3 uk-flex uk-flex-middle uk-flex-center">
-                  <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
+                  <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={src} alt="" />
                 </div>
                 <div className="uk-section uk-section-default uk-padding-small uk-margin-left">
                   <div className="uk-flex uk-margin-small-bottom uk-flex-row uk-flex-middle">
@@ -140,7 +149,7 @@ export default class DetailsPage extends Component {
             <div className="uk-container uk-container-small">
               <div className="uk-grid uk-margin-medium-bottom" uk-grid="true">
                 <div className="uk-width-1-3 uk-flex uk-flex-middle uk-flex-center">
-                  <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
+                  <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={src} alt="" />
                 </div>
                 <div className="uk-section uk-section-default uk-padding-small uk-margin-left">
                   <div className="uk-flex uk-margin-small-bottom uk-flex-row uk-flex-middle">
@@ -194,7 +203,7 @@ export default class DetailsPage extends Component {
           <div className="uk-container uk-container-small">
             <div className="uk-grid uk-margin-medium-bottom" uk-grid="true">
               <div className="uk-width-1-3 uk-flex uk-flex-middle uk-flex-center">
-                <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, data.image.data))}`} alt="" />
+                <img className="uk-border-pill" style={{ maxHeight: '150px', maxWidth: '150px' }} id="profile-image" src={src} alt="" />
               </div>
               <div className="uk-section uk-section-default uk-padding-small uk-margin-left">
                 <div className="uk-flex uk-margin-small-bottom uk-flex-row uk-flex-middle">

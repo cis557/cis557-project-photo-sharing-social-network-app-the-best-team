@@ -1,13 +1,7 @@
 /* globals */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
-class NavBar extends Component {
-  constructor(props) {
-    super(props);
-    const { currentUser } = props;
-  }
-
+class NavBar extends PureComponent {
   render() {
     return (
       <header className="uk-margin-medium-bottom" style={{ backgroundColor: '#fff', borderBottom: '1px solid #dbdbdb' }} data-uk-sticky={{ 'show-on-up': 'true', animation: 'uk-animation-fade' }}>
@@ -41,9 +35,5 @@ class NavBar extends Component {
     );
   }
 }
-
-NavBar.propTypes = {
-  currentUser: PropTypes.string.isRequired,
-};
 
 export default NavBar;

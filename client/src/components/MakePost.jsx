@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { addPost } from '../javascripts/postRequests';
 import NavBar from './NavBar';
@@ -18,7 +19,6 @@ class MakePost extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleFileChange = this.handleFileChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handlePrivacyChange = this.handlePrivacyChange.bind(this);
   }
 
   handleChange(event) {
@@ -30,7 +30,7 @@ class MakePost extends Component {
   }
 
   handlePrivacyChange(event) {
-    this.setState({ privacy: event.target.value });
+    this.setState({ privacy: event });
   }
 
   handleSubmit(event) {
@@ -91,12 +91,12 @@ class MakePost extends Component {
                 <textarea onChange={this.handleChange} className="uk-textarea" id="tags" rows="1" placeholder="Tags (separated by commas)" />
               </div>
               <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                <label htmlFor="radio1">
-                  <input onChange={this.handlePrivacyChange} className="uk-radio" type="radio" name="radio" value="public" checked />
+                <label htmlFor="radioPublic">
+                  <input onChange={this.handlePrivacyChange.bind(this, 'public')} className="uk-radio" type="radio" name="privacy" checked={this.state.privacy === 'public'} />
                   Public
                 </label>
-                <label htmlFor="radio2">
-                  <input onChange={this.handlePrivacyChange} className="uk-radio" type="radio" name="radio" value="private" />
+                <label htmlFor="radioPrivate">
+                  <input onChange={this.handlePrivacyChange.bind(this, 'private')} className="uk-radio" type="radio" name="privacy" checked={this.state.privacy === 'private'} />
                   Private
                 </label>
               </div>
