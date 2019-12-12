@@ -1,1 +1,6 @@
-module.exports = { "extends": "airbnb" };
+module.exports = { 
+  "extends": "airbnb",
+  "env": {
+    "jest": true
+  }
+};
