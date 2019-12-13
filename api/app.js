@@ -26,8 +26,10 @@ mongoose.connect(process.env.DB_URL, {
   useUnifiedTopology: true,
 }, (err) => {
   if (err) {
+    // eslint-disable-next-line no-console
     console.log(`[!] Could not connect to MongoDB Atlas: ${err}`);
   } else {
+    // eslint-disable-next-line no-console
     console.log('Connected to MongoDB Atlas');
   }
 });
@@ -63,6 +65,7 @@ const strategy = new LocalStrategy({ usernameField: 'email' }, (email, password,
   let message = '';
 
   User.findOne({ email })
+    // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
         success = false;
