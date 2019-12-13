@@ -48,9 +48,7 @@ class Comment extends Component {
       .then(() => {
         this.refresh();
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
     this.setState({ deleted: true });
   }
 
@@ -69,9 +67,7 @@ class Comment extends Component {
       .then(() => {
         this.refresh();
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
     this.setState({ editing: false });
     this.setState({ text: textUpdate });
   }

@@ -38,15 +38,12 @@ class Heart extends Component {
       .then((data) => {
         data.json()
           .then((post) => {
+            // eslint-disable-next-line react/no-unused-state
             this.setState({ isLoading: false, data: post.likes });
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   handleEvent(e) {
@@ -60,18 +57,14 @@ class Heart extends Component {
           this.setState({ liked: false });
           window.location.reload(false);
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch(() => {});
     } else {
       addLike(postId)
         .then(() => {
           this.setState({ liked: true });
           window.location.reload(false);
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch(() => {});
     }
   }
 
@@ -104,6 +97,7 @@ class Heart extends Component {
 Heart.propTypes = {
   postId: PropTypes.string.isRequired,
   isLiked: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
   likes: PropTypes.array.isRequired,
 };
 

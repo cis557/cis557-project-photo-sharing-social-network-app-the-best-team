@@ -47,6 +47,7 @@ class MakePost extends Component {
     addPost(title, description, privacy, image, tags)
       .then((res) => {
         if (res.ok) {
+          // eslint-disable-next-line react/prop-types
           this.props.history.push('/');
         } else {
           res.json().then((json) => {
@@ -54,7 +55,7 @@ class MakePost extends Component {
           });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({ message: '[!]' });
       });
   }

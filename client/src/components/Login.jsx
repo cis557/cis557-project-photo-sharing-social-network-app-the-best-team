@@ -28,6 +28,7 @@ class Login extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
+    // eslint-disable-next-line react/prop-types
     const { history } = this.props;
 
     const { email } = this.state;
@@ -36,13 +37,14 @@ class Login extends Component {
     login(email, password)
       .then((res) => {
         if (res.ok) {
+          // eslint-disable-next-line react/prop-types
           history.push('/');
         } else {
           // TODO: Don't hardcode this message.
           this.setState({ message: '[!] Invalid credentials' });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({ message: '[!]' });
       });
   }

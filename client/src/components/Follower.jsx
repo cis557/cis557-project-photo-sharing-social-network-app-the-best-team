@@ -1,7 +1,7 @@
+/* eslint-disable react/button-has-type */
 /* globals */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import NavBar from './NavBar';
 import { getUser } from '../javascripts/userRequests';
 
@@ -12,7 +12,6 @@ class Follower extends Component {
     this.state = {
       data: null,
       isLoading: true,
-      currentUser: null,
     };
   }
 
@@ -23,13 +22,9 @@ class Follower extends Component {
           .then((userInfo) => {
             this.setState({ data: userInfo, isLoading: false });
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   render() {
@@ -73,9 +68,5 @@ class Follower extends Component {
     );
   }
 }
-
-Follower.propTypes = {
-  currentUser: PropTypes.bool.isRequired,
-};
 
 export default Follower;

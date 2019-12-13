@@ -2,7 +2,7 @@
 
 import { api } from '../api';
 
-async function testAPI() {
+export default async function testAPI() {
   return fetch(`${api.url}/testAPI`,
     {
       method: 'GET',
@@ -14,7 +14,3 @@ async function testAPI() {
       mode: 'cors',
     });
 }
-
-export {
-  testAPI,
-};

@@ -1,7 +1,8 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 /* globals */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import NavBar from './NavBar';
 import { getSuggestedUsers, getUser } from '../javascripts/userRequests';
 import { follow } from '../javascripts/followRequests';
@@ -26,13 +27,9 @@ class Follow extends Component {
           .then((userInfo) => {
             this.setState({ currentUser: userInfo });
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
-        console.log(err);
-      })
+      .catch(() => {})
       .then(() => {
         getSuggestedUsers()
           .then((data) => {
@@ -40,13 +37,9 @@ class Follow extends Component {
               .then((usersInfo) => {
                 this.setState({ data: usersInfo, isLoading: false });
               })
-              .catch((err) => {
-                console.log(err);
-              });
+              .catch(() => {});
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch(() => {});
       });
   }
 
@@ -57,13 +50,9 @@ class Follow extends Component {
       .then((res) => {
         if (res.ok) {
           this.props.history.push('/profile');
-        } else {
-          console.log(res);
         }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   render() {
@@ -122,9 +111,5 @@ class Follow extends Component {
     );
   }
 }
-
-Follow.propTypes = {
-  currentUser: PropTypes.bool.isRequired,
-};
 
 export default Follow;

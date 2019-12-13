@@ -1,7 +1,9 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 /* globals */
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import NavBar from './NavBar';
 import { getUser } from '../javascripts/userRequests';
 import { unfollow } from '../javascripts/followRequests';
@@ -13,7 +15,6 @@ class Followee extends Component {
     this.state = {
       data: null,
       isLoading: true,
-      currentUser: null,
     };
     this.handleDelete = this.handleDelete.bind(this);
   }
@@ -25,13 +26,9 @@ class Followee extends Component {
           .then((userInfo) => {
             this.setState({ data: userInfo, isLoading: false });
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   handleDelete(event) {
@@ -41,13 +38,9 @@ class Followee extends Component {
       .then((res) => {
         if (res.ok) {
           this.props.history.push('/profile');
-        } else {
-          console.log(res);
         }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   render() {
@@ -91,9 +84,5 @@ class Followee extends Component {
     );
   }
 }
-
-Followee.propTypes = {
-  currentUser: PropTypes.bool.isRequired,
-};
 
 export default Followee;

@@ -29,13 +29,9 @@ class Feed extends Component {
                   });
               });
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   render() {

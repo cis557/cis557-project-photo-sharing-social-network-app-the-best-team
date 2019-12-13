@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { rgba } from 'polished';
 import { register } from '../javascripts/authRequests';
-import image from '../images/slide-1.jpg';
+import slideImage from '../images/slide-1.jpg';
 import logo from '../images/photogram.png';
 
 class Register extends Component {
@@ -34,6 +34,7 @@ class Register extends Component {
   handleSubmit(event) {
     event.preventDefault();
 
+    // eslint-disable-next-line react/prop-types
     const { history } = this.props;
 
     const { firstName } = this.state;
@@ -53,6 +54,7 @@ class Register extends Component {
     )
       .then((res) => {
         if (res.ok) {
+          // eslint-disable-next-line react/prop-types
           history.push('/');
         } else {
           res.json().then((json) => {
@@ -60,7 +62,7 @@ class Register extends Component {
           });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({ message: '[!]' });
       });
   }
@@ -85,7 +87,7 @@ class Register extends Component {
         id="slideshow"
         className="uk-cover-container uk-background-secondary uk-flex uk-light uk-flex-center uk-flex-middle uk-height-viewport uk-background-cover"
         data-uk-height-viewport="true"
-        style={{ backgroundImage: `url(${image})` }}
+        style={{ backgroundImage: `url(${slideImage})` }}
       >
         <div className="uk-border-rounded uk-width-large uk-padding-large uk-position-z-index" uk-scrollspy="cls: uk-animation-fade" style={{ backgroundColor: rgba(0, 0, 0, 0.4) }}>
           <div className="uk-text-center uk-margin">

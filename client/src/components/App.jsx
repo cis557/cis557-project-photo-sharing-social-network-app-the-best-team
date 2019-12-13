@@ -17,7 +17,6 @@ import DetailsPage from './DetailsPage';
 import RouteProtector from './RouteProtector';
 import RouteVerifier from './RouteVerifier';
 
-
 class App extends PureComponent {
   render() {
     return (

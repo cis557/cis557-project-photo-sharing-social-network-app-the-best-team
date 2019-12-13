@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /* globals */
 import React, { PureComponent } from 'react';
 

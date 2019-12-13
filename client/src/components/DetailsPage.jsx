@@ -1,3 +1,5 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* globals btoa */
 import React, { Component } from 'react';
@@ -50,9 +52,7 @@ export default class DetailsPage extends Component {
               });
           });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   async handleUnfollow() {
@@ -69,9 +69,7 @@ export default class DetailsPage extends Component {
               });
           });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   render() {

@@ -18,7 +18,6 @@ class Post extends Component {
       postId: props.postId,
       isLoading: true,
       currentUser: props.currentUser,
-      otherUser: props.otherUser,
       data: {},
       text: '',
       checkingProfile: false,
@@ -46,13 +45,9 @@ class Post extends Component {
           .then((post) => {
             this.setState({ isLoading: false, data: post });
           })
-          .catch((err) => {
-            console.log([err]);
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   handleChange(event) {
@@ -80,7 +75,7 @@ class Post extends Component {
           });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({ message: '[!]' });
       });
   }
@@ -92,9 +87,7 @@ class Post extends Component {
       .then(() => {
         this.setState({ isDeleted: true });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   render() {

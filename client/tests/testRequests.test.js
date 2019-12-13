@@ -1,8 +1,6 @@
 /* global */
 
-import {
-  testAPI,
-}
+import testAPI
   from '../src/javascripts/testRequests';
 
 const fetch = require('jest-fetch-mock');

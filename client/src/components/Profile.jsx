@@ -21,13 +21,9 @@ class Profile extends Component {
           .then((userInfo) => {
             this.setState({ data: userInfo, isLoading: false });
           })
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch(() => {});
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(() => {});
   }
 
   render() {
