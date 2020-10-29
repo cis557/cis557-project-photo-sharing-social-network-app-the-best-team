@@ -1,0 +1,4 @@
+language: node_js
+script:
+  - cd api && nvm i node && node -v && npm i jest && npm i supertest && npm test
+  - cd .. && cd client && nvm i node && node -v && npm i jest && npm i jest-fetch-mock && npm i supertest && npm test

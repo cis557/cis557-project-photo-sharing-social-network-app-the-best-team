@@ -1,0 +1,9 @@
+coverage
+api/node_modules
+api/coverage
+api/uploads/*
+!api/uploads/.gitkeep
+api/debug.log
+client/node_modules
+client/coverage
+node_modules
